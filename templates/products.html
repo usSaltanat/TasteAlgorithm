@@ -6,11 +6,24 @@
     <h2>Список продуктов</h2>
     <a href="/products/new">Добавить</a>
     {% if products %}
-    <ol>
-        {% for product_id, product in products.items() %}
-        <li> <a href="/products/{{product_id}}"> {{ product.name }} </a></li>
-        {% endfor %}
-    </ol>
+    <table width="100%">
+        <thead>
+            <th>
+            <td width="50%">Наименования</td>
+            <td width="30%">Категория</td>
+            <td width="20%">Единицы измерения</td>
+            </th>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.unit }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
     <p>Список пуст</p>
     {% endif %}
