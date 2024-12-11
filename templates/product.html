@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="/products">Список продуктов</a>
+<a href="/products/{{product_id}}/delete">Удалить</a>
+<a href="/products/{{product_id}}/edit">Изменить</a>
+
+<h1>{{product.name}}</h1>
+{% endblock %}

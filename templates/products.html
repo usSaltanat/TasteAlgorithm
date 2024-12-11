@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<body>
+    <h2>Список продуктов</h2>
+    <a href="/products/new">Добавить</a>
+    {% if products %}
+    <ol>
+        {% for product_id, product in products.items() %}
+        <li> <a href="/products/{{product_id}}"> {{ product.name }} </a></li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    <p>Список пуст</p>
+    {% endif %}
+</body>
+{% endblock %}

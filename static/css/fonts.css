@@ -1,0 +1,33 @@
+/* nunito-regular - cyrillic_latin */
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-regular.woff2') }}?v=1") format('woff2'),
+    url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-regular.woff') }}?v=1") format('woff');
+}
+
+/* nunito-600 - cyrillic_latin */
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-600.woff2') }}?v=1") format('woff2'),
+    url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-600.woff') }}?v=1") format('woff');
+}
+
+/* nunito-800 - cyrillic_latin */
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-800.woff2') }}?v=1") format('woff2'),
+    url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-800.woff') }}?v=1") format('woff');
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+}

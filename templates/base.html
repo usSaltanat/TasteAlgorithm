@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}{% endblock %} - Алгоритм Вкуса</title>
+
+<!-- иконка браузера -->
+<!-- <link rel="icon" type="image/png" href="icon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="icon/favicon.svg" />
+    <link rel="shortcut icon" href="icon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="icon/site.webmanifest" /> -->
+
+<!--  стили-->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+<!-- Чтобы не моргали шрифты их надо предзагрузить -->
+<link rel="preload" href="fonts/nunito-v26-cyrillic_latin-600.woff2" as="font" crossorigin>
+<link rel="preload" href="fonts/nunito-v26-cyrillic_latin-800.woff2" as="font" crossorigin>
+<link rel="preload" href="fonts/nunito-v26-cyrillic_latin-regular.woff2" as="font" crossorigin>
+
+
+<style>
+    /* nunito-regular - cyrillic_latin */
+    @font-face {
+        font-family: 'Nunito';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-regular.woff2') }}?v=1") format('woff2'),
+        url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-regular.woff') }}?v=1") format('woff');
+    }
+
+    /* nunito-600 - cyrillic_latin */
+    @font-face {
+        font-family: 'Nunito';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-600.woff2') }}?v=1") format('woff2'),
+        url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-600.woff') }}?v=1") format('woff');
+    }
+
+    /* nunito-800 - cyrillic_latin */
+    @font-face {
+        font-family: 'Nunito';
+        font-style: normal;
+        font-weight: 800;
+        font-display: swap;
+        src: url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-800.woff2') }}?v=1") format('woff2'),
+        url("{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-800.woff') }}?v=1") format('woff');
+    }
+
+    body {
+        font-family: 'Nunito', sans-serif;
+    }
+</style>
+
+{% block header %}
+<header class="header">
+    <div class="container header_container">
+        <svg class="header_logo" viewBox="0 0 199 44" role="img" aria-label="Логотип YourMeal">
+            <!-- <use href="{{ url_for('static', filename='img/new_logo.svg') }}" /> -->
+        </svg>
+        <div class="header_titile_container">
+            <h1 class="header_title">
+                <span class="header_title-text">Мы поможем вам</span>
+                <span class="header_title-text_red">составить меню!</span>
+            </h1>
+            <p class="header_appereal">Умный планировщик питания на каждый день</p>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}{% endblock %}
+
+{% block footer %}
+<footer>
+    <p>&copy; 2024 Тест</p>
+</footer>
+{% endblock %}
+
+</html>

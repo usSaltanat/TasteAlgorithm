@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+<a href="/products">Назад</a>
+
+{% block content %}
+<form action="/products/{{product_id}}/update" method="post">
+    <label for="product_name">Название продукта</label>
+    <input type="text" id="new_product_name" name="new_product_name" placeholder={{product.name}} required minlength="3"
+        maxlength="100">
+    <input type="submit" value="Сохранить">
+</form>
+{% endblock %}
