@@ -21,6 +21,16 @@ POST /products/{id}/delete
 """
 
 products = {1: {"name": "Хлеб"}, 2: {"name": "Рис"}}
+categories = [
+    {"id": 1, "name": "Бакалея"},
+    {"id": 2, "name": "Фрукты / овощи / зелень"},
+    {"id": 3, "name": "Мясо / курица"},
+]
+units = [
+    {"id": 1, "name": "г."},
+    {"id": 2, "name": "шт."},
+    {"id": 3, "name": "стол. ложка"},
+]
 
 
 @app.route("/products", methods=["GET"])
