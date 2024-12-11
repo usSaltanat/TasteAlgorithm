@@ -18,25 +18,44 @@ class Unit(NamedTuple):
     name: str
 
 
+products = [
+    Product(1, "Хлеб", 1, 1),
+    Product(2, "Курица", 3, 1),
+]
+
+categories = [
+    Category(1, "Бакалея"),
+    Category(2, "Фрукты / овощи / зелень"),
+    Category(3, "Мясо / курица"),
+]
+units = [
+    Unit(1, "г."),
+    Unit(2, "шт."),
+    Unit(3, "стол. ложка"),
+]
+
+
 def get_products() -> List[Product]:
     # тут может быть SQL SELECT...
-    return [
-        Product(1, "Хлеб", 1, 1),
-        Product(2, "Курица", 3, 1),
-    ]
+    return products
 
 
 def get_categories() -> List[Category]:
-    return [
-        Category(1, "Бакалея"),
-        Category(2, "Фрукты / овощи / зелень"),
-        Category(3, "Мясо / курица"),
-    ]
+    return categories
 
 
 def get_units() -> List[Unit]:
-    return [
-        Unit(1, "г."),
-        Unit(2, "шт."),
-        Unit(3, "стол. ложка"),
-    ]
+    return units
+
+
+def insert_product(product: Product) -> int:
+    id = len(products)
+    products.append(
+        Product(
+            id,
+            product.name,
+            product.category_id,
+            product.unit_id,
+        )
+    )
+    return id

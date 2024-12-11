@@ -1,5 +1,6 @@
 from flask import Flask, abort, redirect, render_template, request, redirect
 from service import get_products_view
+from storage import insert_product, Product, get_categories, get_units
 
 app = Flask(__name__)
 
@@ -44,13 +45,19 @@ def get_product_by_id(id: str):
 # Создание продукта
 @app.route("/products/new", methods=["GET"])
 def new_product():
-    return render_template("new.html")
+    return render_template("new.html", categories=get_categories(), units=get_units())
 
 
 @app.route("/products/create", methods=["POST"])
 def create_product():
-    next_id = max(products.keys()) + 1
-    products[next_id] = {"name": request.form["product_name"]}
+    created_product = Product(
+        None,
+        request.form["product_name"],
+        int(request.form["product_category_id"]),
+        int(request.form["product_unit_id"]),
+    )
+    next_id = insert_product(created_product)
+
     return redirect(f"/products/{next_id}")
 
 
