@@ -1,4 +1,5 @@
 from flask import Flask, abort, redirect, render_template, request, redirect
+from service import get_products_view
 
 app = Flask(__name__)
 
@@ -20,31 +21,6 @@ GET /products/{id} - (Read by id) вывести один продукт по е
 POST /products/{id}/delete
 """
 
-products = [
-    {
-        "id": 1,
-        "name": "Хлеб",
-        "category_id": 1,
-        "unit_id": 2,
-    },
-    {
-        "id": 2,
-        "name": "Курица",
-        "category_id": 3,
-        "unit_id": 1,
-    },
-]
-categories = [
-    {"id": 1, "name": "Бакалея"},
-    {"id": 2, "name": "Фрукты / овощи / зелень"},
-    {"id": 3, "name": "Мясо / курица"},
-]
-units = [
-    {"id": 1, "name": "г."},
-    {"id": 2, "name": "шт."},
-    {"id": 3, "name": "стол. ложка"},
-]
-
 
 @app.route("/", methods=["GET"])
 def get_root():
@@ -53,24 +29,8 @@ def get_root():
 
 @app.route("/products", methods=["GET"])
 def get_products():
-    products_view = map(
-        lambda product: {
-            "id": product["id"],
-            "name": product["name"],
-            "category": list(
-                filter(
-                    lambda category: category["id"] == product["category_id"],
-                    categories,
-                )
-            )[0]["name"],
-            "unit": list(filter(lambda unit: unit["id"] == product["unit_id"], units))[
-                0
-            ]["name"],
-        },
-        products,
-    )
-
-    return render_template("products.html", products=products_view)
+    view = get_products_view()
+    return render_template("products.html", products=view)
 
 
 @app.route("/products/<string:id>", methods=["GET"])
