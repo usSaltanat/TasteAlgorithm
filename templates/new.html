@@ -4,6 +4,21 @@
 <form action="/products/create" method="post">
     <label for="product_name">Название продукта</label>
     <input type="text" id="product_name" name="product_name" required minlength="3" maxlength="100">
+
+    <label for="product_category">Категория</label>
+    <select id="product_category" name="product_category_id">
+        {% for category in categories %}
+        <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="product_unit">Единицы измерения</label>
+    <select id="product_unit" name="product_unit_id">
+        {% for unit in units %}
+        <option value="{{ unit.id }}">{{ unit.name }}</option>
+        {% endfor %}
+    </select>
+
     <input type="submit" value="Сохранить">
 </form>
 {% endblock %}

@@ -1,4 +1,6 @@
 from flask import Flask, abort, redirect, render_template, request, redirect
+from service import get_products_view
+from storage import insert_product, Product, get_categories, get_units
 
 app = Flask(__name__)
 
@@ -20,12 +22,16 @@ GET /products/{id} - (Read by id) вывести один продукт по е
 POST /products/{id}/delete
 """
 
-products = {1: {"name": "Хлеб"}, 2: {"name": "Рис"}}
+
+@app.route("/", methods=["GET"])
+def get_root():
+    return redirect("/products")
 
 
 @app.route("/products", methods=["GET"])
 def get_products():
-    return render_template("products.html", products=products)
+    view = get_products_view()
+    return render_template("products.html", products=view)
 
 
 @app.route("/products/<string:id>", methods=["GET"])
@@ -39,13 +45,19 @@ def get_product_by_id(id: str):
 # Создание продукта
 @app.route("/products/new", methods=["GET"])
 def new_product():
-    return render_template("new.html")
+    return render_template("new.html", categories=get_categories(), units=get_units())
 
 
 @app.route("/products/create", methods=["POST"])
 def create_product():
-    next_id = max(products.keys()) + 1
-    products[next_id] = {"name": request.form["product_name"]}
+    created_product = Product(
+        None,
+        request.form["product_name"],
+        int(request.form["product_category_id"]),
+        int(request.form["product_unit_id"]),
+    )
+    next_id = insert_product(created_product)
+
     return redirect(f"/products/{next_id}")
 
 
@@ -77,3 +89,8 @@ def update_product(id: str):
     key = int(id)
     products[key] = {"name": request.form["new_product_name"]}
     return redirect(f"/products/{key}")
+
+
+@app.route("/test", methods=["GET"])
+def test():
+    return render_template("test.html")
