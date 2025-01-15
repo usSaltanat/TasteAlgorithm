@@ -1,26 +1,8 @@
 from flask import Flask, abort, redirect, render_template, request, redirect
-from service import get_products_view
-from storage import insert_product, Product, get_categories, get_units
+from storage import get_products
 
 app = Flask(__name__)
 
-"""
-CRUD = Create, Read, Update, Delete
-
-HTTP verb: GET, POST, PUT, PATCH, DELETE
-
-GET /products - (Read all) вывести список всех продуктов
-GET /products/{id} - (Read by id) вывести один продукт по его id
-
-Создать новый продукт - в два шага
-1 шаг - GET /products/new - вывести пользователю пустую форму с полями для создаваемого продукта
-2 шаг - POST /products/create -
-        создать новый продукта на основании данных из формы
-        редирект на страницу с продуктами, то есть GET /products
-
-Удалить продукт
-POST /products/{id}/delete
-"""
 
 
 @app.route("/", methods=["GET"])
@@ -29,8 +11,8 @@ def get_root():
 
 
 @app.route("/products", methods=["GET"])
-def get_products():
-    view = get_products_view()
+def get_products_route():
+    view = get_products()
     return render_template("products.html", products=view)
 
 

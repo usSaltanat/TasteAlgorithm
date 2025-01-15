@@ -1,61 +1,44 @@
-from typing import NamedTuple, List
+from typing import List, NamedTuple
+import pg8000.native
+
+con = pg8000.native.Connection("oleg", database="taste_algorithm", password="1988")
 
 
-class Product(NamedTuple):
+class ProductView(NamedTuple):
     id: int
     name: str
-    category_id: int
-    unit_id: int
+    category: str
+    unit: str
 
 
-class Category(NamedTuple):
-    id: int
-    name: str
+def get_products() -> List[ProductView]:
+    products_view = []
+    for row in con.run(
+        """
+            SELECT
+                p.id,
+                p.product_name,
+                c.category,
+                u.unit
+            FROM products p
+            JOIN units u ON p.unit_id = u.id
+            JOIN categories c ON p.category_id = c.id
+        """
+    ):
+        products_view.append(ProductView(row[0], row[1], row[2], row[3]))
+    return products_view
 
 
-class Unit(NamedTuple):
-    id: int
-    name: str
-
-
-products = [
-    Product(1, "Хлеб", 1, 1),
-    Product(2, "Курица", 3, 1),
-]
-
-categories = [
-    Category(1, "Бакалея"),
-    Category(2, "Фрукты / овощи / зелень"),
-    Category(3, "Мясо / курица"),
-]
-units = [
-    Unit(1, "г."),
-    Unit(2, "шт."),
-    Unit(3, "стол. ложка"),
-]
-
-
-def get_products() -> List[Product]:
-    # тут может быть SQL SELECT...
-    return products
-
-
-def get_categories() -> List[Category]:
-    return categories
-
-
-def get_units() -> List[Unit]:
-    return units
-
-
-def insert_product(product: Product) -> int:
-    id = len(products)
-    products.append(
-        Product(
-            id,
-            product.name,
-            product.category_id,
-            product.unit_id,
-        )
-    )
-    return id
+def insert_product(product) -> int:
+    # TODO
+    # id = len(products)
+    # products.append(
+    #     Product(
+    #         id,
+    #         product.name,
+    #         product.category_id,
+    #         product.unit_id,
+    #     )
+    # )
+    # return id
+    return -1
