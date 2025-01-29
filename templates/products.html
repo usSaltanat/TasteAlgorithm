@@ -1,31 +1,69 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Таблица с DataTables</title>
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"> -->
+
+<!-- <style>
+
+</style> -->
 
 <body>
-    <h2>Список продуктов</h2>
+    <!-- <h2>Список продуктов</h2> -->
     <a href="/products/new">Добавить</a>
     {% if products %}
-    <table width="100%">
-        <thead>
-            <th>
-            <td width="50%">Наименования</td>
-            <td width="30%">Категория</td>
-            <td width="20%">Единицы измерения</td>
-            </th>
-        </thead>
-        <tbody>
-            {% for product in products %}
-            <tr>
-                <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
-                <td>{{ product.category }}</td>
-                <td>{{ product.unit }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table id="myTable" class="display">
+            <thead>
+                <tr>
+                    <td>Наименования</td>
+                    <td>Категория</td>
+                    <td>Еденицы измерения</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
+                    <td>{{ product.category }}</td>
+                    <td>{{ product.unit }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <p>Список пуст</p>
     {% endif %}
+
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                language: {
+                    search: "", // Убираем слово "Search"
+                    searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
+                    info: "", // Убираем информацию о количестве записей, например, "Показано 1-10 из 50"
+                    infoEmpty: "", // Убираем информацию, когда таблица пуста
+                    zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
+                    infoFiltered: "",
+                    paginate: {
+                        previous: "Назад", // Текст для кнопки "Предыдущая"
+                        next: "Вперед" // Текст для кнопки "Следующая"
+                    },
+                    lengthMenu: "Показать _MENU_ записей",
+                }
+            });
+        });
+    </script>
+    <!-- <script>
+    $(document).ready(function() {
+        $('.dataTables_filter label').text('Найти:'); // Изменение текста лейбла
+    });
+</script> -->
 </body>
 {% endblock %}

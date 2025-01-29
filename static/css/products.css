@@ -1,0 +1,132 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    /* Закругление углов таблицы */
+    overflow: hidden;
+    margin-bottom: 30px;
+    max-width: 100%;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+    /* border: 1px solid #F2F2F3; */
+}
+
+.table-container {
+    max-width: 100%;
+    /* Установим максимальную ширину контейнера */
+    overflow-x: hidden;
+    overflow-y: hidden;
+    /* Выключаем вертикальную прокрутку */
+    margin: 0 auto;
+}
+
+thead {
+    background-color: #F8EBE1;
+    border-radius: 8px 0 0 8px;
+}
+
+input[type="text"] {
+    margin-bottom: 10px;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+
+}
+
+/* Общие стили таблицы */
+table.dataTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Стили для заголовков */
+table.dataTable thead th {
+    background-color: #F8EBE1;
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Стили для строк */
+table.dataTable tbody td {
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+/* Четные строки */
+table.dataTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Строки при наведении */
+table.dataTable tbody tr:hover {
+    background-color: #e0e0e0;
+}
+
+/* Пагинация */
+.dataTables_paginate .paginate_button {
+    background-color: #F8EBE1;
+    color: white;
+    border: 1px solid #F8EBE1;
+    padding: 8px 25px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 8px 12px;
+    /* margin-bottom: 30px; */
+}
+
+/* Пагинация при наведении */
+.dataTables_paginate .paginate_button:hover {
+    background-color: #F8EBE1;
+}
+
+/* Активная кнопка пагинации */
+.dataTables_paginate .paginate_button.current {
+    background-color: #F8EBE1;
+}
+
+/* Поле поиска */
+.dataTables_filter {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.dataTables_filter label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.dataTables_filter input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 250px;
+}
+
+.dataTables_filter input:focus {
+    border-color: #F8EBE1;
+    outline: none;
+}
+
+/* Селектор количества записей */
+.dataTables_length select {
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.dataTables_length select:focus {
+    border-color: #F8EBE1;
+    outline: none;
+}

@@ -1,26 +1,16 @@
 from flask import Flask, abort, redirect, render_template, request, redirect
-from service import get_products_view
-from storage import insert_product, Product, get_categories, get_units
+from storage import (
+    get_products,
+    get_product_by_id,
+    get_categories,
+    get_units,
+    insert_product,
+    Product,
+    Category,
+    Unit,
+)
 
 app = Flask(__name__)
-
-"""
-CRUD = Create, Read, Update, Delete
-
-HTTP verb: GET, POST, PUT, PATCH, DELETE
-
-GET /products - (Read all) вывести список всех продуктов
-GET /products/{id} - (Read by id) вывести один продукт по его id
-
-Создать новый продукт - в два шага
-1 шаг - GET /products/new - вывести пользователю пустую форму с полями для создаваемого продукта
-2 шаг - POST /products/create -
-        создать новый продукта на основании данных из формы
-        редирект на страницу с продуктами, то есть GET /products
-
-Удалить продукт
-POST /products/{id}/delete
-"""
 
 
 @app.route("/", methods=["GET"])
@@ -29,17 +19,17 @@ def get_root():
 
 
 @app.route("/products", methods=["GET"])
-def get_products():
-    view = get_products_view()
+def get_products_route():
+    view = get_products()
     return render_template("products.html", products=view)
 
 
 @app.route("/products/<string:id>", methods=["GET"])
-def get_product_by_id(id: str):
-    key = int(id)
-    if products.get(key, None) is None:
+def get_product_by_id_route(id: str):
+    view = get_product_by_id(id)
+    if view[0].id == None:
         return abort(404, "Продукт не найден")
-    return render_template("product.html", product=products[key], product_id=key)
+    return render_template("product.html", product=view, product_id=id)
 
 
 # Создание продукта
@@ -53,11 +43,10 @@ def create_product():
     created_product = Product(
         None,
         request.form["product_name"],
-        int(request.form["product_category_id"]),
-        int(request.form["product_unit_id"]),
+        Category(request.form["product_category_id"], None),
+        Unit(request.form["product_unit_id"], None),
     )
     next_id = insert_product(created_product)
-
     return redirect(f"/products/{next_id}")
 
 
@@ -89,8 +78,3 @@ def update_product(id: str):
     key = int(id)
     products[key] = {"name": request.form["new_product_name"]}
     return redirect(f"/products/{key}")
-
-
-@app.route("/test", methods=["GET"])
-def test():
-    return render_template("test.html")
