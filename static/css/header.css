@@ -27,7 +27,7 @@
 .header_titile_container {
     padding-bottom: 170px;
     background: url('../img/pic.svg') bottom/180px no-repeat;
-     /* margin-top: -80px ; 
+    /* margin-top: -80px ; 
     width: 300px;
     height: 200px; */
     text-align: center;
@@ -95,6 +95,10 @@
     }
 }
 
+/* .body-container {
+    height: 800px;
+} */
+
 @media (min-width: 768px) {
     .header {
         background-size: 2540px;
@@ -126,4 +130,4 @@
         margin-bottom: 40px;
     }
 
-} 
+}
