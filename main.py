@@ -8,6 +8,7 @@ from storage import (
     Product,
     Category,
     Unit,
+    delete_product_by_id
 )
 
 app = Flask(__name__)
@@ -51,13 +52,12 @@ def create_product():
 
 
 @app.route("/products/<int:id>/delete", methods=["GET"])
-def delete_product_by_id(id: str):
-    key = int(id)
-    if products.get(key, None) is None:
+def delete_product_by_id_route(id: str):
+    flag = delete_product_by_id(id)
+    if flag == 0:
         return abort(404, "Продукт не найден")
     else:
-        del products[key]
-    return redirect(f"/products")
+        return redirect(f"/products")
 
 
 # Изменить продукт - тоже два шага
@@ -69,12 +69,23 @@ def delete_product_by_id(id: str):
 
 @app.route("/products/<int:id>/edit", methods=["GET"])
 def edit_product_by_id(id: str):
-    key = int(id)
-    return render_template("edit.html", product=products[key], product_id=key)
+    view = get_product_by_id(str(id))
+    if view[0].id == None:
+        return abort(404, "Продукт не найден")
+    return render_template("edit.html", product=view[0].name, product_id=id, categories=get_categories(), units=get_units())
 
 
 @app.route("/products/<int:id>/update", methods=["POST"])
 def update_product(id: str):
-    key = int(id)
-    products[key] = {"name": request.form["new_product_name"]}
-    return redirect(f"/products/{key}")
+    view = get_product_by_id(str(id))
+    flag = delete_product_by_id_route(view[0].id)
+    if flag == 0 or view[0].id == None:
+        return abort(404, "Продукт не найден")
+    created_product = Product(
+        None,
+        request.form["new_product_name"],
+        Category(request.form["product_category_id"], None),
+        Unit(request.form["product_unit_id"], None),
+    )
+    next_id = insert_product(created_product)
+    return redirect(f"/products/{next_id}")

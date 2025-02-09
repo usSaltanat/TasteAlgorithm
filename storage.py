@@ -48,7 +48,7 @@ def get_products() -> List[ProductView]:
     return products_view
 
 
-def get_product_by_id(id) -> List[ProductView]:
+def get_product_by_id(id: str) -> List[ProductView]:
     product_view = []
     query = (
         """ 
@@ -107,3 +107,13 @@ def insert_product(product: Product) -> int:
         product_name=product.name,
     )
     return id
+
+
+def delete_product_by_id(id: str) -> int:
+    flag = con.run(
+        "DELETE FROM products WHERE id = :product_id RETURNING id", product_id=id
+    )
+    if flag is None:
+        return 0
+    else:
+        return flag

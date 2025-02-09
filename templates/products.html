@@ -4,18 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Таблица с DataTables</title>
-<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"> -->
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css"> -->
 
 <!-- <style>
 
 </style> -->
 
 <body>
-    <!-- <h2>Список продуктов</h2> -->
-    <a href="/products/new">Добавить</a>
+
+    <a class="btn" href="/products/new">Добавить</a>
+
+    <h2>Список продуктов</h2>
+
     {% if products %}
     <div class="table-container">
-        <table id="myTable" class="display">
+        <table id="products_table" class="display">
             <thead>
                 <tr>
                     <td>Наименования</td>
@@ -38,12 +41,12 @@
     <p>Список пуст</p>
     {% endif %}
 
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-        src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <script>
+    <!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <!-- <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> -->
+    <!-- <script>
         $(document).ready(function () {
-            $('#myTable').DataTable({
+            $('#products_table').DataTable({
                 language: {
                     search: "", // Убираем слово "Search"
                     searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
@@ -55,11 +58,11 @@
                         previous: "Назад", // Текст для кнопки "Предыдущая"
                         next: "Вперед" // Текст для кнопки "Следующая"
                     },
-                    lengthMenu: "Показать _MENU_ записей",
+                    lengthMenu: "_MENU_",
                 }
             });
         });
-    </script>
+    </script> -->
     <!-- <script>
     $(document).ready(function() {
         $('.dataTables_filter label').text('Найти:'); // Изменение текста лейбла

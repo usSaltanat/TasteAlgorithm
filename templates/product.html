@@ -2,17 +2,19 @@
 
 {% block content %}
 
-<a href="/products">Список продуктов</a>
-<a href="/products/{{product_id}}/delete">Удалить</a>
-<a href="/products/{{product_id}}/edit">Изменить</a>
+<a class="btn" href="/products">Список продуктов</a>
+<a class="btn" href="/products/{{product_id}}/edit">Изменить</a>
+<a class="btn" href="/products/{{product_id}}/delete">Удалить</a>
 
-<table id="myTable" class="display">
+<h2>Выбранный продукт</h2>
+
+<table id="products_table" class="display">
     <thead>
-    <tr>
-        <td>Наименования</td>
-        <td>Категория</td>
-        <td>Еденицы измерения</td>
-    </tr>
+        <tr>
+            <td>Наименования</td>
+            <td>Категория</td>
+            <td>Еденицы измерения</td>
+        </tr>
     </thead>
     <tbody>
         {% for item in product %}
