@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
-<a href="/products">Назад</a>
+
 {% block content %}
-
-<a class="btn" href="/products">Отмена</a>
 <!-- <a class="btn" href="/products">Отмена</a> -->
-<input class="btn" type="submit" value="Сохранить">
-
-<h2>Создать продукт</h2>
 
 
 <form action="/products/create" method="post">
-    <div class="product_input_label">
 
+    <a class="btn" href="/products">Назад</a>
+    <input class="btn" type="submit" value="Сохранить">
+
+    <h2>Создать продукт</h2>
+
+    <div class="product_input_label">
         <div class="product_name_input">
             <label for="product_name">Название продукта</label>
             <input type="text" id="product_name" name="product_name" required minlength="3" maxlength="10">

@@ -5,11 +5,14 @@ h2 {
     /* Цвет текста */
 }
 
-table {
+.table-container {
     /* width: 40%; */
+    max-width: 100%;
+    margin: 0 auto;
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden;
+    overflow-x: auto;
     /* margin: 0 auto; */
     margin-left: 20px;
     margin-bottom: 50px;
@@ -35,20 +38,14 @@ tr:hover {
     /* Цвет фона при наведении */
 }
 
-.table-container {
-    max-width: 100%;
-    /* overflow-x: scroll; */
-    /* Выключаем вертикальную прокрутку */
-    /* overflow-y: scroll; */
-    /* margin: 0 auto; */
-    table-layout: auto;
-}
 
 thead {
     background-color: #F8EBE1;
     border-radius: 8px 0 0 8px;
     table-layout: auto;
 }
+
+
 
 /* ---------------------------------------- */
 .btn {
@@ -182,24 +179,85 @@ thead {
     width: 200px;
 }
 
-@media (min-width: 480px) {
-    table {
-        width: 90%;
-    }
 
+div.dataTables_length,
+div.dataTables_filter {
+    display: inline-block;
+    margin: 10px 10px 10px 0;
+    height: 30px;
 }
 
-@media (min-width: 768px) {
-    table {
-        width: 85%;
-    }
-
+.dataTables_filter input {
+    border: 1px solid #ccc;
+    /* Рамка вокруг поля поиска */
+    padding: 8px;
+    /* Отступы внутри поля */
+    border-radius: 4px;
+    /* Закругленные углы */
+    width: 250px;
+    height: 30px;
+    /* Ширина поля поиска */
+    font-size: 12px;
+    /* Размер шрифта */
+    max-height: 34px;
+    color: #474040;
 }
+
+.dataTables_length select {
+    height: 30px;
+    border: 1px solid #ccc;
+    /* Рамка вокруг выпадающего меню */
+    padding: 3px;
+    /* Отступы внутри выпадающего меню */
+    border-radius: 4px;
+    /* Закругленные углы */
+    font-size: 12px;
+    /* Размер шрифта */
+    color: #6e6060;
+}
+
+.dataTables_paginate.paging_simple_numbers {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    width: 300px;
+}
+
+
+.paginate_button.current,
+.paginate_button {
+    /* padding: 8px 12px; Отступы вокруг кнопок пагинации */
+    margin: 10px 5px 10px 5px;
+    /*Отступы между кнопками */
+    margin-bottom: 10px;
+    margin-top: 10px;
+    /* border: 1px solid #ccc; Рамка вокруг кнопок */
+    width: 150px;
+    /* border-radius: 4px; Закругленные углы кнопок */
+    color: #474040;
+    /* Цвет текста кнопок */
+    text-decoration: none;
+    /* Убираем подчеркивание текста */
+    padding: 5px 5px 5px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #474040;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.paginate_button.current,
+.paginate_button :hover {
+    transition: all 0.2s;
+    box-shadow: 0 7px 14px rgb(65 132 144 / 10%), 0 3px 6px rgb(0 0 0 / 8%);
+    background-color: #F8EBE1;
+}
+
 
 @media (min-width: 1024px) {
-    table {
-        width: 70%;
-    }
+    /* .table-container {
+        width: 100%;
+    } */
 
     .product_input_label {
         width: 1000px;
@@ -212,7 +270,7 @@ thead {
     }
 }
 
-@media (min-width: 1234px) {
+/* @media (min-width: 1234px) {
     table {
         width: 65%;
     }
@@ -228,4 +286,4 @@ thead {
     table {
         width: 45%;
     }
-}
+} */

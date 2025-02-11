@@ -41,10 +41,16 @@
     <p>Список пуст</p>
     {% endif %}
 
-    <!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
-    <!-- <script type="text/javascript" charset="utf8"
+    <!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8"
         src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> -->
-    <!-- <script>
+
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+
+    <script>
         $(document).ready(function () {
             $('#products_table').DataTable({
                 language: {
@@ -55,18 +61,18 @@
                     zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
                     infoFiltered: "",
                     paginate: {
-                        previous: "Назад", // Текст для кнопки "Предыдущая"
-                        next: "Вперед" // Текст для кнопки "Следующая"
+                        previous: "<<", // Текст для кнопки "Предыдущая"
+                        next: ">>" // Текст для кнопки "Следующая"
                     },
                     lengthMenu: "_MENU_",
                 }
             });
         });
-    </script> -->
+    </script>
     <!-- <script>
     $(document).ready(function() {
-        $('.dataTables_filter label').text('Найти:'); // Изменение текста лейбла
+        $('.dataTables_filter label').text('Поиск...'); // Изменение текста лейбла
     });
-</script> -->
+    </script> -->
 </body>
 {% endblock %}
