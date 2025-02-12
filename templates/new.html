@@ -14,12 +14,13 @@
     <div class="product_input_label">
         <div class="product_name_input">
             <label for="product_name">Название продукта</label>
-            <input type="text" id="product_name" name="product_name" required minlength="3" maxlength="10">
+            <input type="text" id="product_name" name="product_name" required placeholder="Введите название продукта" minlength="3" maxlength="10">
         </div>
 
         <div class="product_category_input">
             <label for="product_category">Категория</label>
             <select id="product_category" name="product_category_id">
+                <option disabled selected value>Выберите категорию</option>
                 {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
@@ -29,6 +30,7 @@
         <div class="product_unit_input">
             <label for="product_unit">Еденицы измерения</label>
             <select id="product_unit" name="product_unit_id">
+                <option disabled selected value>Выберите единицу измерения</option>
                 {% for unit in units %}
                 <option value="{{ unit.id }}">{{ unit.name }}</option>
                 {% endfor %}

@@ -4,15 +4,15 @@
 {% block content %}
 
 
-<form action="/products/{{product_id}}/update" method="post">
+<form action="/products/{{product.id}}/update" method="post">
     <a class="btn" href="/products">Отмена</a>
     <input class="btn" type="submit" value="Сохранить">
     
     <div class="product_input_label">
         <div class="product_name_input">
             <label for="product_name">Название продукта</label>
-            <input type="text" id="new_product_name" name="new_product_name" placeholder={{product}} required
-                minlength="3" maxlength="100">
+            <input type="text" id="new_product_name" name="new_product_name" placeholder="Введите название продукта" required
+                minlength="3" maxlength="100" value="{{product.name}}">
         </div>
 
         <div class="product_category_input">

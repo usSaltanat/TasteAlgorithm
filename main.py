@@ -5,10 +5,11 @@ from storage import (
     get_categories,
     get_units,
     insert_product,
+    update_product,
     Product,
     Category,
     Unit,
-    delete_product_by_id
+    delete_product_by_id,
 )
 
 app = Flask(__name__)
@@ -25,12 +26,12 @@ def get_products_route():
     return render_template("products.html", products=view)
 
 
-@app.route("/products/<string:id>", methods=["GET"])
-def get_product_by_id_route(id: str):
-    view = get_product_by_id(id)
-    if view[0].id == None:
+@app.route("/products/<int:id>", methods=["GET"])
+def get_product_by_id_route(id: int):
+    product_view = get_product_by_id(id)
+    if product_view is None:
         return abort(404, "Продукт не найден")
-    return render_template("product.html", product=view, product_id=id)
+    return render_template("product.html", product=product_view)
 
 
 # Создание продукта
@@ -41,23 +42,22 @@ def new_product():
 
 @app.route("/products/create", methods=["POST"])
 def create_product():
-    created_product = Product(
+    product_to_create = Product(
         None,
         request.form["product_name"],
         Category(request.form["product_category_id"], None),
         Unit(request.form["product_unit_id"], None),
     )
-    next_id = insert_product(created_product)
-    return redirect(f"/products/{next_id}")
+    created_product_id = insert_product(product_to_create)
+    return redirect(f"/products/{created_product_id}")
 
 
 @app.route("/products/<int:id>/delete", methods=["GET"])
 def delete_product_by_id_route(id: str):
-    flag = delete_product_by_id(id)
-    if flag == 0:
+    deleted_product_id = delete_product_by_id(id)
+    if deleted_product_id is None:
         return abort(404, "Продукт не найден")
-    else:
-        return redirect(f"/products")
+    return redirect(f"/products")
 
 
 # Изменить продукт - тоже два шага
@@ -68,24 +68,29 @@ def delete_product_by_id_route(id: str):
 
 
 @app.route("/products/<int:id>/edit", methods=["GET"])
-def edit_product_by_id(id: str):
-    view = get_product_by_id(str(id))
-    if view[0].id == None:
+def edit_product_by_id(id: int):
+    product_view = get_product_by_id(id)
+    if product_view is None:
         return abort(404, "Продукт не найден")
-    return render_template("edit.html", product=view[0].name, product_id=id, categories=get_categories(), units=get_units())
+    
+    return render_template(
+        "edit.html",
+        product=product_view,
+        categories=get_categories(),
+        units=get_units(),
+    )
 
 
 @app.route("/products/<int:id>/update", methods=["POST"])
-def update_product(id: str):
-    view = get_product_by_id(str(id))
-    flag = delete_product_by_id_route(view[0].id)
-    if flag == 0 or view[0].id == None:
-        return abort(404, "Продукт не найден")
-    created_product = Product(
-        None,
+def update_product_route(id: int):
+    product_to_update = Product(
+        id,
         request.form["new_product_name"],
         Category(request.form["product_category_id"], None),
         Unit(request.form["product_unit_id"], None),
     )
-    next_id = insert_product(created_product)
-    return redirect(f"/products/{next_id}")
+    updated_product_id = update_product(product_to_update)
+    if updated_product_id is None:
+        return abort(404, "Продукт не найден")
+    
+    return redirect(f"/products/{updated_product_id}")

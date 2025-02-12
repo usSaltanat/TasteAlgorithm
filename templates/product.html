@@ -3,8 +3,8 @@
 {% block content %}
 
 <a class="btn" href="/products">Список продуктов</a>
-<a class="btn" href="/products/{{product_id}}/edit">Изменить</a>
-<a class="btn" href="/products/{{product_id}}/delete">Удалить</a>
+<a class="btn" href="/products/{{product.id}}/edit">Изменить</a>
+<a class="btn" href="/products/{{product.id}}/delete">Удалить</a>
 
 <h2>Выбранный продукт</h2>
 
@@ -17,13 +17,11 @@
         </tr>
     </thead>
     <tbody>
-        {% for item in product %}
         <tr>
-            <td>{{ item.name }}</a></td>
-            <td>{{ item.category }}</td>
-            <td>{{ item.unit }}</td>
+            <td>{{ product.name }}</a></td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.unit }}</td>
         </tr>
-        {% endfor %}
     </tbody>
 </table>
 

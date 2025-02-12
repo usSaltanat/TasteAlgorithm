@@ -1,78 +1,61 @@
 {% extends 'base.html' %}
 
+{% block title %}Продукты{% endblock %}
+
 {% block content %}
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Таблица с DataTables</title>
-<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css"> -->
+<a class="btn" href="/products/new">Добавить</a>
+<h2>Список продуктов</h2>
+{% if products %}
+<div class="table-container">
+    <table id="products_table" class="display">
+        <thead>
+            <tr>
+                <td>Наименования</td>
+                <td>Категория</td>
+                <td>Еденицы измерения</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.unit }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>Список пуст</p>
+{% endif %}
+{% endblock %}
 
-<!-- <style>
-
-</style> -->
-
-<body>
-
-    <a class="btn" href="/products/new">Добавить</a>
-
-    <h2>Список продуктов</h2>
-
-    {% if products %}
-    <div class="table-container">
-        <table id="products_table" class="display">
-            <thead>
-                <tr>
-                    <td>Наименования</td>
-                    <td>Категория</td>
-                    <td>Еденицы измерения</td>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                <tr>
-                    <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
-                    <td>{{ product.category }}</td>
-                    <td>{{ product.unit }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <p>Список пуст</p>
-    {% endif %}
-
-    <!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-        src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> -->
-
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script type="text/javascript" charset="utf8"
-        src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-
-
-    <script>
-        $(document).ready(function () {
-            $('#products_table').DataTable({
-                language: {
-                    search: "", // Убираем слово "Search"
-                    searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
-                    info: "", // Убираем информацию о количестве записей, например, "Показано 1-10 из 50"
-                    infoEmpty: "", // Убираем информацию, когда таблица пуста
-                    zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
-                    infoFiltered: "",
-                    paginate: {
-                        previous: "<<", // Текст для кнопки "Предыдущая"
-                        next: ">>" // Текст для кнопки "Следующая"
-                    },
-                    lengthMenu: "_MENU_",
-                }
-            });
+{% block scripts %}
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#products_table').DataTable({
+            language: {
+                search: "", // Убираем слово "Search"
+                searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
+                info: "", // Убираем информацию о количестве записей, например, "Показано 1-10 из 50"
+                infoEmpty: "", // Убираем информацию, когда таблица пуста
+                zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
+                infoFiltered: "",
+                paginate: {
+                    previous: "<<", // Текст для кнопки "Предыдущая"
+                    next: ">>" // Текст для кнопки "Следующая"
+                },
+                lengthMenu: "_MENU_",
+            }
         });
-    </script>
-    <!-- <script>
-    $(document).ready(function() {
-        $('.dataTables_filter label').text('Поиск...'); // Изменение текста лейбла
     });
-    </script> -->
-</body>
+</script>
+<!-- <script>
+$(document).ready(function() {
+    $('.dataTables_filter label').text('Поиск...'); // Изменение текста лейбла
+});
+</script> -->
 {% endblock %}
