@@ -61,7 +61,6 @@
     }
 </style>
 
-{% block header %}
 <header class="header">
     <div class="container header_container">
         <svg class="header_logo" viewBox="0 0 199 44" role="img" aria-label="Логотип Алгоритм Вкуса">
@@ -76,14 +75,12 @@
         </div>
     </div>
 </header>
-{% endblock %}
 
 <body>
     <div class="container">
         {% block content %}{% endblock %}
     </div>
 </body>
-{% block footer %}
 <footer class="footer">
     <div class="container">
         <div class="footer_content">
@@ -131,6 +128,7 @@
         </div>
     </div>
 </footer>
-{% endblock %}
 
+{% block scripts %}
+{% endblock %}
 </html>
