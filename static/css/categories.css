@@ -1,0 +1,48 @@
+.category_input_label {
+    width: 80vw;
+    background-color: #F8EBE1;
+    margin: 25px 0 15px 0;
+    margin-left: 20px;
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+    align-items: right;
+}
+
+.category_name_input label {
+    margin-left: 20px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    color: #272121;
+}
+
+.category_name_input input {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 70%;
+    align-items: center;
+    text-indent: 5px;
+    font-size: 12px;
+}
+
+@media (min-width: 768px) {
+
+    .category_input_label {
+        width: 40vw;
+    }
+
+}
+
+@media (min-width: 1024px) {
+
+    .category_input_label {
+        width: 35%;
+    }
+
+}

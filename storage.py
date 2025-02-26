@@ -70,7 +70,6 @@ def get_product_by_id(id: str) -> ProductView | None:
     )
     if len(result) == 0:
         return None
-
     product = result[0]
     return ProductView(product[0], product[1], product[2], product[3])
 
@@ -88,6 +87,54 @@ def get_categories() -> List[Category]:
     ):
         categories.append(Category(row[0], row[1]))
     return categories
+
+
+def get_category_by_id(id: str) -> Category | None:
+    result = con.run(
+        """
+            SELECT
+                c.id,
+                c.category
+            FROM categories c
+            WHERE c.id = :category_id
+        """,
+        category_id=id,
+    )
+    if len(result) == 0:
+        return None
+    category = result[0]
+    return Category(category[0], category[1])
+
+
+def insert_category(category: Category) -> int | None:
+    try:
+        result = con.run(
+            "INSERT INTO categories (category) VALUES (:category) RETURNING id",
+            category=category.name,
+        )
+        return result[0][0]
+    except:
+        return None
+
+
+def delete_category_by_id(id: str) -> int | None:
+    result = con.run(
+        "DELETE FROM categories WHERE id = :category_id RETURNING id", category_id=id
+    )
+    if len(result) == 0:
+        return None
+    return result[0][0]
+
+
+def update_category(category: Category) -> int | None:
+    result = con.run(
+        "UPDATE categories SET category = :category WHERE id = :id RETURNING id",
+        category=category.name,
+        id=category.id,
+    )
+    if len(result) == 0:
+        return None
+    return result[0][0]
 
 
 def get_units() -> List[Unit]:

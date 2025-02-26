@@ -10,6 +10,10 @@ from storage import (
     Category,
     Unit,
     delete_product_by_id,
+    get_category_by_id,
+    insert_category,
+    delete_category_by_id,
+    update_category,
 )
 
 app = Flask(__name__)
@@ -72,7 +76,7 @@ def edit_product_by_id(id: int):
     product_view = get_product_by_id(id)
     if product_view is None:
         return abort(404, "Продукт не найден")
-    
+
     return render_template(
         "edit.html",
         product=product_view,
@@ -92,5 +96,68 @@ def update_product_route(id: int):
     updated_product_id = update_product(product_to_update)
     if updated_product_id is None:
         return abort(404, "Продукт не найден")
-    
+
     return redirect(f"/products/{updated_product_id}")
+
+
+# -------------------------------------------------------------------------------
+# CRUD Категории
+
+
+@app.route("/categories", methods=["GET"])
+def get_categories_route():
+    view = get_categories()
+    print(view)
+    return render_template("categories.html", categories=view)
+
+
+@app.route("/categories/<int:id>", methods=["GET"])
+def get_category_by_id_route(id: int):
+    category_view = get_category_by_id(id)
+    if category_view is None:
+        return abort(404, "Категория не найдена")
+    return render_template("category.html", category=category_view)
+
+
+@app.route("/categories/new", methods=["GET"])
+def new_category():
+    return render_template("new_category.html")
+
+
+@app.route("/categories/create", methods=["POST"])
+def create_category():
+    category_to_create = Category(None, request.form["category_name"])
+    # print(category_to_create)
+    created_category_id = insert_category(category_to_create)
+    return redirect(f"/categories/{created_category_id}")
+
+
+@app.route("/categories/<int:id>/delete", methods=["GET"])
+def delete_category_by_id_route(id: str):
+    deleted_category_id = delete_category_by_id(id)
+    if deleted_category_id is None:
+        return abort(404, "Категория не найдена")
+    return redirect(f"/categories")
+
+
+@app.route("/categories/<int:id>/edit", methods=["GET"])
+def edit_category_by_id(id: int):
+    category_view = get_category_by_id(id)
+    if category_view is None:
+        return abort(404, "Продукт не найден")
+    return render_template(
+        "edit_category.html",
+        category=category_view,
+    )
+
+
+@app.route("/categories/<int:id>/update", methods=["POST"])
+def update_category_route(id: int):
+    category_to_update = Category(
+        id,
+        request.form["category_name"],
+    )
+    updated_category_id = update_category(category_to_update)
+    if updated_category_id is None:
+        return abort(404, "Категория не найдена")
+    return redirect(f"/categories/{updated_category_id}")

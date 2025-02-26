@@ -1,6 +1,8 @@
 .footer {
     padding: 24px 24px 24px 24px;
     background-color: #FFFFFF;
+    width: 100%;
+    bottom: 0;
 }
 
 .footer_content {
@@ -55,23 +57,23 @@
     flex-direction: column;
 }
 
-@media (min-width: 480px) {
-    /* .footer{
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%; 
-    } */
-
-    .footer_address {
-        flex-direction: row;
-    }
+.footer-development p {
+    font-size: 14px; /* Размер шрифта для всех <p> внутри .footer-development */
 }
 
-@media (min-width: 768px) {
+.footer-development a {
+    font-size: 14px; /* Размер шрифта для ссылок внутри .footer-development */
+}
+
+@media (min-width: 480px) {
+    .footer_logo {
+        margin-bottom: 36px;
+    }
 
     .footer_address {
         flex-direction: row;
+        margin-bottom: 40px;
+
     }
 
     .footer_contact {
@@ -79,7 +81,7 @@
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
     .footer_logo {
         margin-top: 3px;
         margin-bottom: 3px;
@@ -91,9 +93,5 @@
 
     .footer_address {
         margin-bottom: 0;
-    }
-
-    .footer_contact {
-        flex-grow: unset;
     }
 }
