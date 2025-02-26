@@ -1,29 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}Продукты{% endblock %}
+{% block title %}Единицы измерения продуктов{% endblock %}
 
 {% block content %}
-<a class="btn" href="/products/new">Добавить</a>
-<a class="btn" href="/categories">Категории продуктов</a>
-<a class="btn" href="/units">Еденицы измерения</a>
 
-<h2>Список продуктов</h2>
-{% if products %}
+<a class="btn" href="/units/new">Добавить</a>
+<a class="btn" href="/products">Список продуктов</a>
+
+<h2>Список единиц измерения</h2>
+{% if units %}
 <div class="table-container">
-    <table id="products_table" class="display">
+    <table id="units_table" class="display">
         <thead>
             <tr>
-                <td>Наименования</td>
-                <td>Категория</td>
-                <td>Еденицы измерения</td>
+                <td>Единицы измерения</td>
             </tr>
         </thead>
         <tbody>
-            {% for product in products %}
+            {% for unit in units %}
             <tr>
-                <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
-                <td>{{ product.category }}</td>
-                <td>{{ product.unit }}</td>
+                <td><a href="/units/{{ unit.id }}">{{ unit.name }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -32,22 +28,17 @@
 {% else %}
 <p>Список пуст</p>
 {% endif %}
-{% endblock %}
 
 {% block scripts %}
-
 <script type="text/javascript" charset="utf8"
     src="{{ url_for('static', filename='scripts/jquery-3.5.1.js') }}"></script>
 <script type="text/javascript" charset="utf8"
     src="{{ url_for('static', filename='scripts/jquery.dataTables.js') }}"></script>
 
-<!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script> -->
-
 <script>
     $(document).ready(function () {
-        if (!$.fn.DataTable.isDataTable('#products_table')) {
-            $('#products_table').DataTable({
+        if (!$.fn.DataTable.isDataTable('#units_table')) {
+            $('#units_table').DataTable({
                 language: {
                     search: "", // Убираем слово "Search"
                     searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
@@ -65,9 +56,6 @@
         };
     });
 </script>
-<!-- <script>
-$(document).ready(function() {
-    $('.dataTables_filter label').text('Поиск...'); // Изменение текста лейбла
-});
-</script> -->
+{% endblock %}
+
 {% endblock %}

@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Категория{% endblock %}
+{% block title %}единица измерения{% endblock %}
 
 {% block content %}
 
-<a class="btn" href="/categories">Список категорий</a>
-<a class="btn" href="/categories/{{category.id}}/edit">Изменить</a>
-<a class="btn" href="/categories/{{category.id}}/delete">Удалить</a>
+<a class="btn" href="/units">Единицы измерения</a>
+<a class="btn" href="/units/{{unit.id}}/edit">Изменить</a>
+<a class="btn" href="/units/{{unit.id}}/delete">Удалить</a>
 
 
-<h2>Выбранная категория</h2>
+<h2>Выбранная единица измерения</h2>
 <div class="table-container">
-    <table id="category_table" class="display">
+    <table id="unit_table" class="display">
         <tbody>
             <tr>
-                <td>{{ category.name }}</a></td>
+                <td>{{ unit.name }}</a></td>
             </tr>
         </tbody>
     </table>
@@ -37,7 +37,7 @@
 {% if error_flag %}
 <script>
     window.onload = function () {
-        showErrorDialog("{{ 'К данной категории привязаны продукты, поэтому ее можно только изменить... :( ' }}");
+        showErrorDialog("{{ 'К данной единице измерения привязаны продукты, поэтому ее можно только изменить... :( ' }}");
     };
 
     // Функция для отображения модального окна с ошибкой

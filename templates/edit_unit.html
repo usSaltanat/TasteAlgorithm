@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Изменить Единицу измерения{% endblock %}
+<a href="/units">Назад</a>
+
+{% block content %}
+
+
+<form action="/units/{{unit.id}}/update" method="post">
+    <a class="btn" href="/units">Отмена</a>
+    <input class="btn" type="submit" value="Сохранить">
+
+    <h2>Изменить категорию</h2>
+
+    <div class="unit_input_label">
+        <div class="unit_name_input">
+            <label for="unit_name">Наименование</label>
+            <input type="text" id="unit_name" name="unit_name" required placeholder="Введите новое название"
+                minlength="3" maxlength="100">
+        </div>
+    </div>
+
+</form>
+{% endblock %}

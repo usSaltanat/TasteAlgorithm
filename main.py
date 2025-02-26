@@ -14,6 +14,10 @@ from storage import (
     insert_category,
     delete_category_by_id,
     update_category,
+    insert_unit,
+    get_unit_by_id,
+    delete_unit_by_id,
+    update_unit,
 )
 
 app = Flask(__name__)
@@ -107,7 +111,6 @@ def update_product_route(id: int):
 @app.route("/categories", methods=["GET"])
 def get_categories_route():
     view = get_categories()
-    print(view)
     return render_template("categories.html", categories=view)
 
 
@@ -116,7 +119,7 @@ def get_category_by_id_route(id: int):
     category_view = get_category_by_id(id)
     if category_view is None:
         return abort(404, "Категория не найдена")
-    return render_template("category.html", category=category_view)
+    return render_template("category.html", category=category_view, error_flag=False)
 
 
 @app.route("/categories/new", methods=["GET"])
@@ -137,6 +140,9 @@ def delete_category_by_id_route(id: str):
     deleted_category_id = delete_category_by_id(id)
     if deleted_category_id is None:
         return abort(404, "Категория не найдена")
+    if deleted_category_id == -1:
+        category_view = get_category_by_id(id)
+        return render_template("category.html", category=category_view, error_flag=True)
     return redirect(f"/categories")
 
 
@@ -144,7 +150,7 @@ def delete_category_by_id_route(id: str):
 def edit_category_by_id(id: int):
     category_view = get_category_by_id(id)
     if category_view is None:
-        return abort(404, "Продукт не найден")
+        return abort(404, "Категория не найдена")
     return render_template(
         "edit_category.html",
         category=category_view,
@@ -161,3 +167,68 @@ def update_category_route(id: int):
     if updated_category_id is None:
         return abort(404, "Категория не найдена")
     return redirect(f"/categories/{updated_category_id}")
+
+
+# -------------------------------------------------------------------------------
+# CRUD Units
+
+
+@app.route("/units", methods=["GET"])
+def get_units_route():
+    view = get_units()
+    print(view)
+    return render_template("units.html", units=view)
+
+
+@app.route("/units/new", methods=["GET"])
+def new_unit():
+    return render_template("new_unit.html")
+
+
+@app.route("/units/create", methods=["POST"])
+def create_unit():
+    unit_to_create = Unit(None, request.form["unit_name"])
+    created_unit_id = insert_unit(unit_to_create)
+    return redirect(f"/units/{created_unit_id}")
+
+
+@app.route("/units/<int:id>", methods=["GET"])
+def get_unit_by_id_route(id: int):
+    unit_view = get_unit_by_id(id)
+    if unit_view is None:
+        return abort(404, "Единица измерения не найдена")
+    return render_template("unit.html", unit=unit_view, error_flag=False)
+
+
+@app.route("/units/<int:id>/delete", methods=["GET"])
+def delete_unit_by_id_route(id: str):
+    deleted_unit_id = delete_unit_by_id(id)
+    if deleted_unit_id is None:
+        return abort(404, "Единица измерения не найдена")
+    if deleted_unit_id == -1:
+        unit_view = get_unit_by_id(id)
+        return render_template("unit.html", unit=unit_view, error_flag=True)
+    return redirect(f"/units")
+
+
+@app.route("/units/<int:id>/edit", methods=["GET"])
+def edit_unit_by_id(id: int):
+    unit_view = get_unit_by_id(id)
+    if unit_view is None:
+        return abort(404, "Единица измерения не найдена")
+    return render_template(
+        "edit_unit.html",
+        unit=unit_view,
+    )
+
+
+@app.route("/units/<int:id>/update", methods=["POST"])
+def update_unit_route(id: int):
+    unit_to_update = Unit(
+        id,
+        request.form["unit_name"],
+    )
+    updated_unit_id = update_unit(unit_to_update)
+    if updated_unit_id is None:
+        return abort(404, "Единица измерения не найдена")
+    return redirect(f"/units/{updated_unit_id}")
