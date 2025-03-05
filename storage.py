@@ -5,7 +5,7 @@ from config_reader import env_config
 con = pg8000.native.Connection(
     env_config.postgresql_username,
     database=env_config.postgresql_database,
-    password=env_config.postgresql_password,
+    password=env_config.postgresql_password.get_secret_value(),
     port=env_config.postgresql_port,
     host=env_config.postgresql_hostname,
 )

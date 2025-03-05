@@ -5,7 +5,7 @@ from pydantic import SecretStr
 class Settings(BaseSettings):
     postgresql_database: str
     postgresql_username: str
-    postgresql_password: str #SecretStr
+    postgresql_password: SecretStr
     postgresql_hostname: str
     postgresql_port: str
 
