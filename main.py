@@ -1,4 +1,4 @@
-from flask import Flask, abort, redirect, render_template, request, redirect
+from flask import Flask, abort, redirect, render_template, request, redirect, flash
 from storage import (
     get_products,
     get_product_by_id,
@@ -20,7 +20,11 @@ from storage import (
     update_unit,
 )
 
+from forms.create_category import CreateCategoryForm
+
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = "my secret key"
 
 
 @app.route("/", methods=["GET"])
@@ -119,19 +123,28 @@ def get_category_by_id_route(id: int):
     category_view = get_category_by_id(id)
     if category_view is None:
         return abort(404, "Категория не найдена")
-    return render_template("category.html", category=category_view, error_flag=False)
+    return render_template("category.html", category=category_view)
 
 
 @app.route("/categories/new", methods=["GET"])
 def new_category():
-    return render_template("new_category.html")
+    form = CreateCategoryForm()
+    return render_template("new_category.html", form=form)
 
 
 @app.route("/categories/create", methods=["POST"])
 def create_category():
-    category_to_create = Category(None, request.form["category_name"])
+    form = CreateCategoryForm(request.form)
+    if not form.validate():
+        return render_template("new_category.html", form=form)
+
+    category_to_create = Category(None, form.category.data)
     # print(category_to_create)
     created_category_id = insert_category(category_to_create)
+    if created_category_id is None:
+        flash("Не удалось создать категорию")
+        return render_template("new_category.html", form=form)
+
     return redirect(f"/categories/{created_category_id}")
 
 
@@ -139,10 +152,8 @@ def create_category():
 def delete_category_by_id_route(id: str):
     deleted_category_id = delete_category_by_id(id)
     if deleted_category_id is None:
-        return abort(404, "Категория не найдена")
-    if deleted_category_id == -1:
-        category_view = get_category_by_id(id)
-        return render_template("category.html", category=category_view, error_flag=True)
+        flash("Удаление не случилось")
+        return redirect(f"/categories/{id}")
     return redirect(f"/categories")
 
 
@@ -197,7 +208,7 @@ def get_unit_by_id_route(id: int):
     unit_view = get_unit_by_id(id)
     if unit_view is None:
         return abort(404, "Единица измерения не найдена")
-    return render_template("unit.html", unit=unit_view, error_flag=False)
+    return render_template("unit.html", unit=unit_view)
 
 
 @app.route("/units/<int:id>/delete", methods=["GET"])
@@ -207,7 +218,7 @@ def delete_unit_by_id_route(id: str):
         return abort(404, "Единица измерения не найдена")
     if deleted_unit_id == -1:
         unit_view = get_unit_by_id(id)
-        return render_template("unit.html", unit=unit_view, error_flag=True)
+        return render_template("unit.html", unit=unit_view)
     return redirect(f"/units")
 
 

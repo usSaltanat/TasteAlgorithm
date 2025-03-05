@@ -18,41 +18,4 @@
         </tbody>
     </table>
 </div>
-
-
-<!-- Модальное окно для ошибок -->
-<div id="errorModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">Ошибка</div>
-        <div class="modal-body" id="errorMessage"></div>
-        <div class="modal-footer">
-            <button onclick="closeErrorDialog()">Ок</button>
-        </div>
-    </div>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-{% if error_flag %}
-<script>
-    window.onload = function () {
-        showErrorDialog("{{ 'К данной категории привязаны продукты, поэтому ее можно только изменить... :( ' }}");
-    };
-
-    // Функция для отображения модального окна с ошибкой
-    function showErrorDialog(message) {
-        const modal = document.getElementById('errorModal');
-        const errorMessage = document.getElementById('errorMessage');
-        errorMessage.textContent = message; // Устанавливаем текст ошибки
-        modal.style.display = 'block'; // Показываем модальное окно
-    }
-
-    // Функция для закрытия модального окна
-    function closeErrorDialog() {
-        const modal = document.getElementById('errorModal');
-        modal.style.display = 'none'; // Скрываем модальное окно
-    }
-</script>
-{% endif %}
 {% endblock %}

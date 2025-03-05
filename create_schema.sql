@@ -9,7 +9,8 @@ CREATE TABLE IF NOT exists units (
 
 CREATE TABLE IF NOT exists categories  (
     id SERIAL PRIMARY KEY,
-    category VARCHAR NOT NULL
+    category VARCHAR NOT NULL,
+    UNIQUE (category)
 );
 
 CREATE TABLE IF NOT exists products  (

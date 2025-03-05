@@ -127,7 +127,7 @@ def delete_category_by_id(id: str) -> int | None:
             return None
         return result[0][0]
     except:
-        return -1
+        return None
 
 
 def update_category(category: Category) -> int | None:

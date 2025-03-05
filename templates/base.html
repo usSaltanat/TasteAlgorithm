@@ -75,6 +75,25 @@
 </header>
 
 <body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <!-- Модальное окно для ошибок -->
+        <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Ошибка</div>
+            <div class="modal-body" id="errorMessage">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeErrorDialog()">Ок</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <div class="container">
         {% block content %}{% endblock %}
     </div>
@@ -130,5 +149,18 @@
 
 {% block scripts %}
 {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+        // Функция для закрытия модального окна
+        function closeErrorDialog() {
+            const modal = document.getElementById('errorModal');
+            modal.style.display = 'none'; // Скрываем модальное окно
+        }
+    </script>
+    {% endif %}
+{% endwith %}
+
 
 </html>

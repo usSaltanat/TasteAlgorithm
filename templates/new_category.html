@@ -3,19 +3,14 @@
 
 {% block content %}
 <form action="/categories/create" method="post">
-
     <a class="btn" href="/categories">Назад</a>
-    <input class="btn" type="submit" value="Сохранить">
-
+    {{ form.submit(class="btn") }}
     <h2>Создать категорию</h2>
-
     <div class="category_input_label">
         <div class="category_name_input">
-            <label for="category_name">Новая категория</label>
-            <input type="text" id="category_name" name="category_name" required placeholder="Введите новую категорию"
-                minlength="3" maxlength="100">
+            {{ form.category.label() }}
+            {{ form.category(placeholder="Введите новую категорию") }}
         </div>
     </div>
-
 </form>
 {% endblock %}
