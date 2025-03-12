@@ -24,10 +24,9 @@
 <link rel="preload" href="{{ url_for('static', filename='fonts/nunito-v26-cyrillic_latin-regular.woff2') }}" as="font"
     crossorigin>
 
-
 <style>
-    /* nunito-regular - cyrillic_latin */
-    @font-face {
+        /* nunito-regular - cyrillic_latin */
+        @font-face {
         font-family: 'Nunito';
         font-style: normal;
         font-weight: 400;
@@ -60,7 +59,6 @@
         font-family: 'Nunito', sans-serif;
     }
 </style>
-
 <header class="header">
     <div class="container header_container">
         <svg class="header_logo" viewBox="0 0 199 44" role="img" aria-label="Логотип Алгоритм Вкуса">
@@ -77,10 +75,30 @@
 </header>
 
 <body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <!-- Модальное окно для ошибок -->
+        <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Ошибка</div>
+            <div class="modal-body" id="errorMessage">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeErrorDialog()">Ок</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <div class="container">
         {% block content %}{% endblock %}
     </div>
 </body>
+
 <footer class="footer">
     <div class="container">
         <div class="footer_content">
@@ -122,7 +140,7 @@
                 </div>
             </address>
             <div class="footer-development">
-                <p>© МенюМатика, 2025</p>
+                <p>©Алгоритм Вкуса, 2025</p>
                 <p>Design: <a href="#">Ussenova Saltanat</a></p>
             </div>
         </div>
@@ -131,4 +149,18 @@
 
 {% block scripts %}
 {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+        // Функция для закрытия модального окна
+        function closeErrorDialog() {
+            const modal = document.getElementById('errorModal');
+            modal.style.display = 'none'; // Скрываем модальное окно
+        }
+    </script>
+    {% endif %}
+{% endwith %}
+
+
 </html>

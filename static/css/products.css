@@ -84,7 +84,8 @@ thead {
 
 
 .product_input_label {
-    width: 380px;
+    /* width: 350px; */
+    width: 95%;
     height: 300px;
     background-color: #F8EBE1;
     margin: 25px 0 15px 0;
@@ -121,9 +122,11 @@ thead {
     border: none;
     border-radius: 10px;
     height: 40px;
-    width: 300px;
+    width: 95%;
+    /* width: 300px; */
     align-items: center;
-    text-indent: 5px
+    text-indent: 5px;
+    font-size: 12px;
 }
 
 
@@ -150,7 +153,9 @@ thead {
     border: none;
     border-radius: 10px;
     height: 40px;
-    width: 300px;
+    width: 95%;
+    /* width: 300px; */
+    font-size: 12px;
 }
 
 .product_unit_input label {
@@ -176,7 +181,9 @@ thead {
     border: none;
     border-radius: 10px;
     height: 40px;
-    width: 200px;
+    /* width: 200px; */
+    width: 85%;
+    font-size: 11.5px;
 }
 
 
@@ -222,6 +229,11 @@ div.dataTables_filter {
     width: 300px;
 }
 
+.dataTables_info {
+    margin-top: 20px;
+    margin-left: 10px;
+    font-size: 12px;
+}
 
 .paginate_button.current,
 .paginate_button {
@@ -253,37 +265,32 @@ div.dataTables_filter {
     background-color: #F8EBE1;
 }
 
+@media (min-width: 480px) {
+
+    .product_name_input input {
+        width: 300px;
+    }
+    
+    .product_category_input select {
+        width: 300px;
+    }
+    
+    .product_unit_input select {
+        width: 200px;
+    }
+}
 
 @media (min-width: 1024px) {
-    /* .table-container {
-        width: 100%;
-    } */
 
     .product_input_label {
         width: 1000px;
-        height: 200px;
+        height: 200px;       
         flex-direction: row;
         /*Упорядочиваем элементы сверху вниз */
         align-items: center;
         /* Выравнивание элементов по центру */
-
+        
     }
 }
 
-/* @media (min-width: 1234px) {
-    table {
-        width: 65%;
-    }
-}
 
-@media (min-width: 1234px) {
-    table {
-        width: 65%;
-    }
-}
-
-@media (min-width: 1248px) {
-    table {
-        width: 45%;
-    }
-} */

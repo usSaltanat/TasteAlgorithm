@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Добавить единицу измерения{% endblock %}
+
+{% block content %}
+<form action="/units/create" method="post">
+
+    <a class="btn" href="/units">Назад</a>
+    <input class="btn" type="submit" value="Сохранить">
+
+    <h2>Создать единицу измерения</h2>
+
+    <div class="unit_input_label">
+        <div class="unit_name_input">
+            <label for="unit_name">Новая единица измерения</label>
+            <input type="text" id="unit_name" name="unit_name" required placeholder="Введите новую единицу измерения"
+                minlength="1" maxlength="100">
+        </div>
+    </div>
+
+</form>
+{% endblock %}

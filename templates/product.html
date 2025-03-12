@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block title %}Продукт{% endblock %} 
 
 {% block content %}
 
@@ -7,7 +8,7 @@
 <a class="btn" href="/products/{{product.id}}/delete">Удалить</a>
 
 <h2>Выбранный продукт</h2>
-
+<div class="table-container">
 <table id="products_table" class="display">
     <thead>
         <tr>
@@ -24,5 +25,6 @@
         </tr>
     </tbody>
 </table>
+</div>
 
 {% endblock %}

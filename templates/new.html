@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}Добавить Продукт{% endblock %} 
 
 {% block content %}
-<!-- <a class="btn" href="/products">Отмена</a> -->
-
-
 <form action="/products/create" method="post">
 
     <a class="btn" href="/products">Назад</a>
@@ -14,7 +12,8 @@
     <div class="product_input_label">
         <div class="product_name_input">
             <label for="product_name">Название продукта</label>
-            <input type="text" id="product_name" name="product_name" required placeholder="Введите название продукта" minlength="3" maxlength="10">
+            <input type="text" id="product_name" name="product_name" required placeholder="Введите название продукта"
+                minlength="3" maxlength="10">
         </div>
 
         <div class="product_category_input">
@@ -30,7 +29,7 @@
         <div class="product_unit_input">
             <label for="product_unit">Еденицы измерения</label>
             <select id="product_unit" name="product_unit_id">
-                <option disabled selected value>Выберите единицу измерения</option>
+                <option disabled selected value>Выберите еденицу измерения</option>
                 {% for unit in units %}
                 <option value="{{ unit.id }}">{{ unit.name }}</option>
                 {% endfor %}

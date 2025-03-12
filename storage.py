@@ -5,7 +5,7 @@ from config_reader import env_config
 con = pg8000.native.Connection(
     env_config.postgresql_username,
     database=env_config.postgresql_database,
-    password=env_config.postgresql_password,
+    password=env_config.postgresql_password.get_secret_value(),
     port=env_config.postgresql_port,
     host=env_config.postgresql_hostname,
 )
@@ -70,7 +70,6 @@ def get_product_by_id(id: str) -> ProductView | None:
     )
     if len(result) == 0:
         return None
-
     product = result[0]
     return ProductView(product[0], product[1], product[2], product[3])
 
@@ -90,6 +89,58 @@ def get_categories() -> List[Category]:
     return categories
 
 
+def get_category_by_id(id: str) -> Category | None:
+    result = con.run(
+        """
+            SELECT
+                c.id,
+                c.category
+            FROM categories c
+            WHERE c.id = :category_id
+        """,
+        category_id=id,
+    )
+    if len(result) == 0:
+        return None
+    category = result[0]
+    return Category(category[0], category[1])
+
+
+def insert_category(category: Category) -> int | None:
+    try:
+        result = con.run(
+            "INSERT INTO categories (category) VALUES (:category) RETURNING id",
+            category=category.name,
+        )
+        return result[0][0]
+    except:
+        return None
+
+
+def delete_category_by_id(id: str) -> int | None:
+    try:
+        result = con.run(
+            "DELETE FROM categories WHERE id = :category_id RETURNING id",
+            category_id=id,
+        )
+        if len(result) == 0:
+            return None
+        return result[0][0]
+    except:
+        return None
+
+
+def update_category(category: Category) -> int | None:
+    result = con.run(
+        "UPDATE categories SET category = :category WHERE id = :id RETURNING id",
+        category=category.name,
+        id=category.id,
+    )
+    if len(result) == 0:
+        return None
+    return result[0][0]
+
+
 def get_units() -> List[Unit]:
     units = []
     for row in con.run(
@@ -103,6 +154,57 @@ def get_units() -> List[Unit]:
     ):
         units.append(Unit(row[0], row[1]))
     return units
+
+
+def insert_unit(unit: Unit) -> int | None:
+    try:
+        result = con.run(
+            "INSERT INTO units (unit) VALUES (:unit) RETURNING id",
+            unit=unit.name,
+        )
+        return result[0][0]
+    except:
+        return None
+
+
+def get_unit_by_id(id: str) -> Unit | None:
+    result = con.run(
+        """
+            SELECT
+                u.id,
+                u.unit
+            FROM units u
+            WHERE u.id = :unit_id
+        """,
+        unit_id=id,
+    )
+    if len(result) == 0:
+        return None
+    unit = result[0]
+    return Unit(unit[0], unit[1])
+
+
+def delete_unit_by_id(id: str) -> int | None:
+    try:
+        result = con.run(
+            "DELETE FROM units WHERE id = :unit_id RETURNING id", unit_id=id
+        )
+        if len(result) == 0:
+            return None
+        return result[0][0]
+    except:
+        return -1
+
+
+def update_unit(unit: Unit) -> int | None:
+    result = con.run(
+        "UPDATE units SET unit = :unit WHERE id = :id RETURNING id",
+        unit=unit.name,
+        id=unit.id,
+    )
+    if len(result) == 0:
+        return None
+    return result[0][0]
 
 
 def insert_product(product: Product) -> int | None:
