@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Добавить Продукт{% endblock %} 
+{% block title %}Добавить Продукт{% endblock %}
 
 {% block content %}
 <form action="/products/create" method="post">
 
     <a class="btn" href="/products">Назад</a>
-    <input class="btn" type="submit" value="Сохранить">
 
     <h2>Создать продукт</h2>
 
@@ -36,6 +35,7 @@
             </select>
         </div>
     </div>
+    <input class="btn" type="submit" value="Сохранить">
 
 </form>
 {% endblock %}

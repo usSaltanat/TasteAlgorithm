@@ -131,14 +131,17 @@ def delete_category_by_id(id: str) -> int | None:
 
 
 def update_category(category: Category) -> int | None:
-    result = con.run(
-        "UPDATE categories SET category = :category WHERE id = :id RETURNING id",
-        category=category.name,
-        id=category.id,
-    )
-    if len(result) == 0:
+    try:
+        result = con.run(
+            "UPDATE categories SET category = :category WHERE id = :id RETURNING id",
+            category=category.name,
+            id=category.id,
+        )
+        if len(result) == 0:
+            return None
+        return result[0][0]
+    except:
         return None
-    return result[0][0]
 
 
 def get_units() -> List[Unit]:
@@ -193,18 +196,21 @@ def delete_unit_by_id(id: str) -> int | None:
             return None
         return result[0][0]
     except:
-        return -1
+        return None
 
 
 def update_unit(unit: Unit) -> int | None:
-    result = con.run(
-        "UPDATE units SET unit = :unit WHERE id = :id RETURNING id",
-        unit=unit.name,
-        id=unit.id,
-    )
-    if len(result) == 0:
+    try:
+        result = con.run(
+            "UPDATE units SET unit = :unit WHERE id = :id RETURNING id",
+            unit=unit.name,
+            id=unit.id,
+        )
+        if len(result) == 0:
+            return None
+        return result[0][0]
+    except:
         return None
-    return result[0][0]
 
 
 def insert_product(product: Product) -> int | None:
@@ -221,23 +227,29 @@ def insert_product(product: Product) -> int | None:
 
 
 def update_product(product: Product) -> int | None:
-    result = con.run(
-        "UPDATE products SET (unit_id, category_id, product_name) = (:unit_id, :category_id, :product_name) WHERE id = :id RETURNING id",
-        unit_id=product.unit.id,
-        category_id=product.category.id,
-        product_name=product.name,
-        id=product.id,
-    )
+    try:
+        result = con.run(
+            "UPDATE products SET (unit_id, category_id, product_name) = (:unit_id, :category_id, :product_name) WHERE id = :id RETURNING id",
+            unit_id=product.unit.id,
+            category_id=product.category.id,
+            product_name=product.name,
+            id=product.id,
+        )
 
-    if len(result) == 0:
+        if len(result) == 0:
+            return None
+        return result[0][0]
+    except:
         return None
-    return result[0][0]
 
 
 def delete_product_by_id(id: str) -> int | None:
-    result = con.run(
-        "DELETE FROM products WHERE id = :product_id RETURNING id", product_id=id
-    )
-    if len(result) == 0:
+    try:
+        result = con.run(
+            "DELETE FROM products WHERE id = :product_id RETURNING id", product_id=id
+        )
+        if len(result) == 0:
+            return None
+        return result[0][0]
+    except:
         return None
-    return result[0][0]

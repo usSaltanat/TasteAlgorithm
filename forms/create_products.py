@@ -1,11 +1,11 @@
 from wtforms import Form, StringField, validators, SubmitField
 
 
-class CategoryForm(Form):
-    category = StringField(
-        "Новая категория",
+class ProductForm(Form):
+    product = StringField(
+        "Название продукта",
         [
-            validators.Length(min=3, max=100),
+            validators.length(min=2, max=10),
             validators.DataRequired(),
         ],
     )

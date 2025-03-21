@@ -3,21 +3,15 @@
 <a href="/categories">Назад</a>
 
 {% block content %}
-
-
 <form action="/categories/{{category.id}}/update" method="post">
-    <a class="btn" href="/categories">Отмена</a>
-    <input class="btn" type="submit" value="Сохранить">
-
     <h2>Изменить категорию</h2>
-
     <div class="category_input_label">
         <div class="category_name_input">
-            <label for="category_name">Наименование</label>
-            <input type="text" id="category_name" name="category_name" required placeholder="Введите новое название"
-                minlength="3" maxlength="100">
+            {{ form.category.label() }}
+            {{ form.category(placeholder="Введите новое название") }}    
         </div>
     </div>
-
+    <a class="btn" href="/categories">Отмена</a>
+    {{ form.submit(class="btn") }}
 </form>
 {% endblock %}
