@@ -1,24 +1,20 @@
-from flask import Flask, abort, redirect, render_template, request, redirect, flash
+from flask import (
+    Flask,
+    abort,
+    redirect,
+    render_template,
+    request,
+    redirect,
+    flash,
+    current_app,
+)
 from storage import (
-    get_products,
-    get_product_by_id,
-    get_categories,
-    get_units,
-    insert_product,
-    update_product,
+    Storage,
     Product,
     Category,
     Unit,
-    delete_product_by_id,
-    get_category_by_id,
-    insert_category,
-    delete_category_by_id,
-    update_category,
-    insert_unit,
-    get_unit_by_id,
-    delete_unit_by_id,
-    update_unit,
 )
+import typing
 
 from forms.create_category import CategoryForm
 from forms.create_unit import UnitForm
@@ -26,6 +22,7 @@ from forms.create_unit import UnitForm
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "my secret key"
+app.config["storage"] = Storage()
 
 
 @app.route("/", methods=["GET"])
@@ -35,13 +32,15 @@ def get_root():
 
 @app.route("/products", methods=["GET"])
 def get_products_route():
-    view = get_products()
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    view = storage.get_products()
     return render_template("products.html", products=view)
 
 
 @app.route("/products/<int:id>", methods=["GET"])
 def get_product_by_id_route(id: int):
-    product_view = get_product_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    product_view = storage.get_product_by_id(id)
     if product_view is None:
         return abort(404, "Продукт не найден")
     return render_template("product.html", product=product_view)
@@ -50,29 +49,34 @@ def get_product_by_id_route(id: int):
 # Создание продукта
 @app.route("/products/new", methods=["GET"])
 def new_product():
-    return render_template("new.html", categories=get_categories(), units=get_units())
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    return render_template(
+        "new.html", categories=storage.get_categories(), units=storage.get_units()
+    )
 
 
 @app.route("/products/create", methods=["POST"])
 def create_product():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_to_create = Product(
         None,
         request.form["product_name"],
         Category(request.form["product_category_id"], None),
         Unit(request.form["product_unit_id"], None),
     )
-    created_product_id = insert_product(product_to_create)
+    created_product_id = storage.insert_product(product_to_create)
     if created_product_id is None:
         flash("Не удалось создать продукт")
         return render_template(
-            "new.html", categories=get_categories(), units=get_units()
+            "new.html", categories=storage.get_categories(), units=storage.get_units()
         )
     return redirect(f"/products/{created_product_id}")
 
 
 @app.route("/products/<int:id>/delete", methods=["GET"])
 def delete_product_by_id_route(id: str):
-    deleted_product_id = delete_product_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    deleted_product_id = storage.delete_product_by_id(id)
     if deleted_product_id is None:
         flash("Не удалось удалить продукт")
         return redirect(f"/products/{id}")
@@ -88,36 +92,38 @@ def delete_product_by_id_route(id: str):
 
 @app.route("/products/<int:id>/edit", methods=["GET"])
 def edit_product_by_id(id: int):
-    product_view = get_product_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    product_view = storage.get_product_by_id(id)
     if product_view is None:
         return abort(404, "Продукт не найден")
 
     return render_template(
         "edit.html",
         product=product_view,
-        categories=get_categories(),
-        units=get_units(),
+        categories=storage.get_categories(),
+        units=storage.get_units(),
     )
 
 
 @app.route("/products/<int:id>/update", methods=["POST"])
 def update_product_route(id: int):
-    product_view = get_product_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    product_view = storage.get_product_by_id(id)
     product_to_update = Product(
         id,
         request.form["new_product_name"],
         Category(request.form["product_category_id"], None),
         Unit(request.form["product_unit_id"], None),
     )
-    updated_product_id = update_product(product_to_update)
+    updated_product_id = storage.update_product(product_to_update)
     if updated_product_id is None:
         flash("Не удалось изменить продукт")
         # return abort(404, "Продукт не найден")
         return render_template(
             "edit.html",
             product=product_view,
-            categories=get_categories(),
-            units=get_units(),
+            categories=storage.get_categories(),
+            units=storage.get_units(),
         )
     return redirect(f"/products/{updated_product_id}")
 
@@ -128,13 +134,15 @@ def update_product_route(id: int):
 
 @app.route("/categories", methods=["GET"])
 def get_categories_route():
-    view = get_categories()
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    view = storage.get_categories()
     return render_template("categories.html", categories=view)
 
 
 @app.route("/categories/<int:id>", methods=["GET"])
 def get_category_by_id_route(id: int):
-    category_view = get_category_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    category_view = storage.get_category_by_id(id)
     if category_view is None:
         return abort(404, "Категория не найдена")
     return render_template("category.html", category=category_view)
@@ -148,11 +156,12 @@ def new_category():
 
 @app.route("/categories/create", methods=["POST"])
 def create_category():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = CategoryForm(request.form)
     if not form.validate():
         return render_template("new_category.html", form=form)
     category_to_create = Category(None, form.category.data)
-    created_category_id = insert_category(category_to_create)
+    created_category_id = storage.insert_category(category_to_create)
     if created_category_id is None:
         flash("Не удалось создать категорию")
         return render_template("new_category.html", form=form)
@@ -161,7 +170,8 @@ def create_category():
 
 @app.route("/categories/<int:id>/delete", methods=["GET"])
 def delete_category_by_id_route(id: str):
-    deleted_category_id = delete_category_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    deleted_category_id = storage.delete_category_by_id(id)
     if deleted_category_id is None:
         flash("Не удалось удалить категорию")
         return redirect(f"/categories/{id}")
@@ -170,7 +180,8 @@ def delete_category_by_id_route(id: str):
 
 @app.route("/categories/<int:id>/edit", methods=["GET"])
 def edit_category_by_id(id: int):
-    category_view = get_category_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    category_view = storage.get_category_by_id(id)
     form = CategoryForm()
     if category_view is None:
         return abort(404, "Категория не найдена")
@@ -179,15 +190,16 @@ def edit_category_by_id(id: int):
 
 @app.route("/categories/<int:id>/update", methods=["POST"])
 def update_category_route(id: int):
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = CategoryForm(request.form)
-    category_view = get_category_by_id(id)
+    category_view = storage.get_category_by_id(id)
     if not form.validate():
         return render_template("edit_category.html", category=category_view, form=form)
     category_to_update = Category(
         id,
         form.category.data,
     )
-    updated_category_id = update_category(category_to_update)
+    updated_category_id = storage.update_category(category_to_update)
     if updated_category_id is None:  # обход случая когда категории повторяются
         flash("Не удалось изменить категорию")
         return render_template("edit_category.html", category=category_view, form=form)
@@ -200,7 +212,8 @@ def update_category_route(id: int):
 
 @app.route("/units", methods=["GET"])
 def get_units_route():
-    view = get_units()
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    view = storage.get_units()
     return render_template("units.html", units=view)
 
 
@@ -212,11 +225,12 @@ def new_unit():
 
 @app.route("/units/create", methods=["POST"])
 def create_unit():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = UnitForm(request.form)
     if not form.validate():
         return render_template("new_unit.html", form=form)
     unit_to_create = Unit(None, form.unit.data)
-    created_unit_id = insert_unit(unit_to_create)
+    created_unit_id = storage.insert_unit(unit_to_create)
     if created_unit_id is None:
         flash("Не удалось создать единицу измерения")
         return render_template("new_unit.html", form=form)
@@ -225,7 +239,8 @@ def create_unit():
 
 @app.route("/units/<int:id>", methods=["GET"])
 def get_unit_by_id_route(id: int):
-    unit_view = get_unit_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    unit_view = storage.get_unit_by_id(id)
     if unit_view is None:
         return abort(404, "Единица измерения не найдена")
     return render_template("unit.html", unit=unit_view)
@@ -233,7 +248,8 @@ def get_unit_by_id_route(id: int):
 
 @app.route("/units/<int:id>/delete", methods=["GET"])
 def delete_unit_by_id_route(id: str):
-    deleted_unit_id = delete_unit_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    deleted_unit_id = storage.delete_unit_by_id(id)
     if deleted_unit_id is None:
         flash("Не удалось удалить единицу измерения")
         return redirect(f"/units/{id}")
@@ -242,7 +258,8 @@ def delete_unit_by_id_route(id: str):
 
 @app.route("/units/<int:id>/edit", methods=["GET"])
 def edit_unit_by_id(id: int):
-    unit_view = get_unit_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    unit_view = storage.get_unit_by_id(id)
     form = UnitForm(request.form)
     if unit_view is None:
         return abort(404, "Единица измерения не найдена")
@@ -256,14 +273,15 @@ def edit_unit_by_id(id: int):
 @app.route("/units/<int:id>/update", methods=["POST"])
 def update_unit_route(id: int):
     form = UnitForm(request.form)
-    unit_view = get_unit_by_id(id)
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    unit_view = storage.get_unit_by_id(id)
     if not form.validate():
         return render_template("edit_unit.html", unit=unit_view, form=form)
     unit_to_update = Unit(
         id,
         form.unit.data,
     )
-    updated_unit_id = update_unit(unit_to_update)
+    updated_unit_id = storage.update_unit(unit_to_update)
     if updated_unit_id is None:
         flash("Не удалось изменить единицу измерения")
         return render_template("edit_unit.html", unit=unit_view, form=form)
