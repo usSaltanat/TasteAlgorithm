@@ -79,7 +79,6 @@ def delete_product_by_id_route(id: str):
     deleted_product_id = storage.delete_product_by_id(id)
     if deleted_product_id is None:
         flash("Не удалось удалить продукт")
-        return redirect(f"/products/{id}")
     return redirect(f"/products")
 
 
@@ -174,7 +173,7 @@ def delete_category_by_id_route(id: str):
     deleted_category_id = storage.delete_category_by_id(id)
     if deleted_category_id is None:
         flash("Не удалось удалить категорию")
-        return redirect(f"/categories/{id}")
+        # return redirect(f"/categories/{id}")
     return redirect(f"/categories")
 
 
@@ -251,8 +250,8 @@ def delete_unit_by_id_route(id: str):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     deleted_unit_id = storage.delete_unit_by_id(id)
     if deleted_unit_id is None:
-        flash("Не удалось удалить единицу измерения")
-        return redirect(f"/units/{id}")
+        flash("Не удалось удалить еденицу измерения")
+        # return redirect(f"/units/{id}")
     return redirect(f"/units")
 
 
