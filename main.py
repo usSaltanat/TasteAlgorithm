@@ -231,7 +231,7 @@ def create_unit():
     unit_to_create = Unit(None, form.unit.data)
     created_unit_id = storage.insert_unit(unit_to_create)
     if created_unit_id is None:
-        flash("Не удалось создать единицу измерения")
+        flash("Не удалось создать еденицу измерения")
         return render_template("new_unit.html", form=form)
     return redirect(f"/units/{created_unit_id}")
 
@@ -241,7 +241,7 @@ def get_unit_by_id_route(id: int):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     unit_view = storage.get_unit_by_id(id)
     if unit_view is None:
-        return abort(404, "Единица измерения не найдена")
+        return abort(404, "Еденица измерения не найдена")
     return render_template("unit.html", unit=unit_view)
 
 
@@ -261,7 +261,7 @@ def edit_unit_by_id(id: int):
     unit_view = storage.get_unit_by_id(id)
     form = UnitForm(request.form)
     if unit_view is None:
-        return abort(404, "Единица измерения не найдена")
+        return abort(404, "Еденица измерения не найдена")
     return render_template(
         "edit_unit.html",
         unit=unit_view,
@@ -282,6 +282,6 @@ def update_unit_route(id: int):
     )
     updated_unit_id = storage.update_unit(unit_to_update)
     if updated_unit_id is None:
-        flash("Не удалось изменить единицу измерения")
+        flash("Не удалось изменить еденицу измерения")
         return render_template("edit_unit.html", unit=unit_view, form=form)
     return redirect(f"/units/{updated_unit_id}")

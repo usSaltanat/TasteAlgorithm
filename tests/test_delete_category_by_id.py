@@ -1,6 +1,6 @@
 import pytest
 from typing import List
-from storage import ProductView
+from storage import Category
 from main import app
 from mocks import StorageMock
 import requests
@@ -13,55 +13,54 @@ def client():
         yield c
 
 
-def test_delete_product_by_id_empty(client):
-    def delete_product_by_id_empty(id) -> int | None:
+def test_delete_category_by_id_empty(client):
+    def delete_category_by_id_empty(id) -> int | None:
         return None
 
-    def get_products_mock_empty() -> List[ProductView]:
+    def get_categories_mock_empty() -> List[Category]:
         return []
 
     app.config["storage"] = StorageMock(
         {
-            "delete_product_by_id": delete_product_by_id_empty,
-            "get_products": get_products_mock_empty,
+            "delete_category_by_id": delete_category_by_id_empty,
+            "get_categories": get_categories_mock_empty,
         }
     )
 
-    response = client.get("/products/1/delete")
+    response = client.get("/categories/1/delete")
     assert response.status_code == 302
     redirect_response = client.get(
-        "/products/1/delete",
+        "/categories/1/delete",
         follow_redirects=True,  # Ключевой параметр для следования за редиректом
     )
     assert redirect_response.status_code == 200
     html_body = redirect_response.get_data(as_text=True)
-    assert "<h2>Список продуктов</h2>" in html_body
+    assert "<h2>Список категорий</h2>" in html_body
     assert "<p>Список пуст</p>" in html_body
-    assert "Не удалось удалить продукт" in html_body
+    assert "Не удалось удалить категорию" in html_body
 
 
-def test_delete_product_by_id_not_empty(client):
-    def delete_product_by_id_not_empty(id) -> int | None:
+def test_delete_category_by_id_not_empty(client):
+    def delete_category_by_id_not_empty(id) -> int | None:
         return 1
 
-    def get_products_mock_empty() -> List[ProductView]:
+    def get_categories_mock_empty() -> List[Category]:
         return []
 
     app.config["storage"] = StorageMock(
         {
-            "delete_product_by_id": delete_product_by_id_not_empty,
-            "get_products": get_products_mock_empty,
+            "delete_category_by_id": delete_category_by_id_not_empty,
+            "get_categories": get_categories_mock_empty,
         }
     )
 
-    response = client.get("/products/1/delete")
+    response = client.get("/categories/1/delete")
     assert response.status_code == 302
     redirect_response = client.get(
-        "/products/1/delete",
+        "/categories/1/delete",
         follow_redirects=True,  # Ключевой параметр для следования за редиректом
     )
     assert redirect_response.status_code == 200
     html_body = redirect_response.get_data(as_text=True)
-    assert "<h2>Список продуктов</h2>" in html_body
+    assert "<h2>Список категорий</h2>" in html_body
     assert "<p>Список пуст</p>" in html_body
-    assert "Не удалось удалить продукт" not in html_body

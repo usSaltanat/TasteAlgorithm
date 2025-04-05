@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Добавить единицу измерения{% endblock %}
+{% block title %}Добавить еденицу измерения{% endblock %}
 
 {% block content %}
 <form action="/units/create" method="post">
     <a class="btn" href="/units">Назад</a>
-    <h2>Создать единицу измерения</h2>
+    <h2>Создать еденицу измерения</h2>
     <div class="unit_input_label">
         <div class="unit_name_input">
             {{ form.unit.label() }}
