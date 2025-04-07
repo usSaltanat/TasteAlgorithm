@@ -29,6 +29,11 @@ class Product(NamedTuple):
     unit: Unit
 
 
+class MealsCategory(NamedTuple):
+    id: int
+    name: str
+
+
 class Storage:
     def __init__(self):
         self._connection: Optional[pg8000.native.Connection] = (
@@ -284,6 +289,32 @@ class Storage:
                 )
                 if len(result) == 0:
                     return None
+                return result[0][0]
+        except:
+            return None
+
+    def get_categories_meals(self) -> list[MealsCategory]:
+        meals_categories = []
+        with self.connection() as conn:
+            for row in conn.run(
+                """
+                    SELECT
+                        c.id,
+                        c.meals_category
+                    FROM meals_categories c
+                    ORDER BY c.meals_category
+                """
+            ):
+                meals_categories.append(MealsCategory(row[0], row[1]))
+        return meals_categories
+
+    def insert_meals_category(self, meals_category: MealsCategory) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "INSERT INTO meals_categories (meals_category) VALUES (:meals_category) RETURNING id",
+                    meals_category=meals_category.name,
+                )
                 return result[0][0]
         except:
             return None

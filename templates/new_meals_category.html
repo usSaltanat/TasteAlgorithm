@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Добавить Категорию блюда{% endblock %}
+
+{% block content %}
+<form action="/meals_categories/create" method="post">
+    <!-- <a class="btn" href="/categories">Назад</a> -->
+    <h2>Создать категорию блюда</h2>
+    <div class="meals_category_input_label">
+        <div class="meals_category_name_input">
+            {{ form.meals_category.label() }}
+            {{ form.meals_category(placeholder="Введите новую категорию блюда") }}
+        </div>
+    </div>
+    {{ form.submit(class="btn") }}
+</form>
+{% endblock %}

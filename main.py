@@ -8,16 +8,12 @@ from flask import (
     flash,
     current_app,
 )
-from storage import (
-    Storage,
-    Product,
-    Category,
-    Unit,
-)
+from storage import Storage, Product, Category, Unit, MealsCategory
 import typing
 
 from forms.create_category import CategoryForm
 from forms.create_unit import UnitForm
+from forms.create_meals_category import MealsCategoryForm
 
 app = Flask(__name__)
 
@@ -285,3 +281,35 @@ def update_unit_route(id: int):
         flash("Не удалось изменить еденицу измерения")
         return render_template("edit_unit.html", unit=unit_view, form=form)
     return redirect(f"/units/{updated_unit_id}")
+
+
+# -------------------------------------------------------------------------------
+# CRUD meals_category
+
+
+@app.route("/meals_categories", methods=["GET"])
+def get_meals_categories_route():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    view = storage.get_categories_meals()
+    print("!!!", view)
+    return render_template("meals_categories.html", meals_categories=view)
+
+
+@app.route("/meals_categories/new", methods=["GET"])
+def new_meals_category():
+    form = MealsCategoryForm()
+    return render_template("new_meals_category.html", form=form)
+
+
+@app.route("/meals_categories/create", methods=["POST"])
+def create_meal_categories():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    form = MealsCategoryForm(request.form)
+    if not form.validate():
+        return render_template("new_meals_category.html", form=form)
+    meals_category_to_create = MealsCategory(None, form.meals_category.data)
+    created_meals_category_id = storage.insert_meals_category(meals_category_to_create)
+    if created_meals_category_id is None:
+        flash("Не удалось создать категорию блюда")
+        return render_template("new_meals_category.html", form=form)
+    return redirect(f"/meals_categories/{created_meals_category_id}")

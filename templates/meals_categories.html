@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Категории блюд{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="/meals_categories/new">Добавить</a>
+<a class="btn" href="/products">Список продуктов</a>
+
+<h2>Список категорий блюд</h2>
+{% if meals_categories %}
+<div class="table-container">
+    <table id="meals_categories_table" class="display">
+        <thead>
+            <tr>
+                <td>Категория блюда</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for meals_category in meals_categories %}
+            <tr>
+                <td><a href="/categories_meals/{{ meals_category.id }}">{{ meals_category.name }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>Список пуст</p>
+{% endif %}
+
+{% block scripts %}
+<script type="text/javascript" charset="utf8"
+    src="{{ url_for('static', filename='scripts/jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" charset="utf8"
+    src="{{ url_for('static', filename='scripts/jquery.dataTables.js') }}"></script>
+
+<script>
+    $(document).ready(function () {
+        if (!$.fn.DataTable.isDataTable('#categories_table')) {
+            $('#categories_table').DataTable({
+                language: {
+                    search: "", // Убираем слово "Search"
+                    searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
+                    info: "Показано _START_ до _END_ из _TOTAL_ записей", // Убираем информацию о количестве записей, например, "Показано 1-10 из 50"
+                    infoEmpty: "", // Убираем информацию, когда таблица пуста
+                    zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
+                    infoFiltered: "",
+                    paginate: {
+                        previous: "Назад", // Текст для кнопки "Предыдущая"
+                        next: "Вперед" // Текст для кнопки "Следующая"
+                    },
+                    lengthMenu: "_MENU_",
+                }
+            });
+        };
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

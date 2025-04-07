@@ -4,7 +4,7 @@ CREATE DATABASE taste_algorithm;
 
 CREATE TABLE IF NOT exists units (
     id SERIAL PRIMARY KEY,
-    unit VARCHAR NOT NULL
+    unit VARCHAR NOT null,
     UNIQUE (unit)
 );
 
@@ -23,3 +23,31 @@ CREATE TABLE IF NOT EXISTS products (
     CONSTRAINT fk_unit FOREIGN KEY(unit_id) REFERENCES units(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS meals_categories (
+    id SERIAL PRIMARY KEY,
+    meals_category VARCHAR NOT NULL,
+    UNIQUE (meals_category)
+);
+
+CREATE TABLE IF NOT EXISTS meals (
+    id SERIAL PRIMARY KEY,
+    meal VARCHAR NOT NULL,
+    category_meal_id INT null,
+    UNIQUE (meal, category_meal_id),
+    CONSTRAINT fk_category_meal FOREIGN KEY(category_meal_id) REFERENCES meals_categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS meals_compositions (
+    id SERIAL PRIMARY KEY,
+    meal_id INT NULL,
+    product_id INT NULL,
+    per_portion FLOAT NULL,
+    portions INT NULL,
+    portions_size FLOAT NULL,
+    CONSTRAINT fk_meal FOREIGN KEY(meal_id) REFERENCES meals(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_product FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+
+
