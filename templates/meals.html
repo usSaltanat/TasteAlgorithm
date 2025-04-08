@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Блюда{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="/meals/new">Добавить</a>
+<a class="btn" href="/categories">Категории блюд</a>
+<a class="btn" href="/products">Список продуктов</a>
+
+<h2>Список блюд</h2>
+{% if meals %}
+<div class="table-container">
+    <table id="meals_table" class="display">
+        <thead>
+            <tr>
+                <td>Наименования</td>
+                <td>Категория</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for meal in meals %}
+            <tr>
+                <td><a href="/meals/{{ meal.id }}">{{ meal.name }}</a></td>
+                <td>{{ meal.meal_category }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>Список пуст</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript" charset="utf8"
+    src="{{ url_for('static', filename='scripts/jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" charset="utf8"
+    src="{{ url_for('static', filename='scripts/jquery.dataTables.js') }}"></script>
+
+<!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script> -->
+
+<script>
+    $(document).ready(function () {
+        if (!$.fn.DataTable.isDataTable('#meals_table')) {
+            $('#meals_table').DataTable({
+                language: {
+                    search: "", // Убираем слово "Search"
+                    searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
+                    info: "Показано _START_ до _END_ из _TOTAL_ записей", // Убираем информацию о количестве записей, например, "Показано 1-10 из 50"
+                    infoEmpty: "", // Убираем информацию, когда таблица пуста
+                    zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
+                    infoFiltered: "",
+                    paginate: {
+                        previous: "Назад", // Текст для кнопки "Предыдущая"
+                        next: "Вперед" // Текст для кнопки "Следующая"
+                    },
+                    lengthMenu: "_MENU_",
+                }
+            });
+        };
+    });
+</script>
+<!-- <script>
+$(document).ready(function() {
+    $('.dataTables_filter label').text('Поиск...'); // Изменение текста лейбла
+});
+</script> -->
+{% endblock %}

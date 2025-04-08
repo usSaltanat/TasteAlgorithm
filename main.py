@@ -365,3 +365,23 @@ def delete_meals_category_by_id_route(id: str):
     if deleted_meals_category_id is None:
         flash("Не удалось удалить категорию блюда")
     return redirect(f"/meals_categories")
+
+
+# -------------------------------------------------------------------------------
+# CRUD meals
+
+
+@app.route("/meals", methods=["GET"])
+def get_meals_route():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    view = storage.get_meals()
+    return render_template("meals.html", meals=view)
+
+
+@app.route("/meals/<int:id>", methods=["GET"])
+def get_meal_by_id_route(id: int):
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    meal_view = storage.get_meal_by_id(id)
+    if meal_view is None:
+        return abort(404, "Блюдо не найдено")
+    return render_template("meal.html", meal=meal_view)

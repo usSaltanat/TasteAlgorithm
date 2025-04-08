@@ -34,6 +34,12 @@ class MealsCategory(NamedTuple):
     name: str
 
 
+class Meal(NamedTuple):
+    id: int
+    name: str
+    meal_category: MealsCategory
+
+
 class Storage:
     def __init__(self):
         self._connection: Optional[pg8000.native.Connection] = (
@@ -363,3 +369,38 @@ class Storage:
                 return result[0][0]
         except:
             return None
+
+    def get_meals(self) -> List[Meal]:
+        meals_view = []
+        with self.connection() as conn:
+            for row in conn.run(
+                """
+                SELECT 
+                    m.id,
+                    m.meal,
+                    mc.meals_category 
+                FROM meals m 
+                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
+                """
+            ):
+                meals_view.append(Meal(row[0], row[1], row[2]))
+        return meals_view
+
+    def get_meal_by_id(self, id: str) -> Meal | None:
+        with self.connection() as conn:
+            result = conn.run(
+                """
+                SELECT 
+                    m.id,
+                    m.meal,
+                    mc.meals_category 
+                FROM meals m 
+                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
+                WHERE m.id = :meal_id
+                """,
+                meal_id=id,
+            )
+            if len(result) == 0:
+                return None
+            meal = result[0]
+        return Meal(meal[0], meal[1], meal[2])

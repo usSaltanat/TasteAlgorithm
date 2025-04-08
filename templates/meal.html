@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Блюдо{% endblock %} 
+
+{% block content %}
+
+<a class="btn" href="/meals">Список блюд</a>
+<a class="btn" href="/meals/{{meal.id}}/edit">Изменить</a>
+<a class="btn" href="/meals/{{meal.id}}/delete">Удалить</a>
+
+<h2>Выбранное блюдо</h2>
+<div class="table-container">
+<table id="meals_table" class="display">
+    <thead>
+        <tr>
+            <td>Наименование</td>
+            <td>Категория</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ meal.name }}</a></td>
+            <td>{{ meal.meal_category }}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+{% endblock %}
