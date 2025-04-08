@@ -293,7 +293,7 @@ class Storage:
         except:
             return None
 
-    def get_categories_meals(self) -> list[MealsCategory]:
+    def get_meals_categories(self) -> list[MealsCategory]:
         meals_categories = []
         with self.connection() as conn:
             for row in conn.run(
@@ -315,6 +315,51 @@ class Storage:
                     "INSERT INTO meals_categories (meals_category) VALUES (:meals_category) RETURNING id",
                     meals_category=meals_category.name,
                 )
+                return result[0][0]
+        except:
+            return None
+
+    def get_meals_category_by_id(self, id: str) -> MealsCategory | None:
+        with self.connection() as conn:
+            result = conn.run(
+                """
+                    SELECT
+                        c.id,
+                        c.meals_category
+                    FROM meals_categories c
+                    WHERE c.id = :meals_category_id
+                """,
+                meals_category_id=id,
+            )
+            if len(result) == 0:
+                return None
+            meals_category = result[0]
+            # print("!!!", meals_category)
+        return MealsCategory(meals_category[0], meals_category[1])
+
+    def update_meals_category(self, meals_category: MealsCategory) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "UPDATE meals_categories SET meals_category = :meals_category WHERE id = :id RETURNING id",
+                    meals_category=meals_category.name,
+                    id=meals_category.id,
+                )
+                if len(result) == 0:
+                    return None
+                return result[0][0]
+        except:
+            return None
+
+    def delete_meals_category_by_id(self, id: str) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "DELETE FROM meals_categories WHERE id = :meals_category_id RETURNING id",
+                    meals_category_id=id,
+                )
+                if len(result) == 0:
+                    return None
                 return result[0][0]
         except:
             return None

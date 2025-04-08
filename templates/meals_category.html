@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Категория блюда{% endblock %}
+
+{% block content %}
+
+<a class="btn" href="/meals_categories">Категории блюд</a>
+<a class="btn" href="/meals_categories/{{meals_category.id}}/edit">Изменить</a>
+<a class="btn" href="/meals_categories/{{meals_category.id}}/delete">Удалить</a>
+
+
+<h2>Выбранная категория блюда</h2>
+<div class="table-container">
+    <table id="meals_category_table" class="display">
+        <tbody>
+            <tr>
+                <td>{{ meals_category.name }}</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
