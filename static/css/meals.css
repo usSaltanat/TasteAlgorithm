@@ -1,0 +1,215 @@
+
+.meal_input_label {
+    /* width: 350px; */
+    width: 90%;
+    height: 250px;
+    background-color: #F8EBE1;
+    margin: 25px 0 15px 0;
+    margin-left: 20px;
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+    /* Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    align-items: right;
+    /* Выравнивание элементов по центру */
+
+}
+
+.meal_name_input label {
+    margin-left: 20px;
+    padding: 5px;
+    /*Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    color: #272121;
+}
+
+.meal_name_input input {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    align-items: center;
+    text-indent: 5px;
+    font-size: 12px;
+}
+
+
+.meal_category_input label {
+    margin-left: 20px;
+    padding: 5px;
+    /*Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    color: #272121;
+}
+
+.meal_category_input select {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    font-size: 12px;
+}
+
+.meal_unit_input label {
+    margin-left: 20px;
+    padding: 5px;
+    /*Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    color: #272121;
+}
+
+.meal_unit_input select {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    /* width: 200px; */
+    width: 85%;
+    font-size: 11.5px;
+}
+
+
+div.dataTables_length,
+div.dataTables_filter {
+    display: inline-block;
+    margin: 10px 10px 10px 0;
+    height: 30px;
+}
+
+.dataTables_filter input {
+    border: 1px solid #ccc;
+    /* Рамка вокруг поля поиска */
+    padding: 8px;
+    /* Отступы внутри поля */
+    border-radius: 4px;
+    /* Закругленные углы */
+    width: 250px;
+    height: 30px;
+    /* Ширина поля поиска */
+    font-size: 12px;
+    /* Размер шрифта */
+    max-height: 34px;
+    color: #474040;
+}
+
+.dataTables_length select {
+    height: 30px;
+    border: 1px solid #ccc;
+    /* Рамка вокруг выпадающего меню */
+    padding: 3px;
+    /* Отступы внутри выпадающего меню */
+    border-radius: 4px;
+    /* Закругленные углы */
+    font-size: 12px;
+    /* Размер шрифта */
+    color: #6e6060;
+}
+
+.dataTables_paginate.paging_simple_numbers {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    width: 300px;
+}
+
+.dataTables_info {
+    margin-top: 20px;
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.paginate_button.current,
+.paginate_button {
+    /* padding: 8px 12px; Отступы вокруг кнопок пагинации */
+    margin: 10px 5px 10px 5px;
+    /*Отступы между кнопками */
+    margin-bottom: 10px;
+    margin-top: 10px;
+    /* border: 1px solid #ccc; Рамка вокруг кнопок */
+    width: 150px;
+    /* border-radius: 4px; Закругленные углы кнопок */
+    color: #474040;
+    /* Цвет текста кнопок */
+    text-decoration: none;
+    /* Убираем подчеркивание текста */
+    padding: 5px 5px 5px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #474040;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.paginate_button.current,
+.paginate_button :hover {
+    transition: all 0.2s;
+    box-shadow: 0 7px 14px rgb(65 132 144 / 10%), 0 3px 6px rgb(0 0 0 / 8%);
+    background-color: #F8EBE1;
+}
+
+@media (min-width: 480px) {
+
+    .meal_input_label {
+        width: 380px;
+        height: 235px;
+    }
+
+    .meal_name_input input {
+        width: 250px;
+    }
+
+    .meal_category_input select {
+        width: 250px;
+    }
+
+    .meal_unit_input select {
+        width: 200px;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .meal_input_label {
+        width: 720px;
+        height: 200px;
+        flex-direction: row;
+        /*Упорядочиваем элементы сверху вниз */
+        align-items: center;
+        /* Выравнивание элементов по центру */
+
+    }
+}

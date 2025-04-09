@@ -404,3 +404,28 @@ class Storage:
                 return None
             meal = result[0]
         return Meal(meal[0], meal[1], meal[2])
+
+    def insert_meal(self, meal: Meal) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "INSERT INTO meals (meal, meal_category_id) VALUES (:meal, :meal_category_id) RETURNING id",
+                    meal=meal.name,
+                    meal_category_id=meal.meal_category.id,
+                )
+                return result[0][0]
+        except:
+            return None
+
+    def delete_meal_by_id(self, id: str) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "DELETE FROM meals WHERE id = :meal_id RETURNING id",
+                    meal_id=id,
+                )
+                if len(result) == 0:
+                    return None
+                return result[0][0]
+        except:
+            return None

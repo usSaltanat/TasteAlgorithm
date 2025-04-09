@@ -8,7 +8,7 @@ from flask import (
     flash,
     current_app,
 )
-from storage import Storage, Product, Category, Unit, MealsCategory
+from storage import Storage, Product, Category, Unit, MealsCategory, Meal
 import typing
 
 from forms.create_category import CategoryForm
@@ -76,13 +76,6 @@ def delete_product_by_id_route(id: str):
     if deleted_product_id is None:
         flash("Не удалось удалить продукт")
     return redirect(f"/products")
-
-
-# Изменить продукт - тоже два шага
-# 1 шаг - GET /products/{id}/edit - вывести заполненную форму с полями продукта с id
-# 2 шаг - POST /products/{id}/update
-#         сохранить изменную форму
-#         редирект на GET /products/{id}
 
 
 @app.route("/products/<int:id>/edit", methods=["GET"])
@@ -385,3 +378,37 @@ def get_meal_by_id_route(id: int):
     if meal_view is None:
         return abort(404, "Блюдо не найдено")
     return render_template("meal.html", meal=meal_view)
+
+
+@app.route("/meals/new", methods=["GET"])
+def new_meal():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    return render_template(
+        "new_meal.html", meals_categories=storage.get_meals_categories()
+    )
+
+
+@app.route("/meals/create", methods=["POST"])
+def create_meal():
+    storage = typing.cast(Storage, current_app.config["storage"])
+    meal_to_create = Meal(
+        None,
+        request.form["meal_name"],
+        MealsCategory(request.form["meal_category_id"], None),
+    )
+    created_meal_id = storage.insert_meal(meal_to_create)
+    if created_meal_id is None:
+        flash("Не удалось создать блюдо")
+        return render_template(
+            "new_meal.html", meals_categories=storage.get_meals_categories()
+        )
+    return redirect(f"/meals/{created_meal_id}")
+
+
+@app.route("/meals/<int:id>/delete", methods=["GET"])
+def delete_meal_by_id_route(id: str):
+    storage = typing.cast(Storage, current_app.config["storage"])
+    deleted_meal_id = storage.delete_meal_by_id(id)
+    if deleted_meal_id is None:
+        flash("Не удалось удалить блюдо")
+    return redirect(f"/meals")
