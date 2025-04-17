@@ -4,11 +4,11 @@
 
 {% block content %}
 <form action="/units/{{unit.id}}/update" method="post">
-    <h2>Изменить единицу измерения</h2>
+    <h2>Изменить еденицу измерения</h2>
     <div class="unit_input_label">
         <div class="unit_name_input">
             {{ form.unit.label() }}
-            {{ form.unit(placeholder="Введите новое название") }}    
+            {{ form.unit(placeholder="Введите новое название") }}
         </div>
     </div>
     <a class="btn" href="/units">Отмена</a>

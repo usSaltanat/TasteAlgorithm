@@ -17,7 +17,7 @@ def test_new_unit(client):
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
     assert "<h2>Создать еденицу измерения</h2>" in html_body
-    assert '<label for="unit">Новая единица измерения</label>' in html_body
+    assert '<label for="unit">Новая еденица измерения</label>' in html_body
     assert (
         '<input class="btn" id="submit" name="submit" type="submit" value="Сохранить">'
         in html_body

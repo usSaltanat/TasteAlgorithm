@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Изменить Блюдо{% endblock %}
+<a href="/meals">Назад</a>
+
+{% block content %}
+
+<h2>Изменить блюдо</h2>
+<form action="/meals/{{meal.id}}/update" method="post">
+    <a class="btn" href="/meals">Отмена</a>
+
+    <div class="meal_input_label">
+        <div class="meal_name_input">
+            <label for="meal_name">Название Блюда</label>
+            <input type="text" id="new_meal_name" name="new_meal_name" required placeholder="Введите название Блюда"
+                minlength="3" maxlength="100">
+        </div>
+
+        <div class="meal_category_input">
+            <label for="meal_category">Категория</label>
+            <select id="meal_category" name="meal_category_id">
+                <option disabled selected value>Выберите категорию</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <input class="btn" type="submit" value="Сохранить">
+
+</form>
+{% endblock %}

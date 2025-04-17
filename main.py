@@ -84,7 +84,6 @@ def edit_product_by_id(id: int):
     product_view = storage.get_product_by_id(id)
     if product_view is None:
         return abort(404, "Продукт не найден")
-
     return render_template(
         "edit.html",
         product=product_view,
@@ -403,6 +402,19 @@ def create_meal():
             "new_meal.html", meals_categories=storage.get_meals_categories()
         )
     return redirect(f"/meals/{created_meal_id}")
+
+
+@app.route("/meals/<int:id>/edit", methods=["GET"])
+def edit_meal_by_id(id: int):
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    meal_view = storage.get_meal_by_id(id)
+    if meal_view is None:
+        return abort(404, "Блюдо не найдено")
+    return render_template(
+        "edit_meal.html",
+        meal=meal_view,
+        categories=storage.get_meals_categories(),
+    )
 
 
 @app.route("/meals/<int:id>/delete", methods=["GET"])

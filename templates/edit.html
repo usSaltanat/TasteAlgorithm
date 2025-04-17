@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Изменить Продукт{% endblock %} 
+{% block title %}Изменить Продукт{% endblock %}
 <a href="/products">Назад</a>
 
 {% block content %}
 
-
+<h2>Изменить продукт</h2>
 <form action="/products/{{product.id}}/update" method="post">
     <a class="btn" href="/products">Отмена</a>
     <input class="btn" type="submit" value="Сохранить">
-    
+
     <div class="product_input_label">
         <div class="product_name_input">
             <label for="product_name">Название продукта</label>
-            <input type="text" id="new_product_name" name="new_product_name" required placeholder="Введите название продукта"
-                minlength="3" maxlength="100">
+            <input type="text" id="new_product_name" name="new_product_name" required
+                placeholder="Введите название продукта" minlength="3" maxlength="100">
         </div>
 
         <div class="product_category_input">
