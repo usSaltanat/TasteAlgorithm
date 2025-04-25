@@ -57,8 +57,8 @@ def create_product():
     product_to_create = Product(
         None,
         request.form["product_name"],
-        Category(request.form["product_category_id"], None),
-        Unit(request.form["product_unit_id"], None),
+        Category(int(request.form["product_category_id"]), None),
+        Unit(int(request.form["product_unit_id"]), None),
     )
     created_product_id = storage.insert_product(product_to_create)
     if created_product_id is None:

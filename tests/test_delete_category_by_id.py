@@ -28,6 +28,9 @@ def test_delete_category_by_id_empty(client):
 
     response = client.get("/categories/1/delete")
     assert response.status_code == 302
+
+    # TODO проверяем только один метод, в данном случае GET "/categories/1/delete
+    # все что происходит после него, нас не интересует
     redirect_response = client.get(
         "/categories/1/delete",
         follow_redirects=True,  # Ключевой параметр для следования за редиректом
