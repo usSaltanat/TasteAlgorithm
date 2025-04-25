@@ -3,7 +3,6 @@ from typing import List
 from storage import Category
 from main import app
 from mocks import StorageMock
-import requests
 
 
 @pytest.fixture
