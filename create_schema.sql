@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS meals_categories (
 CREATE TABLE IF NOT EXISTS meals (
     id SERIAL PRIMARY KEY,
     meal VARCHAR NOT NULL,
-    meal_category_id INT null,
+    meal_category_id INT NULL,
     UNIQUE (meal, meal_category_id),
     CONSTRAINT fk_category_meal FOREIGN KEY(meal_category_id) REFERENCES meals_categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
@@ -49,5 +49,11 @@ CREATE TABLE IF NOT EXISTS meals_compositions (
     CONSTRAINT fk_product FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
+CREATE TABLE IF NOT EXISTS recipes (
+    id SERIAL PRIMARY KEY,
+    meal_id INT NULL,
+    body_meal_recipes VARCHAR NULL,
+    CONSTRAINT fk_meal FOREIGN KEY(meal_id) REFERENCES meals(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
 
 

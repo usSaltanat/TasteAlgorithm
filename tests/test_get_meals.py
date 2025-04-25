@@ -47,3 +47,4 @@ def test_get_meals_not_empty(client):
     html_body = response.get_data(as_text=True)
     assert "<h2>Список блюд</h2>" in html_body
     assert '<table id="meals_table" class="display">' in html_body
+    assert ' $(document).ready(function () {' in html_body   

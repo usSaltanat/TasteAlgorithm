@@ -424,3 +424,14 @@ def delete_meal_by_id_route(id: str):
     if deleted_meal_id is None:
         flash("Не удалось удалить блюдо")
     return redirect(f"/meals")
+
+
+# -------------------------------------------------------------------------------
+# CRUD recipes
+
+
+@app.route("/recipes", methods=["GET"])
+def get_recipes_route():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    view = storage.get_recipes()
+    return render_template("recipes.html", recipes=view)

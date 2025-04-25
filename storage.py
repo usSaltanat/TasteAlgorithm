@@ -40,6 +40,13 @@ class Meal(NamedTuple):
     meal_category: MealsCategory
 
 
+class Recipes(NamedTuple):
+    id: int
+    meal: Meal
+    meal_category: MealsCategory
+    body_meal_recipes: str
+
+
 class Storage:
     def __init__(self):
         self._connection: Optional[pg8000.native.Connection] = (
@@ -429,3 +436,21 @@ class Storage:
                 return result[0][0]
         except:
             return None
+
+    def get_recipes(self) -> List[Recipes]:
+        recipes_view = []
+        with self.connection() as conn:
+            for row in conn.run(
+                """
+                SELECT 
+                    r.id,
+                    m.meal,
+                    mc.meals_category,
+                    r.body_meal_recipes 
+                FROM recipes r 
+                JOIN meals m ON r.meal_id  = m.id 
+                JOIN meals_categories mc ON  m.meal_category_id = mc.id
+                """
+            ):
+                recipes_view.append(Recipes(row[0], row[1], row[2], row[3]))
+        return recipes_view
