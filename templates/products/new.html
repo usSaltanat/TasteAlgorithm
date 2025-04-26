@@ -10,13 +10,13 @@
 
     <div class="product_input_label">
         <div class="product_name_input">
-            <label for="product_name">Название продукта</label>
-            <input type="text" id="product_name" name="product_name" required placeholder="Введите название продукта"
-                minlength="3" maxlength="10">
+            {{ form.product_name.label() }}
+            {{ form.product_name(placeholder="Введите название продукта") }}       
         </div>
 
         <div class="product_category_input">
-            <label for="product_category">Категория</label>
+            <!-- {{ form.product_category_id.label() }}  -->
+            <!-- <label for="product_category">Категория</label> -->
             <select id="product_category" name="product_category_id">
                 <option disabled selected value>Выберите категорию</option>
                 {% for category in categories %}
