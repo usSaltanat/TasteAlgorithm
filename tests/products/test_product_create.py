@@ -31,9 +31,9 @@ def test_product_create_success(client):
     response = client.post(
         "/products/create",
         data={
-            "product_name": "Хлеб",
-            "product_category_id": "1",
-            "product_unit_id": "2",
+            "name": "Хлеб",
+            "category": 1,
+            "unit": 2,
         },
     )
 
