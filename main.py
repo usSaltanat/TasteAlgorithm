@@ -257,7 +257,6 @@ def delete_unit_by_id_route(id: str):
     deleted_unit_id = storage.delete_unit_by_id(id)
     if deleted_unit_id is None:
         flash("Не удалось удалить еденицу измерения")
-        # return redirect(f"/units/{id}")
     return redirect(f"/units")
 
 

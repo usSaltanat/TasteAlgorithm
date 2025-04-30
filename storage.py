@@ -86,23 +86,31 @@ class Storage:
             self._connection.close()
             self._connection = None
 
-    def get_products(self) -> List[ProductView]:
-        products_view = []
+    def get_products(self) -> List[Product]:
+        products = []
         with self.connection() as conn:
             for row in conn.run(
                 """
                     SELECT
                         p.id,
                         p.product_name,
+                        c.id,
                         c.category,
+                        u.id,
                         u.unit
                     FROM products p
                     JOIN units u ON p.unit_id = u.id
                     JOIN categories c ON p.category_id = c.id
                 """
             ):
-                products_view.append(ProductView(row[0], row[1], row[2], row[3]))
-        return products_view
+                products.append(
+                    Product(int(row[0]), row[1], 
+                            Category(int(row[2]), row[3]),
+                            Unit(int(row[4]), row[5]),
+                    )
+                )
+                # products_view.append(ProductView(row[0], row[1], row[2], row[3]))
+        return products
 
     def get_product_by_id(self, id: str) -> ProductView | None:
         with self.connection() as conn:
