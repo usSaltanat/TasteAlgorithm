@@ -14,7 +14,8 @@ import typing
 from forms.create_category import CategoryForm
 from forms.create_unit import UnitForm
 from forms.create_meals_category import MealsCategoryForm
-from forms.create_products import ProductForm
+from forms.create_product import ProductForm
+from forms.create_meal import MealForm
 
 
 app = Flask(__name__)
@@ -49,10 +50,12 @@ def get_product_by_id_route(id: int):
 def new_product():
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = ProductForm()
+    form.category.choices = [
+        (category.id, category.name) for category in storage.get_categories()
+    ]
+    form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units()]
     return render_template(
-        "products/new.html", 
-        categories=storage.get_categories(), 
-        units=storage.get_units(),
+        "products/new.html",
         form=form,
     )
 
@@ -62,15 +65,17 @@ def create_product():
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_to_create = Product(
         None,
-        request.form["product_name"],
-        Category(int(request.form["product_category_id"]), None),
-        Unit(int(request.form["product_unit_id"]), None),
+        request.form["name"],
+        Category(int(request.form["category"]), None),
+        Unit(int(request.form["unit"]), None),
     )
     created_product_id = storage.insert_product(product_to_create)
     if created_product_id is None:
         flash("Не удалось создать продукт")
         return render_template(
-            "products/new.html", categories=storage.get_categories(), units=storage.get_units()
+            "products/new.html",
+            categories=storage.get_categories(),
+            units=storage.get_units(),
         )
     return redirect(f"/products/{created_product_id}")
 
@@ -88,13 +93,17 @@ def delete_product_by_id_route(id: str):
 def edit_product_by_id(id: int):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_view = storage.get_product_by_id(id)
+    form = ProductForm()
+    form.category.choices = [
+        (category.id, category.name) for category in storage.get_categories()
+    ]
+    form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units()]
     if product_view is None:
         return abort(404, "Продукт не найден")
     return render_template(
         "products/edit.html",
         product=product_view,
-        categories=storage.get_categories(),
-        units=storage.get_units(),
+        form=form,
     )
 
 
@@ -104,9 +113,9 @@ def update_product_route(id: int):
     product_view = storage.get_product_by_id(id)
     product_to_update = Product(
         id,
-        request.form["new_product_name"],
-        Category(request.form["product_category_id"], None),
-        Unit(request.form["product_unit_id"], None),
+        request.form["name"],
+        Category(request.form["category"], None),
+        Unit(request.form["unit"], None),
     )
     updated_product_id = storage.update_product(product_to_update)
     if updated_product_id is None:
@@ -178,7 +187,9 @@ def edit_category_by_id(id: int):
     form = CategoryForm()
     if category_view is None:
         return abort(404, "Категория не найдена")
-    return render_template("categories/edit_category.html", category=category_view, form=form)
+    return render_template(
+        "categories/edit_category.html", category=category_view, form=form
+    )
 
 
 @app.route("/categories/<int:id>/update", methods=["POST"])
@@ -187,7 +198,9 @@ def update_category_route(id: int):
     form = CategoryForm(request.form)
     category_view = storage.get_category_by_id(id)
     if not form.validate():
-        return render_template("categories/edit_category.html", category=category_view, form=form)
+        return render_template(
+            "categories/edit_category.html", category=category_view, form=form
+        )
     category_to_update = Category(
         id,
         form.category.data,
@@ -195,7 +208,9 @@ def update_category_route(id: int):
     updated_category_id = storage.update_category(category_to_update)
     if updated_category_id is None:  # обход случая когда категории повторяются
         flash("Не удалось изменить категорию")
-        return render_template("categories/edit_category.html", category=category_view, form=form)
+        return render_template(
+            "categories/edit_category.html", category=category_view, form=form
+        )
     return redirect(f"/categories/{updated_category_id}")
 
 
@@ -245,7 +260,6 @@ def delete_unit_by_id_route(id: str):
     deleted_unit_id = storage.delete_unit_by_id(id)
     if deleted_unit_id is None:
         flash("Не удалось удалить еденицу измерения")
-        # return redirect(f"/units/{id}")
     return redirect(f"/units")
 
 
@@ -289,7 +303,9 @@ def update_unit_route(id: int):
 def get_meals_categories_route():
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_meals_categories()
-    return render_template("meals_categories/meals_categories.html", meals_categories=view)
+    return render_template(
+        "meals_categories/meals_categories.html", meals_categories=view
+    )
 
 
 @app.route("/meals_categories/<int:id>", methods=["GET"])
@@ -298,7 +314,9 @@ def get_meals_category_by_id_route(id: int):
     meals_category_view = storage.get_meals_category_by_id(id)
     if meals_category_view is None:
         return abort(404, "Категория блюда не найдена")
-    return render_template("meals_categories/meals_category.html", meals_category=meals_category_view)
+    return render_template(
+        "meals_categories/meals_category.html", meals_category=meals_category_view
+    )
 
 
 @app.route("/meals_categories/new", methods=["GET"])
@@ -329,7 +347,9 @@ def edit_meals_category_by_id(id: int):
     if meals_category_view is None:
         return abort(404, "Категория блюда не найдена")
     return render_template(
-        "meals_categories/edit_meals_category.html", meals_category=meals_category_view, form=form
+        "meals_categories/edit_meals_category.html",
+        meals_category=meals_category_view,
+        form=form,
     )
 
 
@@ -340,9 +360,10 @@ def update_meals_category_route(id: int):
     meals_category_view = storage.get_meals_category_by_id(id)
     if not form.validate():
         return render_template(
-            "meals_categories/edit_meals_category.html", meals_category=meals_category_view, form=form
+            "meals_categories/edit_meals_category.html",
+            meals_category=meals_category_view,
+            form=form,
         )
-    print("!!!", form.meals_category.data)
     meals_category_to_update = MealsCategory(
         id,
         form.meals_category.data,
@@ -351,7 +372,9 @@ def update_meals_category_route(id: int):
     if updated_meals_category_id is None:  # обход случая когда категории повторяются
         flash("Не удалось изменить категорию блюда")
         return render_template(
-            "meals_categories/edit_meals_category.html", meals_category=meals_category_view, form=form
+            "meals_categories/edit_meals_category.html",
+            meals_category=meals_category_view,
+            form=form,
         )
     return redirect(f"/meals_categories/{updated_meals_category_id}")
 
@@ -388,9 +411,12 @@ def get_meal_by_id_route(id: int):
 @app.route("/meals/new", methods=["GET"])
 def new_meal():
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    return render_template(
-        "meals/new_meal.html", meals_categories=storage.get_meals_categories()
-    )
+    form = MealForm()
+    form.meals_category.choices = [
+        (meals_category.id, meals_category.name)
+        for meals_category in storage.get_meals_categories()
+    ]
+    return render_template("meals/new_meal.html", form=form)
 
 
 @app.route("/meals/create", methods=["POST"])
@@ -398,8 +424,8 @@ def create_meal():
     storage = typing.cast(Storage, current_app.config["storage"])
     meal_to_create = Meal(
         None,
-        request.form["meal_name"],
-        MealsCategory(request.form["meal_category_id"], None),
+        request.form["name"],
+        MealsCategory(request.form["meals_category"], None),
     )
     created_meal_id = storage.insert_meal(meal_to_create)
     if created_meal_id is None:
@@ -414,12 +440,17 @@ def create_meal():
 def edit_meal_by_id(id: int):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     meal_view = storage.get_meal_by_id(id)
+    form = MealForm()
+    form.meals_category.choices = [
+        (meals_category.id, meals_category.name)
+        for meals_category in storage.get_meals_categories()
+    ]
     if meal_view is None:
         return abort(404, "Блюдо не найдено")
     return render_template(
         "meals/edit_meal.html",
         meal=meal_view,
-        categories=storage.get_meals_categories(),
+        form=form,
     )
 
 

@@ -10,29 +10,18 @@
 
     <div class="product_input_label">
         <div class="product_name_input">
-            {{ form.product_name.label() }}
-            {{ form.product_name(placeholder="Введите название продукта") }}       
+            {{ form.name.label() }}
+            {{ form.name(placeholder="Введите название продукта") }}
         </div>
 
         <div class="product_category_input">
-            <!-- {{ form.product_category_id.label() }}  -->
-            <!-- <label for="product_category">Категория</label> -->
-            <select id="product_category" name="product_category_id">
-                <option disabled selected value>Выберите категорию</option>
-                {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
+            {{ form.category.label() }}
+            {{ form.category() }}
         </div>
 
         <div class="product_unit_input">
-            <label for="product_unit">Еденицы измерения</label>
-            <select id="product_unit" name="product_unit_id">
-                <option disabled selected value>Выберите еденицу измерения</option>
-                {% for unit in units %}
-                <option value="{{ unit.id }}">{{ unit.name }}</option>
-                {% endfor %}
-            </select>
+            {{ form.unit.label() }}
+            {{ form.unit() }}
         </div>
     </div>
     <input class="btn" type="submit" value="Сохранить">

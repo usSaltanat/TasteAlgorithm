@@ -5,11 +5,11 @@ from config_reader import env_config
 from contextlib import contextmanager
 
 
-class ProductView(NamedTuple):
-    id: int
-    name: str
-    category: str
-    unit: str
+# class ProductView(NamedTuple):
+#     id: int
+#     name: str
+#     category: str
+#     unit: str
 
 
 class Category(NamedTuple):
@@ -86,32 +86,44 @@ class Storage:
             self._connection.close()
             self._connection = None
 
-    def get_products(self) -> List[ProductView]:
-        products_view = []
+    def get_products(self) -> List[Product]:
+        products = []
         with self.connection() as conn:
             for row in conn.run(
                 """
                     SELECT
                         p.id,
                         p.product_name,
+                        c.id,
                         c.category,
+                        u.id,
                         u.unit
                     FROM products p
                     JOIN units u ON p.unit_id = u.id
                     JOIN categories c ON p.category_id = c.id
                 """
             ):
-                products_view.append(ProductView(row[0], row[1], row[2], row[3]))
-        return products_view
+                products.append(
+                    Product(
+                        int(row[0]),
+                        row[1],
+                        Category(int(row[2]), row[3]),
+                        Unit(int(row[4]), row[5]),
+                    )
+                )
+                # products_view.append(ProductView(row[0], row[1], row[2], row[3]))
+        return products
 
-    def get_product_by_id(self, id: str) -> ProductView | None:
+    def get_product_by_id(self, id: str) -> Product | None:
         with self.connection() as conn:
             result = conn.run(
                 """
                     SELECT
                         p.id,
                         p.product_name,
+                        p.category_id,
                         c.category,
+                        p.unit_id,
                         u.unit
                     FROM products p
                     JOIN units u ON p.unit_id = u.id
@@ -123,7 +135,12 @@ class Storage:
             if len(result) == 0:
                 return None
             product = result[0]
-        return ProductView(product[0], product[1], product[2], product[3])
+        return Product(
+            int(product[0]),
+            product[1],
+            Category(int(product[2]), product[3]),
+            Unit(int(product[4]), product[5]),
+        )
 
     def get_categories(self) -> List[Category]:
         categories = []
@@ -137,7 +154,7 @@ class Storage:
                     ORDER BY c.category
                 """
             ):
-                categories.append(Category(row[0], row[1]))
+                categories.append(Category(int(row[0]), row[1]))
         return categories
 
     def get_category_by_id(self, id: str) -> Category | None:
@@ -155,7 +172,7 @@ class Storage:
             if len(result) == 0:
                 return None
             category = result[0]
-        return Category(category[0], category[1])
+        return Category(int(category[0]), category[1])
 
     def insert_category(self, category: Category) -> int | None:
         try:
@@ -236,7 +253,7 @@ class Storage:
             if len(result) == 0:
                 return None
             unit = result[0]
-        return Unit(unit[0], unit[1])
+        return Unit(int(unit[0]), unit[1])
 
     def delete_unit_by_id(self, id: str) -> int | None:
         try:
@@ -318,7 +335,7 @@ class Storage:
                     ORDER BY c.meals_category
                 """
             ):
-                meals_categories.append(MealsCategory(row[0], row[1]))
+                meals_categories.append(MealsCategory(int(row[0]), row[1]))
         return meals_categories
 
     def insert_meals_category(self, meals_category: MealsCategory) -> int | None:
@@ -348,7 +365,7 @@ class Storage:
                 return None
             meals_category = result[0]
             # print("!!!", meals_category)
-        return MealsCategory(meals_category[0], meals_category[1])
+        return MealsCategory(int(meals_category[0]), meals_category[1])
 
     def update_meals_category(self, meals_category: MealsCategory) -> int | None:
         try:
@@ -387,10 +404,10 @@ class Storage:
                     m.meal,
                     mc.meals_category 
                 FROM meals m 
-                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
+                JOIN meals_categories mc ON m.meal_category_id = mc.id 
                 """
             ):
-                meals_view.append(Meal(row[0], row[1], row[2]))
+                meals_view.append(Meal(int(row[0]), row[1], row[2]))
         return meals_view
 
     def get_meal_by_id(self, id: str) -> Meal | None:
@@ -410,7 +427,7 @@ class Storage:
             if len(result) == 0:
                 return None
             meal = result[0]
-        return Meal(meal[0], meal[1], meal[2])
+        return Meal(int(meal[0]), meal[1], meal[2])
 
     def insert_meal(self, meal: Meal) -> int | None:
         try:
@@ -452,5 +469,5 @@ class Storage:
                 JOIN meals_categories mc ON  m.meal_category_id = mc.id
                 """
             ):
-                recipes_view.append(Recipes(row[0], row[1], row[2], row[3]))
+                recipes_view.append(Recipes(int(row[0]), row[1], row[2], row[3]))
         return recipes_view

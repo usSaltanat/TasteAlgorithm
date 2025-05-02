@@ -10,19 +10,13 @@
 
     <div class="meal_input_label">
         <div class="meal_name_input">
-            <label for="meal_name">Название Блюда</label>
-            <input type="text" id="new_meal_name" name="new_meal_name" required placeholder="Введите название Блюда"
-                minlength="3" maxlength="100">
+            {{ form.name.label() }}
+            {{ form.name(placeholder="Введите название блюда") }}
         </div>
 
         <div class="meal_category_input">
-            <label for="meal_category">Категория</label>
-            <select id="meal_category" name="meal_category_id">
-                <option disabled selected value>Выберите категорию</option>
-                {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
+            {{ form.meals_category.label() }}
+            {{ form.meals_category() }}
         </div>
 
         <input class="btn" type="submit" value="Сохранить">

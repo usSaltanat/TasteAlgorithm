@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Продукт{% endblock %} 
+{% block title %}Продукт{% endblock %}
 
 {% block content %}
 
@@ -9,22 +9,22 @@
 
 <h2>Выбранный продукт</h2>
 <div class="table-container">
-<table id="products_table" class="display">
-    <thead>
-        <tr>
-            <td>Наименования</td>
-            <td>Категория</td>
-            <td>Еденицы измерения</td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{{ product.name }}</a></td>
-            <td>{{ product.category }}</td>
-            <td>{{ product.unit }}</td>
-        </tr>
-    </tbody>
-</table>
+    <table id="products_table" class="display">
+        <thead>
+            <tr>
+                <td>Наименования</td>
+                <td>Категория</td>
+                <td>Еденицы измерения</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ product.name }}</a></td>
+                <td>{{ product.category.name }}</td>
+                <td>{{ product.unit.name }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}
