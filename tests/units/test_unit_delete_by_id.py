@@ -25,6 +25,11 @@ def test_delete_unit_by_id_empty(client):
 
     response = client.get("/units/100500/delete")
     assert response.status_code == 302
+    assert response.headers.get("Location") == "/units"
+    
+    with client.session_transaction() as session:
+        flash_message = dict(session["_flashes"]).get("message")
+        assert flash_message == "Не удалось удалить еденицу измерения"
 
 
 def test_delete_unit_by_id_not_empty(client):

@@ -53,7 +53,9 @@ def new_product():
     form.category.choices = [
         (category.id, category.name) for category in storage.get_categories()
     ]
-    form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units()]
+    form.unit.choices = [
+        (unit.id, unit.name) for unit in storage.get_units()
+    ]
     return render_template(
         "products/new.html",
         form=form,
