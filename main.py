@@ -114,8 +114,8 @@ def update_product_route(id: int):
     product_to_update = Product(
         id,
         request.form["name"],
-        Category(request.form["category"], None),
-        Unit(request.form["unit"], None),
+        Category(int(request.form["category"]), None),
+        Unit(int(request.form["unit"]), None),
     )
     updated_product_id = storage.update_product(product_to_update)
     if updated_product_id is None:

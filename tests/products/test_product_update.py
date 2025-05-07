@@ -13,6 +13,9 @@ def client():
 
 
 def test_product_update_success(client):
+    def get_product_by_id(id: str) -> Product | None:
+        return Product(2025, "Хлебушек", Category(1, "Бакалея"), Unit(2, "шт"))
+
     def update_product(product: Product) -> int | None:
         assert product.name == "Хлеб"
         assert product.category.id == 1
@@ -21,6 +24,7 @@ def test_product_update_success(client):
 
     storage_mock = StorageMock(
         {
+            "get_product_by_id": get_product_by_id,
             "update_product": update_product,
         }
     )
@@ -30,6 +34,7 @@ def test_product_update_success(client):
     response = client.post(
         "/products/2025/update",
         data={
+            "id": 2025,
             "name": "Хлеб",
             "category": 1,
             "unit": 2,
@@ -37,12 +42,16 @@ def test_product_update_success(client):
     )
 
     assert response.status_code == 302
-    # assert response.headers.get("Location") == "/products/2025"
+    assert response.headers.get("Location") == "/products/2025"
 
 
-def test_product_create_failed(client):
+def test_product_update_failed(client):
+
+    def get_product_by_id(id: str) -> Product | None:
+        return Product(2025, "Хлебушек", Category(1, "Бакалея"), Unit(2, "шт"))
+
     def update_product(product: Product) -> int | None:
-        return 2025
+        return None
 
     def get_categories() -> List[Category]:
         return [
@@ -56,8 +65,18 @@ def test_product_create_failed(client):
 
     storage_mock = StorageMock(
         {
+            "get_product_by_id": get_product_by_id,
             "update_product": update_product,
             "get_categories": get_categories,
             "get_units": get_units,
         }
     )
+    app.config["storage"] = storage_mock
+
+    response = client.get("/products/2025/edit")
+    assert response.status_code == 200
+    html_body = response.get_data(as_text=True)
+    assert "<h2>Изменить продукт</h2>" in html_body
+    assert '<div class="product_input_label">' in html_body
+    assert '<div class="product_category_input">' in html_body
+    assert '<div class="product_unit_input">' in html_body

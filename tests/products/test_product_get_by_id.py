@@ -1,6 +1,6 @@
 import pytest
 from typing import List
-from storage import ProductView
+from storage import Product, Category, Unit
 from main import app
 from mocks import StorageMock
 
@@ -13,7 +13,7 @@ def client():
 
 
 def test_get_product_by_id_empty(client):
-    def get_product_by_id_empty(id) -> ProductView | None:
+    def get_product_by_id_empty(id) -> Product | None:
         return None
 
     app.config["storage"] = StorageMock(
@@ -29,8 +29,8 @@ def test_get_product_by_id_empty(client):
 
 
 def test_get_product_by_id_not_empty(client):
-    def get_product_by_id_not_empty(id) -> ProductView | None:
-        return ProductView(1, "Молоко", "Бакалея", "Литры")
+    def get_product_by_id_not_empty(id) -> Product | None:
+        return Product(1, "Молоко", Category(1, "Бакалея"), Unit(1 ,"Литры"))
 
     app.config["storage"] = StorageMock(
         {

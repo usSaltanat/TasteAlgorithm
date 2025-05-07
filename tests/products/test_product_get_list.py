@@ -1,6 +1,6 @@
 import pytest
 from typing import List
-from storage import ProductView
+from storage import Product, Category, Unit
 from main import app
 from mocks import StorageMock
 
@@ -16,7 +16,7 @@ def client():
         yield c
 
 def test_get_products_empty(client):
-    def get_products_mock_empty() -> List[ProductView]:
+    def get_products_mock_empty() -> List[Product]:
         return []
 
     app.config["storage"] = StorageMock(
@@ -33,10 +33,10 @@ def test_get_products_empty(client):
 
 
 def test_get_products_not_empty(client):
-    def get_products_mock_not_empty() -> List[ProductView]:
+    def get_products_mock_not_empty() -> List[Product]:
         return [
-            ProductView(1, "Молоко", "Бакалея", "Литры"),
-            ProductView(2, "Яйца", "Бакалея", "Десятки"),
+            Product(1, "Молоко", Category(1, "Бакалея"), Unit(1, "Литры")),
+            Product(2, "Яйца", Category(1,"Бакалея"), Unit(2,"Десятки")),
         ]
 
     app.config["storage"] = StorageMock(

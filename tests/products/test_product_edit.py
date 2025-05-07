@@ -1,6 +1,6 @@
 import pytest
 from typing import List
-from storage import Category, Unit, ProductView
+from storage import Category, Unit, Product
 from main import app
 from mocks import StorageMock
 
@@ -13,7 +13,7 @@ def client():
 
 
 def test_edit_product_empty(client):
-    def get_product_mock_by_id_empty(id: str) -> ProductView | None:
+    def get_product_mock_by_id_empty(id: str) -> Product | None:
         return None
 
     def get_categories_mock_empty() -> List[Category]:
@@ -36,8 +36,8 @@ def test_edit_product_empty(client):
 
 
 def test_edit_product_not_empty(client):
-    def get_product_mock_by_id_not_empty(id: str) -> ProductView | None:
-        return ProductView(1, "Молоко", "Молочные продукты", "мл")
+    def get_product_mock_by_id_not_empty(id: str) -> Product | None:
+        return Product(1, "Молоко", Category(1, "Молочные продукты"), Unit(1, "мл"))
 
     def get_categories_mock_not_empty() -> List[Category]:
         return [Category(1, "бакалея"), Category(2, "фрукты")]
