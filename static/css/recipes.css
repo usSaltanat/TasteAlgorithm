@@ -1,0 +1,73 @@
+.recipe_input_label {
+    /* width: 350px; */
+    width: 90%;
+    height: 250px;
+    background-color: #F8EBE1;
+    margin: 25px 0 15px 0;
+    margin-left: 20px;
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+    /* Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    align-items: right;
+    /* Выравнивание элементов по центру */
+
+}
+
+.recipe_body_input label {
+    margin-left: 20px;
+    padding: 5px;
+    /*Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    color: #272121;
+}
+
+.recipe_body_input input {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    align-items: center;
+    text-indent: 5px;
+    font-size: 12px;
+}
+
+.recipe_meal_input label {
+    margin-left: 20px;
+    padding: 5px;
+    /*Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    color: #272121;
+}
+
+.recipe_meal_input select {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    font-size: 12px;
+}

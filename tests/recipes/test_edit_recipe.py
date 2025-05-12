@@ -12,24 +12,33 @@ def client():
         yield c
 
 
-def test_get_recipes_empty(client):
+def test_edit_recipe_empty(client):
+    def get_recipe_by_id_mock_empty(id: str) -> Recipe | None:
+        return None
+
     def get_recipes_mock_empty() -> List[Recipe]:
         return []
 
     app.config["storage"] = StorageMock(
         {
+            "get_recipe_by_id": get_recipe_by_id_mock_empty,
             "get_recipes": get_recipes_mock_empty,
         }
     )
-
-    response = client.get("/recipes")
-    assert response.status_code == 200
+    response = client.get("/recipes/1/edit")
+    assert response.status_code == 404
     html_body = response.get_data(as_text=True)
-    assert "<h2>Список рецептов</h2>" in html_body
-    assert "<p>Список пуст</p>" in html_body
+    assert "Рецепт не найден" in html_body
 
 
-def test_get_recipes_not_empty(client):
+def test_edit_recipe_not_empty(client):
+    def get_recipe_by_id_not_empty(id) -> Recipe | None:
+        return Recipe(
+            1,
+            Meal(2, "сырники", MealsCategory(3, "десерт")),
+            "фффф",
+        )
+
     def get_recipes_mock_not_empty() -> List[Recipe]:
         return [
             Recipe(
@@ -46,17 +55,15 @@ def test_get_recipes_not_empty(client):
 
     app.config["storage"] = StorageMock(
         {
+            "get_recipe_by_id": get_recipe_by_id_not_empty,
             "get_recipes": get_recipes_mock_not_empty,
         }
     )
-
-    response = client.get("/recipes")
+    response = client.get("/recipes/1/edit")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
-    assert "<h2>Список рецептов</h2>" in html_body
-    assert '<table id="recipes_table" class="display">' in html_body
-    assert "<td>сырники</td>" in html_body
-    assert "<td>десерт</td>" in html_body
-    assert '<td><a href="/recipes/1">фффф</a></td>' in html_body
-    assert '<td><a href="/recipes/2">бббб</a></td>' in html_body
-    assert " $(document).ready(function () {" in html_body
+    assert "<h2>Изменить рецепт</h2>" in html_body
+    assert '<div class="recipe_meal_input">' in html_body
+    assert '<div class="recipe_body_input">' in html_body
+    assert '<option value="2">сырники</option>' in html_body
+    assert '<option value="3">бутерброд</option>' in html_body

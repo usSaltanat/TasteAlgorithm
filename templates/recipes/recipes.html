@@ -20,8 +20,8 @@
         <tbody>
             {% for recipe in recipes %}
             <tr>
-                <td>{{ recipe.meal }}</td>
-                <td>{{ recipe.meal_category }}</td>
+                <td>{{ recipe.meal.name }}</td>
+                <td>{{ recipe.meal.meal_category.name }}</td>
                 <td><a href="/recipes/{{ recipe.id }}">{{ recipe.body_meal_recipes }}</a></td>
             </tr>
             {% endfor %}

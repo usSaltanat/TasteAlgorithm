@@ -15,3 +15,11 @@ class MealForm(Form):
             validators.InputRequired(),
         ],
     )
+
+    recipe = StringField(
+        "Рецепт",
+        [
+            validators.length(min=2, max=10),
+            validators.DataRequired(),
+        ],
+    )

@@ -5,13 +5,6 @@ from config_reader import env_config
 from contextlib import contextmanager
 
 
-# class ProductView(NamedTuple):
-#     id: int
-#     name: str
-#     category: str
-#     unit: str
-
-
 class Category(NamedTuple):
     id: int
     name: str | None
@@ -40,10 +33,9 @@ class Meal(NamedTuple):
     meal_category: MealsCategory
 
 
-class Recipes(NamedTuple):
+class Recipe(NamedTuple):
     id: int
     meal: Meal
-    meal_category: MealsCategory
     body_meal_recipes: str
 
 
@@ -364,7 +356,6 @@ class Storage:
             if len(result) == 0:
                 return None
             meals_category = result[0]
-            # print("!!!", meals_category)
         return MealsCategory(int(meals_category[0]), meals_category[1])
 
     def update_meals_category(self, meals_category: MealsCategory) -> int | None:
@@ -454,20 +445,112 @@ class Storage:
         except:
             return None
 
-    def get_recipes(self) -> List[Recipes]:
+    def update_meal(self, meal: Meal) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "UPDATE meals SET ( meal_category_id, meal) = (:meal_category_id, :meal) WHERE id = :id RETURNING id",
+                    meal_category_id=meal.meal_category.id,
+                    meal=meal.name,
+                    id=meal.id,
+                )
+                if len(result) == 0:
+                    return None
+                return result[0][0]
+        except:
+            return None
+
+    def get_recipes(self) -> List[Recipe]:
         recipes_view = []
         with self.connection() as conn:
             for row in conn.run(
                 """
                 SELECT 
-                    r.id,
+                    r.id ,
+                    r.meal_id,
                     m.meal,
+                    mc.id meals_category_id,
                     mc.meals_category,
-                    r.body_meal_recipes 
+                    r.body_meal_recipes     
                 FROM recipes r 
-                JOIN meals m ON r.meal_id  = m.id 
-                JOIN meals_categories mc ON  m.meal_category_id = mc.id
+                join meals m on r.meal_id = m.id 
+                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
+
                 """
             ):
-                recipes_view.append(Recipes(int(row[0]), row[1], row[2], row[3]))
+                recipes_view.append(
+                    Recipe(
+                        int(row[0]),
+                        Meal(int(row[1]), row[2], MealsCategory(int(row[3]), row[4])),
+                        row[5],
+                    )
+                )
         return recipes_view
+
+    def get_recipe_by_id(self, id: str) -> Recipe | None:
+        with self.connection() as conn:
+            result = conn.run(
+                """
+                SELECT 
+                    r.id ,
+                    r.meal_id,
+                    m.meal,
+                    mc.id meals_category_id,
+                    mc.meals_category,
+                    r.body_meal_recipes     
+                FROM recipes r 
+                join meals m on r.meal_id = m.id 
+                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
+                WHERE r.id = :recipe_id
+
+                """,
+                recipe_id=id,
+            )
+            if len(result) == 0:
+                return None
+            recipe = result[0]
+        return Recipe(
+            int(recipe[0]),
+            Meal(int(recipe[1]), recipe[2], MealsCategory(int(recipe[3]), recipe[4])),
+            recipe[5],
+        )
+
+    def insert_recipe(self, recipe: Recipe) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "INSERT INTO recipes (meal_id, body_meal_recipes) VALUES (:meal_id, :body_meal_recipes) RETURNING id",
+                    meal_id=recipe.meal.id,
+                    body_meal_recipes=recipe.body_meal_recipes,
+                )
+                return result[0][0]
+        except:
+            return None
+
+    def delete_recipe_by_id(self, id: str) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "DELETE FROM recipes WHERE id = :recipe_id RETURNING id",
+                    recipe_id=id,
+                )
+                if len(result) == 0:
+                    return None
+                return result[0][0]
+        except:
+            return None
+
+    def update_recipe(self, recipe: Recipe) -> int | None:
+        try:
+            with self.connection() as conn:
+                result = conn.run(
+                    "UPDATE recipes SET ( meal_id, body_meal_recipes) = (:meal_id, :body_meal_recipes) WHERE id = :id RETURNING id",
+                    meal_id=recipe.meal.id,
+                    body_meal_recipes=recipe.body_meal_recipes,
+                    id=recipe.id,
+                )
+                if len(result) == 0:
+                    return None
+                return result[0][0]
+        except:
+            return None

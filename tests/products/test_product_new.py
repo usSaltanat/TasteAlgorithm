@@ -36,10 +36,10 @@ def test_new_product_empty(client):
 
 def test_new_product_not_empty(client):
     def get_categories_mock_not_empty() -> List[Category]:
-        return [Category(1, 'бакалея'), Category(2, 'фрукты')]
+        return [Category(1, "бакалея"), Category(2, "фрукты")]
 
     def get_units_mock_not_empty() -> List[Unit]:
-        return [Unit(1, 'шт'), Unit(2, 'гр')]
+        return [Unit(1, "шт"), Unit(2, "гр")]
 
     app.config["storage"] = StorageMock(
         {
@@ -58,4 +58,3 @@ def test_new_product_not_empty(client):
     assert '<option value="2">фрукты</option>' in html_body
     assert '<option value="1">шт</option>' in html_body
     assert '<option value="2">гр</option>' in html_body
-

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Добавить Рецепт{% endblock %}
+
+{% block content %}
+<form action="/recipes/create" method="post">
+
+    <a class="btn" href="/recipes">Назад</a>
+
+    <h2>Создать рецепт</h2>
+
+    <div class="recipe_input_label">
+        <div class="recipe_meal_input">
+            {{ form.meal.label() }}
+            {{ form.meal(placeholder="Выберите блюдо") }}
+        </div>
+
+        <div class="recipe_body_input">
+            {{ form.recipe_body.label() }}
+            {{ form.recipe_body(placeholder="Введите рецепт") }}
+        </div>
+    </div>
+    <input class="btn" type="submit" value="Сохранить">
+
+</form>
+{% endblock %}
