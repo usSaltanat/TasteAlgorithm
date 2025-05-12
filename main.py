@@ -8,7 +8,7 @@ from flask import (
     flash,
     current_app,
 )
-from storage import Storage, Product, Category, Unit, MealsCategory, Meal
+from storage import Storage, Product, Category, Unit, MealsCategory, Meal, Recipe
 import typing
 
 from forms.create_category import CategoryForm
@@ -16,7 +16,7 @@ from forms.create_unit import UnitForm
 from forms.create_meals_category import MealsCategoryForm
 from forms.create_product import ProductForm
 from forms.create_meal import MealForm
-
+from forms.create_recipe import RecipeForm
 
 app = Flask(__name__)
 
@@ -53,9 +53,7 @@ def new_product():
     form.category.choices = [
         (category.id, category.name) for category in storage.get_categories()
     ]
-    form.unit.choices = [
-        (unit.id, unit.name) for unit in storage.get_units()
-    ]
+    form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units()]
     return render_template(
         "products/new.html",
         form=form,
@@ -74,10 +72,14 @@ def create_product():
     created_product_id = storage.insert_product(product_to_create)
     if created_product_id is None:
         flash("Не удалось создать продукт")
+        form = ProductForm()
+        form.category.choices = [
+            (category.id, category.name) for category in storage.get_categories()
+        ]
+        form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units()]
         return render_template(
             "products/new.html",
-            categories=storage.get_categories(),
-            units=storage.get_units(),
+            form=form,
         )
     return redirect(f"/products/{created_product_id}")
 
@@ -122,12 +124,16 @@ def update_product_route(id: int):
     updated_product_id = storage.update_product(product_to_update)
     if updated_product_id is None:
         flash("Не удалось изменить продукт")
-        # return abort(404, "Продукт не найден")
+        product_view = storage.get_product_by_id(id)
+        form = ProductForm()
+        form.category.choices = [
+            (category.id, category.name) for category in storage.get_categories()
+        ]
+        form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units()]
         return render_template(
             "products/edit.html",
             product=product_view,
-            categories=storage.get_categories(),
-            units=storage.get_units(),
+            form=form,
         )
     return redirect(f"/products/{updated_product_id}")
 
@@ -293,7 +299,7 @@ def update_unit_route(id: int):
     updated_unit_id = storage.update_unit(unit_to_update)
     if updated_unit_id is None:
         flash("Не удалось изменить еденицу измерения")
-        return render_template("edit_unit.html", unit=unit_view, form=form)
+        return render_template("units/edit_unit.html", unit=unit_view, form=form)
     return redirect(f"/units/{updated_unit_id}")
 
 
@@ -427,14 +433,17 @@ def create_meal():
     meal_to_create = Meal(
         None,
         request.form["name"],
-        MealsCategory(request.form["meals_category"], None),
+        MealsCategory(int(request.form["meals_category"]), None),
     )
     created_meal_id = storage.insert_meal(meal_to_create)
     if created_meal_id is None:
         flash("Не удалось создать блюдо")
-        return render_template(
-            "meals/new_meal.html", meals_categories=storage.get_meals_categories()
-        )
+        form = MealForm()
+        form.meals_category.choices = [
+            (meals_category.id, meals_category.name)
+            for meals_category in storage.get_meals_categories()
+        ]
+        return render_template("meals/new_meal.html", form=form)
     return redirect(f"/meals/{created_meal_id}")
 
 
@@ -456,6 +465,32 @@ def edit_meal_by_id(id: int):
     )
 
 
+@app.route("/meals/<int:id>/update", methods=["POST"])
+def update_meal_route(id: int):
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    # meal_view = storage.get_meal_by_id(id)
+    meal_to_update = Meal(
+        id,
+        request.form["name"],
+        MealsCategory(int(request.form["meals_category"]), None),
+    )
+    updated_meal_id = storage.update_meal(meal_to_update)
+    if updated_meal_id is None:
+        flash("Не удалось изменить блюдо")
+        meal_view = storage.get_meal_by_id(id)
+        form = MealForm()
+        form.meals_category.choices = [
+            (meal_category.id, meal_category.name)
+            for meal_category in storage.get_meals_categories()
+        ]
+        return render_template(
+            "meals/edit_meal.html",
+            meal=meal_view,
+            form=form,
+        )
+    return redirect(f"/meals/{updated_meal_id}")
+
+
 @app.route("/meals/<int:id>/delete", methods=["GET"])
 def delete_meal_by_id_route(id: str):
     storage = typing.cast(Storage, current_app.config["storage"])
@@ -474,3 +509,91 @@ def get_recipes_route():
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_recipes()
     return render_template("recipes/recipes.html", recipes=view)
+
+
+@app.route("/recipes/<int:id>", methods=["GET"])
+def get_recipe_by_id_route(id: int):
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    recipe_view = storage.get_recipe_by_id(id)
+    if recipe_view is None:
+        return abort(404, "Рецепт не найден")
+    return render_template("recipes/recipe.html", recipe=recipe_view)
+
+
+@app.route("/recipes/new", methods=["GET"])
+def new_recipe():
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    form = RecipeForm()
+    form.meal.choices = [
+        (recipe.meal.id, recipe.meal.name) for recipe in storage.get_recipes()
+    ]
+    return render_template("recipes/new_recipe.html", form=form)
+
+
+@app.route("/recipes/create", methods=["POST"])
+def create_recipe():
+    storage = typing.cast(Storage, current_app.config["storage"])
+    recipe_to_create = Recipe(
+        None,
+        Meal(int(request.form["meal"]), None, MealsCategory(None, None)),
+        request.form["recipe_body"],
+    )
+    created_recipe_id = storage.insert_recipe(recipe_to_create)
+    if created_recipe_id is None:
+        flash("Не удалось создать рецепт")
+        form = RecipeForm()
+        form.meal.choices = [
+            (recipe.meal.id, recipe.meal.name) for recipe in storage.get_recipes()
+        ]
+        return render_template("recipes/new_recipe.html", form=form)
+    return redirect(f"/recipes/{created_recipe_id}")
+
+
+@app.route("/recipes/<int:id>/edit", methods=["GET"])
+def edit_recipe_by_id(id: int):
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    recipe_view = storage.get_recipe_by_id(id)
+    form = RecipeForm()
+    form.meal.choices = [
+        (recipe.meal.id, recipe.meal.name) for recipe in storage.get_recipes()
+    ]
+    if recipe_view is None:
+        return abort(404, "Рецепт не найден")
+    return render_template(
+        "recipes/edit_recipe.html",
+        recipe=recipe_view,
+        form=form,
+    )
+
+
+@app.route("/recipes/<int:id>/update", methods=["POST"])
+def update_recipe_route(id: int):
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    recipe_to_update = Recipe(
+        id,
+        Meal(int(request.form["meal"]), None, MealsCategory(None, None)),
+        request.form["recipe_body"],
+    )
+    updated_recipe_id = storage.update_recipe(recipe_to_update)
+    if updated_recipe_id is None:
+        flash("Не удалось изменить рецепт")
+        recipe_view = storage.get_recipe_by_id(id)
+        form = RecipeForm()
+        form.meal.choices = [
+            (recipe.meal.id, recipe.meal.name) for recipe in storage.get_recipes()
+        ]
+        return render_template(
+            "recipes/edit_recipe.html",
+            recipe=recipe_view,
+            form=form,
+        )
+    return redirect(f"/recipes/{updated_recipe_id}")
+
+
+@app.route("/recipes/<int:id>/delete", methods=["GET"])
+def delete_recipe_by_id_route(id: str):
+    storage = typing.cast(Storage, current_app.config["storage"])
+    deleted_recipe_id = storage.delete_recipe_by_id(id)
+    if deleted_recipe_id is None:
+        flash("Не удалось удалить рецепт")
+    return redirect(f"/recipes")

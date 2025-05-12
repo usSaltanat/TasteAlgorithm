@@ -73,10 +73,20 @@ def test_product_update_failed(client):
     )
     app.config["storage"] = storage_mock
 
-    response = client.get("/products/2025/edit")
+    response = client.post(
+        "/products/2025/update",
+        data={
+            "id": 2025,
+            "name": "Хлеб",
+            "category": 1,
+            "unit": 2,
+        },
+    )
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
     assert "<h2>Изменить продукт</h2>" in html_body
     assert '<div class="product_input_label">' in html_body
     assert '<div class="product_category_input">' in html_body
     assert '<div class="product_unit_input">' in html_body
+    assert "errorModal" in html_body
+    assert "Не удалось изменить продукт" in html_body

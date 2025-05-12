@@ -3,7 +3,6 @@ from typing import List
 from storage import Category, Unit, Product
 from main import app
 from mocks import StorageMock
-from flask import session
 
 
 @pytest.fixture
@@ -74,15 +73,12 @@ def test_product_create_failed(client):
             "unit": 2,
         },
     )
-    response = client.get("/products/new")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
+
     assert "<h2>Создать продукт</h2>" in html_body
     assert '<div class="product_input_label">' in html_body
     assert '<div class="product_category_input">' in html_body
     assert '<div class="product_unit_input">' in html_body
-    # flashes = session.get("_flashes").get('message')
-    # print(flashes)    
-    # with client.session_transaction() as sess:
-    #             flashes = sess.get('_flashes')
-    #             print(flashes)
+    assert "errorModal" in html_body
+    assert "Не удалось создать продукт" in html_body
