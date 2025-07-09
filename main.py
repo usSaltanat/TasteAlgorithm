@@ -19,44 +19,56 @@ from forms.create_meals_category import MealsCategoryForm
 from forms.create_product import ProductForm
 from forms.create_meal import MealForm
 from forms.create_recipe import RecipeForm
+from forms.login import LoginForm
 
 users = {"salta": {"password": "qwerty123", "name": "Usen Salta"}}
 
 session_storage = {}
 
 
-@app.route("/login/<string:login>/<string:password>", methods=["GET"])
-def get_login(login, password):
-    if login in users:
-        if users[login]["password"] == password:
-            session_id = str(uuid.uuid4())
-            session_storage[session_id] = {"name": users[login]["name"]}
-            resp = make_response()
-            resp.set_cookie("session_id", session_id, 60 * 60)
-            return resp
-    return abort(400, "неверное имя пользователя или пароль")
-
-
-@app.route("/test", methods=["GET"])
-def get_test():
-    if "session_id" in request.cookies:
-        print(session_storage)
-        if session_storage[request.cookies["session_id"]]:
-            return session_storage[request.cookies["session_id"]]["name"]
-    return "нет куки"
-
-
-@app.route("/logout", methods=["GET"])
-def get_logout():
-    resp = make_response()
-    resp.set_cookie("session_id", "", -1)
-    return resp
-
-
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "my secret key"
 app.config["storage"] = Storage()
+
+
+def is_logged_in() -> bool:
+    if "session_id" in request.cookies:
+        if request.cookies["session_id"] in session_storage:
+            return True
+    return False
+
+
+@app.route("/login", methods=["GET"])
+def get_login():
+    if is_logged_in():
+        return redirect("/")
+    return render_template("login/login.html", form=LoginForm())
+
+
+@app.route("/login", methods=["POST"])
+def post_login():
+    login = request.form["login"]
+    password = request.form["password"]
+    if login in users:
+        if users[login]["password"] == password:
+            session_id = str(uuid.uuid4())
+            session_storage[session_id] = {"name": users[login]["name"]}
+            response = make_response("", 302)
+            response.set_cookie("session_id", session_id, 60 * 60)
+            response.headers["Location"] = "/"
+
+            return response
+
+    flash("Неверное имя пользователя или пароль")
+    return render_template("login/login.html", form=LoginForm())
+
+
+@app.route("/logout", methods=["GET"])
+def get_logout():
+    response = make_response()
+    response.set_cookie("session_id", "", -1)
+    return response
 
 
 @app.route("/", methods=["GET"])
@@ -66,6 +78,8 @@ def get_root():
 
 @app.route("/products", methods=["GET"])
 def get_products_route():
+    if not is_logged_in():
+        return redirect("/login")
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_products()
     return render_template("products/products.html", products=view)
