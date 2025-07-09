@@ -7,9 +7,11 @@ from flask import (
     redirect,
     flash,
     current_app,
+    make_response,
 )
 from storage import Storage, Product, Category, Unit, MealsCategory, Meal, Recipe
 import typing
+import uuid
 
 from forms.create_category import CategoryForm
 from forms.create_unit import UnitForm
@@ -17,6 +19,39 @@ from forms.create_meals_category import MealsCategoryForm
 from forms.create_product import ProductForm
 from forms.create_meal import MealForm
 from forms.create_recipe import RecipeForm
+
+users = {"salta": {"password": "qwerty123", "name": "Usen Salta"}}
+
+session_storage = {}
+
+
+@app.route("/login/<string:login>/<string:password>", methods=["GET"])
+def get_login(login, password):
+    if login in users:
+        if users[login]["password"] == password:
+            session_id = str(uuid.uuid4())
+            session_storage[session_id] = {"name": users[login]["name"]}
+            resp = make_response()
+            resp.set_cookie("session_id", session_id, 60 * 60)
+            return resp
+    return abort(400, "неверное имя пользователя или пароль")
+
+
+@app.route("/test", methods=["GET"])
+def get_test():
+    if "session_id" in request.cookies:
+        print(session_storage)
+        if session_storage[request.cookies["session_id"]]:
+            return session_storage[request.cookies["session_id"]]["name"]
+    return "нет куки"
+
+
+@app.route("/logout", methods=["GET"])
+def get_logout():
+    resp = make_response()
+    resp.set_cookie("session_id", "", -1)
+    return resp
+
 
 app = Flask(__name__)
 
