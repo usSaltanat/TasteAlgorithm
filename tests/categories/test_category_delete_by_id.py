@@ -24,6 +24,9 @@ def test_delete_category_by_id_empty(client):
 
     response = client.get("/categories/1/delete")
     assert response.status_code == 302
+    with client.session_transaction() as session:
+        flash_message = dict(session["_flashes"]).get("message")
+        assert flash_message == "Не удалось удалить категорию"
 
 
 def test_delete_category_by_id_not_empty(client):

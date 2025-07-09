@@ -1,6 +1,4 @@
 import pytest
-from typing import List
-from storage import Unit
 from main import app
 from mocks import StorageMock
 
