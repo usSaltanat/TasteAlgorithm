@@ -32,7 +32,6 @@ def test_unit_update_success(client):
     response = client.post(
         "/units/105/update",
         data={
-
             "unit": "шт",
         },
     )
