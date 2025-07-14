@@ -21,6 +21,7 @@ def test_new_recipe_empty(client):
             "get_recipes": get_recipes_mock_empty,
         }
     )
+    client.set_cookie("session_id", "test_session")
     response = client.get("/recipes/new")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
@@ -49,6 +50,7 @@ def test_new_recipe_not_empty(client):
             "get_recipes": get_recipes_mock_not_empty,
         }
     )
+    client.set_cookie("session_id", "test_session")
     response = client.get("/recipes/new")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)

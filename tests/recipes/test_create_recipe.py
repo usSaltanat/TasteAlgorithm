@@ -25,7 +25,7 @@ def test_recipe_create_success(client):
     )
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/recipes/create",
         data={
@@ -66,7 +66,7 @@ def test_recipe_create_failed(client):
     )
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/recipes/create",
         data={

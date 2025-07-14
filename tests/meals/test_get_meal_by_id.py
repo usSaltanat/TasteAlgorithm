@@ -20,7 +20,7 @@ def test_get_meal_by_id_empty(client):
             "get_meal_by_id": get_meal_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/meals/1")
     assert response.status_code == 404
     html_body = response.get_data(as_text=True)
@@ -36,7 +36,7 @@ def test_get_meal_by_id_not_empty(client):
             "get_meal_by_id": get_meal_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/meals/1")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)

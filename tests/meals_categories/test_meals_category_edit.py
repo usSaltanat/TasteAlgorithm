@@ -20,7 +20,7 @@ def test_edit_meals_category_empty(client):
             "get_meals_category_by_id": get_meals_category_mock_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/meals_categories/1/edit")
     assert response.status_code == 404
     html_body = response.get_data(as_text=True)
@@ -36,7 +36,7 @@ def test_edit_meals_category_not_empty(client):
             "get_meals_category_by_id": get_meals_category_mock_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/meals_categories/1/edit")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)

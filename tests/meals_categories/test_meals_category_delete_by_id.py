@@ -21,7 +21,7 @@ def test_delete_meals_category_by_id_empty(client):
             "delete_meals_category_by_id": delete_meals_category_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/meals_categories/1/delete")
     assert response.status_code == 302
     with client.session_transaction() as session:
@@ -38,6 +38,6 @@ def test_delete_meals_category_by_id_not_empty(client):
             "delete_meals_category_by_id": delete_meals_category_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/meals_categories/1/delete")
     assert response.status_code == 302

@@ -21,7 +21,7 @@ def test_edit_unit_empty(client):
             "get_unit_by_id": get_unit_mock_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/units/1/edit")
     assert response.status_code == 404
     html_body = response.get_data(as_text=True)
@@ -37,7 +37,7 @@ def test_edit_unit_not_empty(client):
             "get_unit_by_id": get_unit_mock_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/units/1/edit")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)

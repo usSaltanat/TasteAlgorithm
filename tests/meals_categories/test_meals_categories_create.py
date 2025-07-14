@@ -23,7 +23,7 @@ def test_meals_category_create_success(client):
     )
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/meals_categories/create",
         data={
@@ -47,7 +47,7 @@ def test_meals_category_create_failed(client):
     )
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/meals_categories/create",
         data={

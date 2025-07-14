@@ -20,7 +20,7 @@ def test_delete_unit_by_id_empty(client):
             "delete_unit_by_id": delete_unit_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/units/100500/delete")
     assert response.status_code == 302
     assert response.headers.get("Location") == "/units"
@@ -39,6 +39,6 @@ def test_delete_unit_by_id_not_empty(client):
             "delete_unit_by_id": delete_unit_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/units/1/delete")
     assert response.status_code == 302

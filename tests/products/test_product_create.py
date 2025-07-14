@@ -27,7 +27,7 @@ def test_product_create_success(client):
     )
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/products/create",
         data={
@@ -64,7 +64,7 @@ def test_product_create_failed(client):
     )
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/products/create",
         data={

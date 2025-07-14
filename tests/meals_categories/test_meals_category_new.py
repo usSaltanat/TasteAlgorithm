@@ -12,6 +12,7 @@ def client():
 
 
 def test_new_meals_category(client):
+    client.set_cookie("session_id", "test_session")
     response = client.get("/meals_categories/new")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)

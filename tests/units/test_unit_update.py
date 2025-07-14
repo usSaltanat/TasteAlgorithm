@@ -28,7 +28,7 @@ def test_unit_update_success(client):
     )    
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/units/105/update",
         data={
@@ -58,7 +58,7 @@ def test_unit_update_failed(client):
     )    
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/units/105/update",
         data={

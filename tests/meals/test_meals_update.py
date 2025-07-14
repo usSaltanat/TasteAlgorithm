@@ -29,7 +29,7 @@ def test_meal_update_success(client):
     )
 
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/meals/2025/update",
         data={
@@ -64,7 +64,7 @@ def test_meal_update_failed(client):
         }
     )
     app.config["storage"] = storage_mock
-
+    client.set_cookie("session_id", "test_session")
     response = client.post(
         "/meals/2025/update",
         data={

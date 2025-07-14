@@ -20,7 +20,7 @@ def test_delete_product_by_id_empty(client):
             "delete_product_by_id": delete_product_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/products/1/delete")
     assert response.status_code == 302
     with client.session_transaction() as session:
@@ -37,6 +37,6 @@ def test_delete_product_by_id_not_empty(client):
             "delete_product_by_id": delete_product_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/products/1/delete")
     assert response.status_code == 302

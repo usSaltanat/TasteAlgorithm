@@ -47,6 +47,7 @@ def test_get_products_not_empty(client):
         }
     )
 
+    client.set_cookie("session_id", "test_session")
     response = client.get("/products")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)

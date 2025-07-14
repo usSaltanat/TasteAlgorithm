@@ -11,6 +11,7 @@ def client():
 
 
 def test_get_root_success(client):
+    client.set_cookie("session_id", "test_session")
     response = client.get("/")
     assert response.status_code == 302
     assert response.headers.get("Location") == "/products"

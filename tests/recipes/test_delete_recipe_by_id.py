@@ -19,7 +19,7 @@ def test_delete_recipe_by_id_empty(client):
             "delete_recipe_by_id": delete_recipe_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/recipes/1/delete")
     assert response.status_code == 302
     with client.session_transaction() as session:
@@ -36,6 +36,6 @@ def test_delete_recipe_by_id_not_empty(client):
             "delete_recipe_by_id": delete_recipe_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/recipes/1/delete")
     assert response.status_code == 302

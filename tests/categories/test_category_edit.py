@@ -21,7 +21,7 @@ def test_edit_category_empty(client):
             "get_category_by_id": get_category_mock_by_id_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/categories/1/edit")
     assert response.status_code == 404
     html_body = response.get_data(as_text=True)
@@ -37,7 +37,7 @@ def test_edit_category_not_empty(client):
             "get_category_by_id": get_category_mock_by_id_not_empty,
         }
     )
-
+    client.set_cookie("session_id", "test_session")
     response = client.get("/categories/1/edit")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
