@@ -4,10 +4,15 @@ from pg8000.exceptions import DatabaseError
 from config_reader import env_config
 from contextlib import contextmanager
 
+class User(NamedTuple):
+    id: int
+    login: str
+    password_hash: str
 
 class Category(NamedTuple):
     id: int
     name: str | None
+    user: User | None
 
 
 class Unit(NamedTuple):
@@ -39,6 +44,14 @@ class Recipe(NamedTuple):
     body_meal_recipes: str
 
 
+
+
+
+class Session(NamedTuple):
+    user: User
+    session_uuid: str
+
+
 class Storage:
     def __init__(self):
         self._connection: Optional[pg8000.native.Connection] = (
@@ -56,15 +69,15 @@ class Storage:
                     port=env_config.postgresql_port,
                     host=env_config.postgresql_hostname,
                 )
-                return self._connection
             except DatabaseError as e:
                 raise ConnectionError(f"Failed to connect to database: {str(e)}")
+
+        return self._connection
 
     @contextmanager
     def connection(self):
         """Контекстный менеджер для работы с соединением"""
-        if self._connection is None:
-            self._connection = self._create_connection()
+        self._connection = self._create_connection()
 
         try:
             yield self._connection
@@ -78,22 +91,65 @@ class Storage:
             self._connection.close()
             self._connection = None
 
+    def find_user_by_login(self, login: str) -> Optional[User]:
+        with self.connection() as conn:
+            user_rows = conn.run("""
+                SELECT
+                    u.id as user_id,
+                    u.login as user_login,
+                    u.password_hash as user_password_hash
+                FROM users u
+                WHERE u.login = :login
+            """, login=login)
+        if len(user_rows) == 0:
+            return None
+        user_row = user_rows[0]
+        print(f"❗️user_row = {user_row}")
+        return User(user_row[0], user_row[1], user_row[2])
+
+    def find_session_by_uuid(self, session_uuid: str) -> Optional[Session]:
+        with self.connection() as conn:
+            session_rows = conn.run("""
+                SELECT
+                    s.session_uuid,
+                    u.id as user_id,
+                    u.login as user_login,
+                    u.password_hash as user_password_hash
+                FROM auth_session s
+                JOIN users u ON u.id = s.user_id
+                WHERE s.session_uuid = :session_uuid
+            """, session_uuid=session_uuid,
+            )
+        if len(session_rows) == 0:
+            return None
+        session_row = session_rows[0]
+        return Session(
+            User(session_row[1], session_row[2], session_row[3]),
+            session_row[0],
+        )
+
+    def create_session(self, user: User, session_uuid: str) -> None:
+        with self.connection() as conn:
+            conn.run(
+                "INSERT INTO auth_session (user_id, session_uuid) VALUES (:user_id, :session_uuid)",
+                user_id=user.id, session_uuid=session_uuid,
+            )
+
     def get_products(self) -> List[Product]:
         products = []
         with self.connection() as conn:
             for row in conn.run(
-                """
-                    SELECT
-                        p.id,
-                        p.product_name,
-                        c.id,
-                        c.category,
-                        u.id,
-                        u.unit
+                    """
+                    SELECT p.id,
+                           p.product_name,
+                           c.id,
+                           c.category,
+                           u.id,
+                           u.unit
                     FROM products p
-                    JOIN units u ON p.unit_id = u.id
-                    JOIN categories c ON p.category_id = c.id
-                """
+                             JOIN units u ON p.unit_id = u.id
+                             JOIN categories c ON p.category_id = c.id
+                    """
             ):
                 products.append(
                     Product(
@@ -110,17 +166,16 @@ class Storage:
         with self.connection() as conn:
             result = conn.run(
                 """
-                    SELECT
-                        p.id,
-                        p.product_name,
-                        p.category_id,
-                        c.category,
-                        p.unit_id,
-                        u.unit
-                    FROM products p
-                    JOIN units u ON p.unit_id = u.id
-                    JOIN categories c ON p.category_id = c.id
-                    WHERE p.id = :product_id
+                SELECT p.id,
+                       p.product_name,
+                       p.category_id,
+                       c.category,
+                       p.unit_id,
+                       u.unit
+                FROM products p
+                         JOIN units u ON p.unit_id = u.id
+                         JOIN categories c ON p.category_id = c.id
+                WHERE p.id = :product_id
                 """,
                 product_id=id,
             )
@@ -138,26 +193,24 @@ class Storage:
         categories = []
         with self.connection() as conn:
             for row in conn.run(
-                """
-                    SELECT
-                        c.id,
-                        c.category
+                    """
+                    SELECT c.id,
+                           c.category
                     FROM categories c
                     ORDER BY c.category
-                """
+                    """
             ):
-                categories.append(Category(int(row[0]), row[1]))
+                categories.append(Category(int(row[0]), row[1], None))
         return categories
 
     def get_category_by_id(self, id: str) -> Category | None:
         with self.connection() as conn:
             result = conn.run(
                 """
-                    SELECT
-                        c.id,
-                        c.category
-                    FROM categories c
-                    WHERE c.id = :category_id
+                SELECT c.id,
+                       c.category
+                FROM categories c
+                WHERE c.id = :category_id
                 """,
                 category_id=id,
             )
@@ -170,11 +223,13 @@ class Storage:
         try:
             with self.connection() as conn:
                 result = conn.run(
-                    "INSERT INTO categories (category) VALUES (:category) RETURNING id",
+                    "INSERT INTO categories (category, user_id) VALUES (:category, :user_id) RETURNING id",
                     category=category.name,
+                    user_id=category.user.id,
                 )
                 return result[0][0]
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def delete_category_by_id(self, id: str) -> int | None:
@@ -208,13 +263,12 @@ class Storage:
         units = []
         with self.connection() as conn:
             for row in conn.run(
-                """
-                    SELECT
-                        u.id,
-                        u.unit
+                    """
+                    SELECT u.id,
+                           u.unit
                     FROM units u
                     ORDER BY u.unit
-                """
+                    """
             ):
                 units.append(Unit(row[0], row[1]))
         return units
@@ -234,11 +288,10 @@ class Storage:
         with self.connection() as conn:
             result = conn.run(
                 """
-                    SELECT
-                        u.id,
-                        u.unit
-                    FROM units u
-                    WHERE u.id = :unit_id
+                SELECT u.id,
+                       u.unit
+                FROM units u
+                WHERE u.id = :unit_id
                 """,
                 unit_id=id,
             )
@@ -319,13 +372,12 @@ class Storage:
         meals_categories = []
         with self.connection() as conn:
             for row in conn.run(
-                """
-                    SELECT
-                        c.id,
-                        c.meals_category
+                    """
+                    SELECT c.id,
+                           c.meals_category
                     FROM meals_categories c
                     ORDER BY c.meals_category
-                """
+                    """
             ):
                 meals_categories.append(MealsCategory(int(row[0]), row[1]))
         return meals_categories
@@ -345,11 +397,10 @@ class Storage:
         with self.connection() as conn:
             result = conn.run(
                 """
-                    SELECT
-                        c.id,
-                        c.meals_category
-                    FROM meals_categories c
-                    WHERE c.id = :meals_category_id
+                SELECT c.id,
+                       c.meals_category
+                FROM meals_categories c
+                WHERE c.id = :meals_category_id
                 """,
                 meals_category_id=id,
             )
@@ -389,14 +440,13 @@ class Storage:
         meals_view = []
         with self.connection() as conn:
             for row in conn.run(
-                """
-                SELECT 
-                    m.id,
-                    m.meal,
-                    mc.meals_category 
-                FROM meals m 
-                JOIN meals_categories mc ON m.meal_category_id = mc.id 
-                """
+                    """
+                    SELECT m.id,
+                           m.meal,
+                           mc.meals_category
+                    FROM meals m
+                             JOIN meals_categories mc ON m.meal_category_id = mc.id
+                    """
             ):
                 meals_view.append(Meal(int(row[0]), row[1], row[2]))
         return meals_view
@@ -405,12 +455,11 @@ class Storage:
         with self.connection() as conn:
             result = conn.run(
                 """
-                SELECT 
-                    m.id,
-                    m.meal,
-                    mc.meals_category 
-                FROM meals m 
-                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
+                SELECT m.id,
+                       m.meal,
+                       mc.meals_category
+                FROM meals m
+                         JOIN meals_categories mc ON m.meal_category_id = mc.id
                 WHERE m.id = :meal_id
                 """,
                 meal_id=id,
@@ -453,101 +502,6 @@ class Storage:
                     meal_category_id=meal.meal_category.id,
                     meal=meal.name,
                     id=meal.id,
-                )
-                if len(result) == 0:
-                    return None
-                return result[0][0]
-        except:
-            return None
-
-    def get_recipes(self) -> List[Recipe]:
-        recipes_view = []
-        with self.connection() as conn:
-            for row in conn.run(
-                """
-                SELECT 
-                    r.id ,
-                    r.meal_id,
-                    m.meal,
-                    mc.id meals_category_id,
-                    mc.meals_category,
-                    r.body_meal_recipes     
-                FROM recipes r 
-                join meals m on r.meal_id = m.id 
-                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
-
-                """
-            ):
-                recipes_view.append(
-                    Recipe(
-                        int(row[0]),
-                        Meal(int(row[1]), row[2], MealsCategory(int(row[3]), row[4])),
-                        row[5],
-                    )
-                )
-        return recipes_view
-
-    def get_recipe_by_id(self, id: str) -> Recipe | None:
-        with self.connection() as conn:
-            result = conn.run(
-                """
-                SELECT 
-                    r.id ,
-                    r.meal_id,
-                    m.meal,
-                    mc.id meals_category_id,
-                    mc.meals_category,
-                    r.body_meal_recipes     
-                FROM recipes r 
-                join meals m on r.meal_id = m.id 
-                JOIN meals_categories mc ON m.meal_category_id  = mc.id 
-                WHERE r.id = :recipe_id
-
-                """,
-                recipe_id=id,
-            )
-            if len(result) == 0:
-                return None
-            recipe = result[0]
-        return Recipe(
-            int(recipe[0]),
-            Meal(int(recipe[1]), recipe[2], MealsCategory(int(recipe[3]), recipe[4])),
-            recipe[5],
-        )
-
-    def insert_recipe(self, recipe: Recipe) -> int | None:
-        try:
-            with self.connection() as conn:
-                result = conn.run(
-                    "INSERT INTO recipes (meal_id, body_meal_recipes) VALUES (:meal_id, :body_meal_recipes) RETURNING id",
-                    meal_id=recipe.meal.id,
-                    body_meal_recipes=recipe.body_meal_recipes,
-                )
-                return result[0][0]
-        except:
-            return None
-
-    def delete_recipe_by_id(self, id: str) -> int | None:
-        try:
-            with self.connection() as conn:
-                result = conn.run(
-                    "DELETE FROM recipes WHERE id = :recipe_id RETURNING id",
-                    recipe_id=id,
-                )
-                if len(result) == 0:
-                    return None
-                return result[0][0]
-        except:
-            return None
-
-    def update_recipe(self, recipe: Recipe) -> int | None:
-        try:
-            with self.connection() as conn:
-                result = conn.run(
-                    "UPDATE recipes SET ( meal_id, body_meal_recipes) = (:meal_id, :body_meal_recipes) WHERE id = :id RETURNING id",
-                    meal_id=recipe.meal.id,
-                    body_meal_recipes=recipe.body_meal_recipes,
-                    id=recipe.id,
                 )
                 if len(result) == 0:
                     return None

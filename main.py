@@ -1,30 +1,18 @@
-from flask import (
-    Flask,
-    abort,
-    redirect,
-    render_template,
-    request,
-    redirect,
-    flash,
-    current_app,
-    make_response,
-)
-from storage import Storage, Product, Category, Unit, MealsCategory, Meal, Recipe
 import typing
 import uuid
 from functools import wraps
 
+from flask import (abort, current_app, flash, Flask, make_response, redirect, render_template, request)
+
 from forms.create_category import CategoryForm
-from forms.create_unit import UnitForm
+from forms.create_meal import MealForm
 from forms.create_meals_category import MealsCategoryForm
 from forms.create_product import ProductForm
-from forms.create_meal import MealForm
 from forms.create_recipe import RecipeForm
+from forms.create_unit import UnitForm
 from forms.login import LoginForm
-
-users = {"salta": {"password": "qwerty123", "name": "Usen Salta"}}
-
-session_storage = {}
+from storage import Category, Meal, MealsCategory, Product, Recipe, Session, Storage, Unit, User
+from passlib.hash import pbkdf2_sha256
 
 app = Flask(__name__)
 
@@ -34,16 +22,23 @@ app.config["storage"] = Storage()
 def login_required(view_func):
     @wraps(view_func)
     def wrapped_view(*args, **kwargs):
-        if not is_logged_in(): 
+        auth_session = get_session_from_cookies()
+        if not auth_session:
             return redirect("/login")
+        kwargs["session"] = auth_session
         return view_func(*args, **kwargs)
     return wrapped_view
 
 @app.route("/login", methods=["GET"])
 def get_login():
-    if is_logged_in():
+    if get_session_from_cookies():
         return redirect("/")
-    return render_template("login/login.html", form=LoginForm())
+
+    body = render_template("login/login.html", form=LoginForm())
+    response = make_response(body)
+    response.set_cookie("session_id", "", -1)
+
+    return response
 
 
 # @app.route("/test", methods=["GET"])
@@ -62,24 +57,24 @@ def get_logout():
     return resp
 
 
-def is_logged_in() -> bool:
+def get_session_from_cookies() -> typing.Optional[Session]:
     if "session_id" in request.cookies:
-        # временных костыль для тестов, пока не используется хранилище сессий в БД
-        if request.cookies["session_id"] == "test_session":
-            return True
-        if request.cookies["session_id"] in session_storage:
-            return True
-    return False
+        storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+        return storage.find_session_by_uuid(request.cookies["session_id"])
+    return None
 
 
 @app.route("/login", methods=["POST"])
 def post_login():
     login = request.form["login"]
     password = request.form["password"]
-    if login in users:
-        if users[login]["password"] == password:
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+    user = storage.find_user_by_login(login)
+    print(f"❗️user = {user}")
+    if user is not None:
+        if pbkdf2_sha256.verify(password, user.password_hash):
             session_id = str(uuid.uuid4())
-            session_storage[session_id] = {"name": users[login]["name"]}
+            storage.create_session(user, session_id)
             response = make_response("", 302)
             response.set_cookie("session_id", session_id, 60 * 60)
             response.headers["Location"] = "/"
@@ -104,7 +99,7 @@ def get_products_route():
 
 
 @app.route("/products/<int:id>", methods=["GET"])
-@login_required 
+@login_required
 def get_product_by_id_route(id: int):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_view = storage.get_product_by_id(id)
@@ -217,7 +212,7 @@ def update_product_route(id: int):
 
 @app.route("/categories", methods=["GET"])
 @login_required 
-def get_categories_route():
+def get_categories_route(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_categories()
     return render_template("categories/categories.html", categories=view)
@@ -225,7 +220,7 @@ def get_categories_route():
 
 @app.route("/categories/<int:id>", methods=["GET"])
 @login_required 
-def get_category_by_id_route(id: int):
+def get_category_by_id_route(session: Session, id: int):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     category_view = storage.get_category_by_id(id)
     if category_view is None:
@@ -242,12 +237,13 @@ def new_category():
 
 @app.route("/categories/create", methods=["POST"])
 @login_required 
-def create_category():
+def create_category(session: Session):
+    print(f"❗ 1234️{session}")
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = CategoryForm(request.form)
     if not form.validate():
         return render_template("categories/new_category.html", form=form)
-    category_to_create = Category(None, form.category.data)
+    category_to_create = Category(None, form.category.data, session.user)
     created_category_id = storage.insert_category(category_to_create)
     if created_category_id is None:
         flash("Не удалось создать категорию")

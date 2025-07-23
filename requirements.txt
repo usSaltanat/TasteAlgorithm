@@ -1,5 +1,6 @@
+passlib[bcrypt]
 flask
-wtforms
-pytest
 pg8000
 pydantic-settings==2.6.1
+pytest
+wtforms
