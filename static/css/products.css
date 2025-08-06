@@ -5,21 +5,40 @@ h2 {
     /* Цвет текста */
 }
 
-.table-container {
+/* .table-container { */
     /* width: 40%; */
+    /* max-width: 100%; */
+    /* margin: 0 auto; */
+    /* border-collapse: collapse; */
+    /* border-radius: 10px; */
+    /* overflow: hidden; */
+    /* overflow-x: auto; */
+    /* margin: 0 auto; */
+    /* margin-left: 20px; */
+    /* margin-bottom: 50px; */
+    /* max-width: 70%; */
+    /* color: #272121; */
+    /* table-layout: auto; */
+/* } */
+
+.table-container {
+    width: 100%; /* Добавлено */
     max-width: 100%;
-    margin: 0 auto;
+    margin: 0; /* Изменено */
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden;
     overflow-x: auto;
-    /* margin: 0 auto; */
-    margin-left: 20px;
     margin-bottom: 50px;
-    /* max-width: 70%; */
     color: #272121;
     table-layout: auto;
+    padding: 0 20px; /* Добавлено вместо margin-left */
+    box-sizing: border-box; /* Добавлено */
+}
 
+.display {
+    width: 100%;
+    border-collapse: collapse;
 }
 
 th,

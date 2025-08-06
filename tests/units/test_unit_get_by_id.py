@@ -25,7 +25,7 @@ def test_get_unit_by_id_empty(client):
     response = client.get("/units/1")
     assert response.status_code == 404
     html_body = response.get_data(as_text=True)
-    assert "<p>Еденица измерения не найдена</p>" in html_body
+    assert "<p>Единица измерения не найдена</p>" in html_body
 
 
 def test_get_unit_by_id_not_empty(client):
@@ -41,5 +41,5 @@ def test_get_unit_by_id_not_empty(client):
     response = client.get("/units/1")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
-    assert "<h2>Выбранная еденица измерения</h2>" in html_body
+    assert "<h2>Выбранная Единица измерения</h2>" in html_body
     assert '<table id="unit_table" class="display">' in html_body

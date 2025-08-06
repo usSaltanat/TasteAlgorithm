@@ -1,4 +1,4 @@
-.meals_category_input_label {
+/* .meals_category_input_label {
     width: 80vw;
     background-color: #F8EBE1;
     margin: 25px 0 15px 0;
@@ -7,6 +7,17 @@
     border-radius: 10px;
     padding: 30px;
     align-items: right;
+} */
+
+.meals_category_input_label {
+    width: calc(100% - 40px); /* Заменили 80vw на адаптивную ширину */
+    max-width: 500px; /* Ограничиваем максимальную ширину */
+    background-color: #F8EBE1;
+    margin: 25px 0 15px 20px; /* Упростили margin */
+    border: none;
+    border-radius: 10px;
+    padding: 20px; /* Уменьшили padding для мобилок */
+    box-sizing: border-box; /* Важно! */
 }
 
 .meals_category_name_input label {
@@ -17,7 +28,7 @@
     color: #272121;
 }
 
-.meals_category_name_input input {
+/* .meals_category_name_input input {
     margin-left: 20px;
     margin-bottom: 15px;
     padding: 10px;
@@ -29,6 +40,19 @@
     align-items: center;
     text-indent: 5px;
     font-size: 12px;
+} */
+
+.meals_category_name_input input {
+    width: calc(100% - 40px); /* Полная ширина с учетом отступов */
+    max-width: 400px;
+    margin: 0 20px 15px 20px;
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    font-size: 14px; /* Увеличили для удобства */
+    box-sizing: border-box;
 }
 
 
@@ -88,7 +112,8 @@
     background-color: #ff5c00;
 }
 
-@media (min-width: 768px) {
+
+/* @media (min-width: 768px) {
 
     .meals_category_input_label {
         width: 40vw;
@@ -102,4 +127,4 @@
         width: 35%;
     }
 
-}
+} */

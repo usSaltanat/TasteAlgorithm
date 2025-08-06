@@ -25,7 +25,7 @@ def test_edit_unit_empty(client):
     response = client.get("/units/1/edit")
     assert response.status_code == 404
     html_body = response.get_data(as_text=True)
-    assert "Еденица измерения не найдена" in html_body
+    assert "Единица измерения не найдена" in html_body
 
 
 def test_edit_unit_not_empty(client):
@@ -41,8 +41,8 @@ def test_edit_unit_not_empty(client):
     response = client.get("/units/1/edit")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
-    assert "<h2>Изменить еденицу измерения</h2>" in html_body
-    assert '<label for="unit">Новая еденица измерения</label>' in html_body
+    assert "<h2>Изменить единицу измерения</h2>" in html_body
+    assert '<label for="unit">Новая Единица измерения</label>' in html_body
     assert (
         '<input class="btn" id="submit" name="submit" type="submit" value="Сохранить">'
         in html_body

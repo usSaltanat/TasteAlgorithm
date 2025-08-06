@@ -17,7 +17,7 @@ class ProductForm(Form):
     )
 
     unit = SelectField(
-        "Еденицы измерения",
+        "Единицы измерения",
         [
             validators.InputRequired(),
         ],

@@ -25,7 +25,7 @@ def test_get_units_empty(client):
     response = client.get("/units")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
-    assert "<h2>Список едениц измерения</h2>" in html_body
+    assert "<h2>Список единиц измерения</h2>" in html_body
     assert "<p>Список пуст</p>" in html_body
 
 
@@ -45,6 +45,6 @@ def test_get_units_not_empty(client):
     response = client.get("/units")
     assert response.status_code == 200
     html_body = response.get_data(as_text=True)
-    assert "<h2>Список едениц измерения</h2>" in html_body
+    assert "<h2>Список единиц измерения</h2>" in html_body
     assert '<table id="units_table" class="display">' in html_body
     assert " $(document).ready(function () {" in html_body
