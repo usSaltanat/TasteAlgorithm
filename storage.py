@@ -547,3 +547,12 @@ class Storage:
                 return result[0][0]
         except:
             return None
+
+    def signup(self, login: str, password_hash: str) -> int:
+        with self.connection() as conn:
+            result = conn.run(
+                "INSERT INTO users (login, password_hash) VALUES (:login, :password_hash) RETURNING id",
+                login=login,
+                password_hash=password_hash,
+            )
+            return result[0][0]

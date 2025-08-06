@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<form action="/signup" method="post">
+    <div>
+        <div class="login_input">
+            {{ form.login.label() }}
+            {{ form.login(placeholder="Выберите логин") }}
+        </div>
+
+        <div class="password_input">
+            {{ form.password.label() }}
+            {{ form.password(placeholder="Придумайте надежный пароль") }}
+        </div>
+
+        <div class="password_input">
+            {{ form.password_confirm.label() }}
+            {{ form.password_confirm(placeholder="Повторите пароль") }}
+        </div>
+
+    </div>
+    <input class="btn" type="submit" value="Зарегистрироваться">
+</form>
+{% endblock %}

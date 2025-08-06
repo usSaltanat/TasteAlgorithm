@@ -11,6 +11,7 @@ from forms.create_meals_category import MealsCategoryForm
 from forms.create_product import ProductForm
 from forms.create_unit import UnitForm
 from forms.login import LoginForm
+from forms.signup import SignUpForm
 from storage import Category, Meal, MealsCategory, Product, Session, Storage, Unit, User
 
 app = Flask(__name__)
@@ -79,6 +80,40 @@ def post_login():
             return response 
     flash("Неверное имя пользователя или пароль")
     return render_template("login/login.html", form=LoginForm())
+
+
+
+
+@app.route("/signup", methods=["GET"])
+def get_signup():
+    if get_session_from_cookies():
+        return redirect("/")
+    body = render_template("signup/signup.html", form=SignUpForm())
+    response = make_response(body)
+    response.set_cookie("session_id", "", -1)
+    return response
+
+
+
+@app.route("/signup", methods=["POST"])
+def post_signup():
+    login = request.form["login"]
+    password = request.form["password"]
+    # хакер может при помощи Postman или curl отправить запрос со слабым паролем (даже пустым)
+
+    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+
+    user = storage.find_user_by_login(login)
+    if user is not None:
+        flash("Логин занят, выберите другой")
+        return render_template("signup/signup.html", form=SignUpForm())
+
+    # зашифровать plaintext password
+    password_hash = pbkdf2_sha256.hash(password)
+
+    storage.signup(login, password_hash)
+
+    return redirect('/')
 
 
 @app.route("/", methods=["GET"])
