@@ -3,16 +3,15 @@ import uuid
 from functools import wraps
 
 from flask import (abort, current_app, flash, Flask, make_response, redirect, render_template, request)
+from passlib.hash import pbkdf2_sha256
 
 from forms.create_category import CategoryForm
 from forms.create_meal import MealForm
 from forms.create_meals_category import MealsCategoryForm
 from forms.create_product import ProductForm
-from forms.create_recipe import RecipeForm
 from forms.create_unit import UnitForm
 from forms.login import LoginForm
 from storage import Category, Meal, MealsCategory, Product, Session, Storage, Unit, User
-from passlib.hash import pbkdf2_sha256
 
 app = Flask(__name__)
 
@@ -25,8 +24,7 @@ def login_required(view_func):
         auth_session = get_session_from_cookies()
         if not auth_session:
             return redirect("/login")
-        kwargs["session"] = auth_session #пока убрала передачу session
-        # kwargs["user"] = auth_session.user  # Передаём user вместо session
+        kwargs["session"] = auth_session
         return view_func(*args, **kwargs)
     return wrapped_view
 
@@ -56,7 +54,7 @@ def get_logout():
     return resp
 
 
-def get_session_from_cookies() -> typing.Optional[Session]:
+def get_session_from_cookies() -> Session | None:
     if "session_id" in request.cookies:
         storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
         return storage.find_session_by_uuid(request.cookies["session_id"])

@@ -108,7 +108,7 @@ class Storage:
         # print(f"❗️user_row = {user_row}")
         return User(user_row[0], user_row[1], user_row[2])
 
-    def find_session_by_uuid(self, session_uuid: str) -> Optional[Session]:
+    def find_session_by_uuid(self, session_uuid: str) -> Session | None:
         with self.connection() as conn:
             session_rows = conn.run("""
                 SELECT
