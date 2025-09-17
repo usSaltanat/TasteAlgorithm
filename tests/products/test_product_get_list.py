@@ -1,6 +1,6 @@
 import pytest
 from typing import List
-from storage import Product, Category, Unit
+from storage import Product, Category, Unit, User, Session
 from main import app
 from mocks import StorageMock
 
@@ -20,12 +20,20 @@ def client():
 def test_get_products_empty(client):
     def get_products_mock_empty() -> List[Product]:
         return []
+    
+    def find_session_by_uuid() -> Session | None:
+        return Session(
+            User(1, "salta", "hashqwerty123"),
+            "test_session",
+        )
 
     app.config["storage"] = StorageMock(
         {
             "get_products": get_products_mock_empty,
+            "find_session_by_uuid": find_session_by_uuid,
         }
     )
+    
     client.set_cookie("session_id", "test_session")
     response = client.get("/products")
     assert response.status_code == 200

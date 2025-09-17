@@ -57,7 +57,7 @@ def test_category_create_no_auth_cookie(client):
     )
 
     assert response.status_code == 302
-    assert response.headers.get("Location") == "/login"
+    assert response.headers.get("Location") == "/signin"
 
 
 def test_category_create_unauthorized(client):
@@ -80,7 +80,7 @@ def test_category_create_unauthorized(client):
     )
 
     assert response.status_code == 302
-    assert response.headers.get("Location") == "/login"
+    assert response.headers.get("Location") == "/signin"
 
 
 def test_category_create_failed(client):

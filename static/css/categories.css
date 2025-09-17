@@ -1,19 +1,30 @@
 .category_input_label {
-    width: 80vw;
+    /* width: 350px; */
+    width: 95%;
+    height: 130px;
     background-color: #F8EBE1;
     margin: 25px 0 15px 0;
     margin-left: 20px;
     border: none;
     border-radius: 10px;
     padding: 30px;
+    /* Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
     align-items: right;
+    /* Выравнивание элементов по центру */
 }
 
 .category_name_input label {
     margin-left: 20px;
     padding: 5px;
+    /*Внутренние отступы */
     display: flex;
+    /* Выравниваем элементы по горизонтали */
     flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
     color: #272121;
 }
 
@@ -25,7 +36,8 @@
     border: none;
     border-radius: 10px;
     height: 40px;
-    width: 70%;
+    width: 95%;
+    /* width: 300px; */
     align-items: center;
     text-indent: 5px;
     font-size: 12px;
@@ -88,18 +100,18 @@
     background-color: #ff5c00;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 480px) {
 
     .category_input_label {
-        width: 40vw;
+        width: 300px;
     }
 
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 760px) {
 
     .category_input_label {
-        width: 35%;
+        width: 400px;
     }
 
 }

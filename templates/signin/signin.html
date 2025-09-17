@@ -2,7 +2,7 @@
 {% block title %}Логин{% endblock %}
 
 {% block content %}
-<form action="/login" method="post">
+<form action="/signin" method="post">
     <div>
         <div class="login_input">
             {{ form.login.label() }}
@@ -17,4 +17,5 @@
     </div>
     <input class="btn" type="submit" value="Войти">
 </form>
+    <a class="btn" href="/signup">Регистрация</a>
 {% endblock %}

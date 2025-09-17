@@ -2,7 +2,16 @@ import typing
 import uuid
 from functools import wraps
 
-from flask import (abort, current_app, flash, Flask, make_response, redirect, render_template, request)
+from flask import (
+    abort,
+    current_app,
+    flash,
+    Flask,
+    make_response,
+    redirect,
+    render_template,
+    request,
+)
 from passlib.hash import pbkdf2_sha256
 
 from forms.create_category import CategoryForm
@@ -10,7 +19,7 @@ from forms.create_meal import MealForm
 from forms.create_meals_category import MealsCategoryForm
 from forms.create_product import ProductForm
 from forms.create_unit import UnitForm
-from forms.login import LoginForm
+from forms.signin import LoginForm
 from forms.signup import SignUpForm
 from storage import Category, Meal, MealsCategory, Product, Session, Storage, Unit, User
 
@@ -19,21 +28,23 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "my secret key"
 app.config["storage"] = Storage()
 
+
 def login_required(view_func):
     @wraps(view_func)
     def wrapped_view(*args, **kwargs):
         auth_session = get_session_from_cookies()
         if not auth_session:
-            return redirect("/login")
+            return redirect("/signin")
         kwargs["session"] = auth_session
         return view_func(*args, **kwargs)
     return wrapped_view
 
-@app.route("/login", methods=["GET"])
+
+@app.route("/signin", methods=["GET"])
 def get_login():
     if get_session_from_cookies():
         return redirect("/")
-    body = render_template("login/login.html", form=LoginForm())
+    body = render_template("signin/signin.html", form=LoginForm())
     response = make_response(body)
     response.set_cookie("session_id", "", -1)
     return response
@@ -52,17 +63,19 @@ def get_login():
 def get_logout():
     resp = make_response()
     resp.set_cookie("session_id", "", -1)
-    return resp
+    return resp 
 
 
 def get_session_from_cookies() -> Session | None:
     if "session_id" in request.cookies:
-        storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
+        storage = typing.cast(
+            Storage, current_app.config["storage"]
+        )  # подключение к БД
         return storage.find_session_by_uuid(request.cookies["session_id"])
     return None
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/signin", methods=["POST"])
 def post_login():
     login = request.form["login"]
     password = request.form["password"]
@@ -77,11 +90,9 @@ def post_login():
             response.set_cookie("session_id", session_id, 60 * 60)
             response.headers["Location"] = "/"
             # print("❗️", response)
-            return response 
+            return response
     flash("Неверное имя пользователя или пароль")
-    return render_template("login/login.html", form=LoginForm())
-
-
+    return render_template("signin/signin.html", form=LoginForm())
 
 
 @app.route("/signup", methods=["GET"])
@@ -94,26 +105,20 @@ def get_signup():
     return response
 
 
-
 @app.route("/signup", methods=["POST"])
 def post_signup():
     login = request.form["login"]
     password = request.form["password"]
     # хакер может при помощи Postman или curl отправить запрос со слабым паролем (даже пустым)
-
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-
     user = storage.find_user_by_login(login)
     if user is not None:
         flash("Логин занят, выберите другой")
         return render_template("signup/signup.html", form=SignUpForm())
-
     # зашифровать plaintext password
     password_hash = pbkdf2_sha256.hash(password)
-
     storage.signup(login, password_hash)
-
-    return redirect('/')
+    return redirect("/")
 
 
 @app.route("/", methods=["GET"])
@@ -123,7 +128,7 @@ def get_root():
 
 
 @app.route("/products", methods=["GET"])
-@login_required 
+@login_required
 def get_products_route(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     # print(f"❗️user = {user}")
@@ -143,14 +148,17 @@ def get_product_by_id_route(id: int, session: Session):
 
 # Создание продукта
 @app.route("/products/new", methods=["GET"])
-@login_required 
+@login_required
 def new_product(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = ProductForm()
     form.category.choices = [
-        (category.id, category.name) for category in storage.get_categories(session.user)
+        (category.id, category.name)
+        for category in storage.get_categories(session.user)
     ]
-    form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units(session.user)]
+    form.unit.choices = [
+        (unit.id, unit.name) for unit in storage.get_units(session.user)
+    ]
     return render_template(
         "products/new.html",
         form=form,
@@ -158,7 +166,7 @@ def new_product(session: Session):
 
 
 @app.route("/products/create", methods=["POST"])
-@login_required 
+@login_required
 def create_product(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_to_create = Product(
@@ -166,8 +174,7 @@ def create_product(session: Session):
         request.form["name"],
         Category(int(request.form["category"]), None, None),
         Unit(int(request.form["unit"]), None, None),
-        User(int(session.user.id), None, None)
-
+        User(int(session.user.id), None, None),
     )
     # print("❗️", product_to_create)
     created_product_id = storage.insert_product(product_to_create)
@@ -175,9 +182,12 @@ def create_product(session: Session):
         flash("Не удалось создать продукт")
         form = ProductForm()
         form.category.choices = [
-            (category.id, category.name) for category in storage.get_categories(session.user)
+            (category.id, category.name)
+            for category in storage.get_categories(session.user)
         ]
-        form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units(session.user)]
+        form.unit.choices = [
+            (unit.id, unit.name) for unit in storage.get_units(session.user)
+        ]
         return render_template(
             "products/new.html",
             form=form,
@@ -186,7 +196,7 @@ def create_product(session: Session):
 
 
 @app.route("/products/<int:id>/delete", methods=["GET"])
-@login_required 
+@login_required
 def delete_product_by_id_route(id: str, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     deleted_product_id = storage.delete_product_by_id(id, session.user)
@@ -196,16 +206,19 @@ def delete_product_by_id_route(id: str, session: Session):
 
 
 @app.route("/products/<int:id>/edit", methods=["GET"])
-@login_required 
+@login_required
 def edit_product_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_view = storage.get_product_by_id(id, session.user)
     form = ProductForm()
     form.name.data = product_view.name
     form.category.choices = [
-        (category.id, category.name) for category in storage.get_categories(session.user)
+        (category.id, category.name)
+        for category in storage.get_categories(session.user)
     ]
-    form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units(session.user)]
+    form.unit.choices = [
+        (unit.id, unit.name) for unit in storage.get_units(session.user)
+    ]
     if product_view is None:
         return abort(404, "Продукт не найден")
     return render_template(
@@ -216,7 +229,7 @@ def edit_product_by_id(id: int, session: Session):
 
 
 @app.route("/products/<int:id>/update", methods=["POST"])
-@login_required 
+@login_required
 def update_product_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_view = storage.get_product_by_id(id, session.user)
@@ -233,9 +246,12 @@ def update_product_route(id: int, session: Session):
         product_view = storage.get_product_by_id(id, session.user)
         form = ProductForm()
         form.category.choices = [
-            (category.id, category.name) for category in storage.get_categories(session.user)
+            (category.id, category.name)
+            for category in storage.get_categories(session.user)
         ]
-        form.unit.choices = [(unit.id, unit.name) for unit in storage.get_units(session.user)]
+        form.unit.choices = [
+            (unit.id, unit.name) for unit in storage.get_units(session.user)
+        ]
         return render_template(
             "products/edit.html",
             product=product_view,
@@ -249,7 +265,7 @@ def update_product_route(id: int, session: Session):
 
 
 @app.route("/categories", methods=["GET"])
-@login_required 
+@login_required
 def get_categories_route(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_categories(session.user)
@@ -257,7 +273,7 @@ def get_categories_route(session: Session):
 
 
 @app.route("/categories/<int:id>", methods=["GET"])
-@login_required 
+@login_required
 def get_category_by_id_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     category_view = storage.get_category_by_id(id, session.user)
@@ -267,14 +283,14 @@ def get_category_by_id_route(id: int, session: Session):
 
 
 @app.route("/categories/new", methods=["GET"])
-@login_required 
+@login_required
 def new_category(session: Session):
     form = CategoryForm()
     return render_template("categories/new_category.html", form=form)
 
 
 @app.route("/categories/create", methods=["POST"])
-@login_required 
+@login_required
 def create_category(session: Session):
     # print(f"❗ 1234️{session}")
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
@@ -290,7 +306,7 @@ def create_category(session: Session):
 
 
 @app.route("/categories/<int:id>/delete", methods=["GET"])
-@login_required 
+@login_required
 def delete_category_by_id_route(id: str, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     deleted_category_id = storage.delete_category_by_id(id, session.user)
@@ -301,7 +317,7 @@ def delete_category_by_id_route(id: str, session: Session):
 
 
 @app.route("/categories/<int:id>/edit", methods=["GET"])
-@login_required 
+@login_required
 def edit_category_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     category_view = storage.get_category_by_id(id, session.user)
@@ -315,7 +331,7 @@ def edit_category_by_id(id: int, session: Session):
 
 
 @app.route("/categories/<int:id>/update", methods=["POST"])
-@login_required 
+@login_required
 def update_category_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = CategoryForm(request.form)
@@ -324,11 +340,7 @@ def update_category_route(id: int, session: Session):
         return render_template(
             "categories/edit_category.html", category=category_view, form=form
         )
-    category_to_update = Category(
-        id,
-        form.category.data,
-        session.user
-    )
+    category_to_update = Category(id, form.category.data, session.user)
     updated_category_id = storage.update_category(category_to_update)
     if updated_category_id is None:  # обход случая когда категории повторяются
         flash("Не удалось изменить категорию")
@@ -343,7 +355,7 @@ def update_category_route(id: int, session: Session):
 
 
 @app.route("/units", methods=["GET"])
-@login_required 
+@login_required
 def get_units_route(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_units(session.user)
@@ -351,14 +363,14 @@ def get_units_route(session: Session):
 
 
 @app.route("/units/new", methods=["GET"])
-@login_required 
+@login_required
 def new_unit(session: Session):
     form = UnitForm()
     return render_template("units/new_unit.html", form=form)
 
 
 @app.route("/units/create", methods=["POST"])
-@login_required 
+@login_required
 def create_unit(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = UnitForm(request.form)
@@ -373,7 +385,7 @@ def create_unit(session: Session):
 
 
 @app.route("/units/<int:id>", methods=["GET"])
-@login_required 
+@login_required
 def get_unit_by_id_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     unit_view = storage.get_unit_by_id(id, session.user)
@@ -383,7 +395,7 @@ def get_unit_by_id_route(id: int, session: Session):
 
 
 @app.route("/units/<int:id>/delete", methods=["GET"])
-@login_required 
+@login_required
 def delete_unit_by_id_route(id: str, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     deleted_unit_id = storage.delete_unit_by_id(id, session.user)
@@ -393,7 +405,7 @@ def delete_unit_by_id_route(id: str, session: Session):
 
 
 @app.route("/units/<int:id>/edit", methods=["GET"])
-@login_required 
+@login_required
 def edit_unit_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     unit_view = storage.get_unit_by_id(id, session.user)
@@ -409,7 +421,7 @@ def edit_unit_by_id(id: int, session: Session):
 
 
 @app.route("/units/<int:id>/update", methods=["POST"])
-@login_required 
+@login_required
 def update_unit_route(id: int, session: Session):
     form = UnitForm(request.form)
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
@@ -433,7 +445,7 @@ def update_unit_route(id: int, session: Session):
 
 
 @app.route("/meals_categories", methods=["GET"])
-@login_required 
+@login_required
 def get_meals_categories_route(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_meals_categories(session.user)
@@ -443,7 +455,7 @@ def get_meals_categories_route(session: Session):
 
 
 @app.route("/meals_categories/<int:id>", methods=["GET"])
-@login_required 
+@login_required
 def get_meals_category_by_id_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     meals_category_view = storage.get_meals_category_by_id(id, session.user)
@@ -455,20 +467,22 @@ def get_meals_category_by_id_route(id: int, session: Session):
 
 
 @app.route("/meals_categories/new", methods=["GET"])
-@login_required 
+@login_required
 def new_meals_category(session: Session):
     form = MealsCategoryForm()
     return render_template("meals_categories/new_meals_category.html", form=form)
 
 
 @app.route("/meals_categories/create", methods=["POST"])
-@login_required 
+@login_required
 def create_meal_categories(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = MealsCategoryForm(request.form)
     if not form.validate():
         return render_template("meals_categories/new_meals_category.html", form=form)
-    meals_category_to_create = MealsCategory(None, form.meals_category.data, session.user)
+    meals_category_to_create = MealsCategory(
+        None, form.meals_category.data, session.user
+    )
     created_meals_category_id = storage.insert_meals_category(meals_category_to_create)
     if created_meals_category_id is None:
         flash("Не удалось создать категорию блюда")
@@ -477,7 +491,7 @@ def create_meal_categories(session: Session):
 
 
 @app.route("/meals_categories/<int:id>/edit", methods=["GET"])
-@login_required 
+@login_required
 def edit_meals_category_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     meals_category_view = storage.get_meals_category_by_id(id, session.user)
@@ -493,7 +507,7 @@ def edit_meals_category_by_id(id: int, session: Session):
 
 
 @app.route("/meals_categories/<int:id>/update", methods=["POST"])
-@login_required 
+@login_required
 def update_meals_category_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = MealsCategoryForm(request.form)
@@ -504,11 +518,7 @@ def update_meals_category_route(id: int, session: Session):
             meals_category=meals_category_view,
             form=form,
         )
-    meals_category_to_update = MealsCategory(
-        id,
-        form.meals_category.data,
-        session.user
-    )
+    meals_category_to_update = MealsCategory(id, form.meals_category.data, session.user)
     updated_meals_category_id = storage.update_meals_category(meals_category_to_update)
     if updated_meals_category_id is None:  # обход случая когда категории повторяются
         flash("Не удалось изменить категорию блюда")
@@ -521,7 +531,7 @@ def update_meals_category_route(id: int, session: Session):
 
 
 @app.route("/meals_categories/<int:id>/delete", methods=["GET"])
-@login_required 
+@login_required
 def delete_meals_category_by_id_route(id: str, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     deleted_meals_category_id = storage.delete_meals_category_by_id(id, session.user)
@@ -535,7 +545,7 @@ def delete_meals_category_by_id_route(id: str, session: Session):
 
 
 @app.route("/meals", methods=["GET"])
-@login_required 
+@login_required
 def get_meals_route(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     view = storage.get_meals(session.user)
@@ -543,7 +553,7 @@ def get_meals_route(session: Session):
 
 
 @app.route("/meals/<int:id>", methods=["GET"])
-@login_required 
+@login_required
 def get_meal_by_id_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     meal_view = storage.get_meal_by_id(id, session.user)
@@ -553,7 +563,7 @@ def get_meal_by_id_route(id: int, session: Session):
 
 
 @app.route("/meals/new", methods=["GET"])
-@login_required 
+@login_required
 def new_meal(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = MealForm()
@@ -565,14 +575,14 @@ def new_meal(session: Session):
 
 
 @app.route("/meals/create", methods=["POST"])
-@login_required 
+@login_required
 def create_meal(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])
     meal_to_create = Meal(
         None,
         request.form["name"],
         MealsCategory(int(request.form["meals_category"]), None, None),
-        session.user
+        session.user,
     )
     created_meal_id = storage.insert_meal(meal_to_create)
     if created_meal_id is None:
@@ -587,7 +597,7 @@ def create_meal(session: Session):
 
 
 @app.route("/meals/<int:id>/edit", methods=["GET"])
-@login_required 
+@login_required
 def edit_meal_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     meal_view = storage.get_meal_by_id(id, session.user)
@@ -607,7 +617,7 @@ def edit_meal_by_id(id: int, session: Session):
 
 
 @app.route("/meals/<int:id>/update", methods=["POST"])
-@login_required 
+@login_required
 def update_meal_route(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     # meal_view = storage.get_meal_by_id(id)
@@ -615,7 +625,7 @@ def update_meal_route(id: int, session: Session):
         id,
         request.form["name"],
         MealsCategory(int(request.form["meals_category"]), None, None),
-        session.user
+        session.user,
     )
     updated_meal_id = storage.update_meal(meal_to_update)
     if updated_meal_id is None:
@@ -635,7 +645,7 @@ def update_meal_route(id: int, session: Session):
 
 
 @app.route("/meals/<int:id>/delete", methods=["GET"])
-@login_required 
+@login_required
 def delete_meal_by_id_route(id: str, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])
     deleted_meal_id = storage.delete_meal_by_id(id, session.user)
@@ -649,7 +659,7 @@ def delete_meal_by_id_route(id: str, session: Session):
 
 
 # @app.route("/recipes", methods=["GET"])
-# @login_required 
+# @login_required
 # def get_recipes_route():
 #     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
 #     view = storage.get_recipes()
@@ -657,7 +667,7 @@ def delete_meal_by_id_route(id: str, session: Session):
 
 
 # @app.route("/recipes/<int:id>", methods=["GET"])
-# @login_required 
+# @login_required
 # def get_recipe_by_id_route(id: int):
 #     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
 #     recipe_view = storage.get_recipe_by_id(id)
@@ -667,7 +677,7 @@ def delete_meal_by_id_route(id: str, session: Session):
 
 
 # @app.route("/recipes/new", methods=["GET"])
-# @login_required 
+# @login_required
 # def new_recipe():
 #     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
 #     form = RecipeForm()
@@ -678,7 +688,7 @@ def delete_meal_by_id_route(id: str, session: Session):
 
 
 # @app.route("/recipes/create", methods=["POST"])
-# @login_required 
+# @login_required
 # def create_recipe():
 #     storage = typing.cast(Storage, current_app.config["storage"])
 #     recipe_to_create = Recipe(
@@ -698,7 +708,7 @@ def delete_meal_by_id_route(id: str, session: Session):
 
 
 # @app.route("/recipes/<int:id>/edit", methods=["GET"])
-# @login_required 
+# @login_required
 # def edit_recipe_by_id(id: int):
 #     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
 #     recipe_view = storage.get_recipe_by_id(id)
@@ -716,7 +726,7 @@ def delete_meal_by_id_route(id: str, session: Session):
 
 
 # @app.route("/recipes/<int:id>/update", methods=["POST"])
-# @login_required 
+# @login_required
 # def update_recipe_route(id: int):
 #     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
 #     recipe_to_update = Recipe(
@@ -741,7 +751,7 @@ def delete_meal_by_id_route(id: str, session: Session):
 
 
 # @app.route("/recipes/<int:id>/delete", methods=["GET"])
-# @login_required 
+# @login_required
 # def delete_recipe_by_id_route(id: str):
 #     storage = typing.cast(Storage, current_app.config["storage"])
 #     deleted_recipe_id = storage.delete_recipe_by_id(id)
