@@ -1,264 +1,37 @@
 import typing
-import uuid
-from functools import wraps
 
 from flask import (
     abort,
     current_app,
     flash,
     Flask,
-    make_response,
     redirect,
     render_template,
     request,
 )
-from passlib.hash import pbkdf2_sha256
 
+from auth import bp as auth_bp, login_required
 from forms.create_category import CategoryForm
 from forms.create_meal import MealForm
 from forms.create_meals_category import MealsCategoryForm
-from forms.create_product import ProductForm
 from forms.create_unit import UnitForm
-from forms.signin import LoginForm
-from forms.signup import SignUpForm
-from storage_entities import Category, Meal, MealsCategory, Product, Session, Unit, User
+from products import bp as products_bp
 from storage import Storage
+from storage_entities import Category, Meal, MealsCategory, Session, Unit
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "my secret key"
 app.config["storage"] = Storage()
 
-
-def login_required(view_func):
-    @wraps(view_func)
-    def wrapped_view(*args, **kwargs):
-        auth_session = get_session_from_cookies()
-        if not auth_session:
-            return redirect("/signin")
-        kwargs["session"] = auth_session
-        return view_func(*args, **kwargs)
-    return wrapped_view
-
-
-@app.route("/signin", methods=["GET"])
-def get_login():
-    if get_session_from_cookies():
-        return redirect("/")
-    body = render_template("signin/signin.html", form=LoginForm())
-    response = make_response(body)
-    response.set_cookie("session_id", "", -1)
-    return response
-
-
-# @app.route("/test", methods=["GET"])
-# def get_test():
-#     if "session_id" in request.cookies:
-#         print(session_storage)
-#         if session_storage[request.cookies["session_id"]]:
-#             return session_storage[request.cookies["session_id"]]["name"]
-#     return "нет куки"
-
-
-@app.route("/logout", methods=["GET"])
-def get_logout():
-    resp = make_response()
-    resp.set_cookie("session_id", "", -1)
-    return resp 
-
-
-def get_session_from_cookies() -> Session | None:
-    if "session_id" in request.cookies:
-        storage = typing.cast(
-            Storage, current_app.config["storage"]
-        )  # подключение к БД
-        return storage.find_session_by_uuid(request.cookies["session_id"])
-    return None
-
-
-@app.route("/signin", methods=["POST"])
-def post_login():
-    login = request.form["login"]
-    password = request.form["password"]
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    user = storage.find_user_by_login(login)
-    # print(f"❗️user = {user}")
-    if user is not None:
-        if pbkdf2_sha256.verify(password, user.password_hash):
-            session_id = str(uuid.uuid4())
-            storage.create_session(user, session_id)
-            response = make_response("", 302)
-            response.set_cookie("session_id", session_id, 60 * 60)
-            response.headers["Location"] = "/"
-            # print("❗️", response)
-            return response
-    flash("Неверное имя пользователя или пароль")
-    return render_template("signin/signin.html", form=LoginForm())
-
-
-@app.route("/signup", methods=["GET"])
-def get_signup():
-    if get_session_from_cookies():
-        return redirect("/")
-    body = render_template("signup/signup.html", form=SignUpForm())
-    response = make_response(body)
-    response.set_cookie("session_id", "", -1)
-    return response
-
-
-@app.route("/signup", methods=["POST"])
-def post_signup():
-    login = request.form["login"]
-    password = request.form["password"]
-    # хакер может при помощи Postman или curl отправить запрос со слабым паролем (даже пустым)
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    user = storage.find_user_by_login(login)
-    if user is not None:
-        flash("Логин занят, выберите другой")
-        return render_template("signup/signup.html", form=SignUpForm())
-    # зашифровать plaintext password
-    password_hash = pbkdf2_sha256.hash(password)
-    storage.signup(login, password_hash)
-    return redirect("/")
+app.register_blueprint(auth_bp)
+app.register_blueprint(products_bp)
 
 
 @app.route("/", methods=["GET"])
 def get_root():
     # print(f"❗️user = {pbkdf2_sha256.hash("qwerty123")}")
     return redirect("/products")
-
-
-@app.route("/products", methods=["GET"])
-@login_required
-def get_products_route(session: Session):
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    # print(f"❗️user = {user}")
-    view = storage.get_products(session.user)
-    return render_template("products/products.html", products=view)
-
-
-@app.route("/products/<int:id>", methods=["GET"])
-@login_required
-def get_product_by_id_route(id: int, session: Session):
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    product_view = storage.get_product_by_id(id, session.user)
-    if product_view is None:
-        return abort(404, "Продукт не найден")
-    return render_template("products/product.html", product=product_view)
-
-
-# Создание продукта
-@app.route("/products/new", methods=["GET"])
-@login_required
-def new_product(session: Session):
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    form = ProductForm()
-    form.category.choices = [
-        (category.id, category.name)
-        for category in storage.get_categories(session.user)
-    ]
-    form.unit.choices = [
-        (unit.id, unit.name) for unit in storage.get_units(session.user)
-    ]
-    return render_template(
-        "products/new.html",
-        form=form,
-    )
-
-
-@app.route("/products/create", methods=["POST"])
-@login_required
-def create_product(session: Session):
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    product_to_create = Product(
-        None,
-        request.form["name"],
-        Category(int(request.form["category"]), None, None),
-        Unit(int(request.form["unit"]), None, None),
-        User(int(session.user.id), None, None),
-    )
-    # print("❗️", product_to_create)
-    created_product_id = storage.insert_product(product_to_create)
-    if created_product_id is None:
-        flash("Не удалось создать продукт")
-        form = ProductForm()
-        form.category.choices = [
-            (category.id, category.name)
-            for category in storage.get_categories(session.user)
-        ]
-        form.unit.choices = [
-            (unit.id, unit.name) for unit in storage.get_units(session.user)
-        ]
-        return render_template(
-            "products/new.html",
-            form=form,
-        )
-    return redirect(f"/products/{created_product_id}")
-
-
-@app.route("/products/<int:id>/delete", methods=["GET"])
-@login_required
-def delete_product_by_id_route(id: str, session: Session):
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    deleted_product_id = storage.delete_product_by_id(id, session.user)
-    if deleted_product_id is None:
-        flash("Не удалось удалить продукт")
-    return redirect(f"/products")
-
-
-@app.route("/products/<int:id>/edit", methods=["GET"])
-@login_required
-def edit_product_by_id(id: int, session: Session):
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    product_view = storage.get_product_by_id(id, session.user)
-    form = ProductForm()
-    form.name.data = product_view.name
-    form.category.choices = [
-        (category.id, category.name)
-        for category in storage.get_categories(session.user)
-    ]
-    form.unit.choices = [
-        (unit.id, unit.name) for unit in storage.get_units(session.user)
-    ]
-    if product_view is None:
-        return abort(404, "Продукт не найден")
-    return render_template(
-        "products/edit.html",
-        product=product_view,
-        form=form,
-    )
-
-
-@app.route("/products/<int:id>/update", methods=["POST"])
-@login_required
-def update_product_route(id: int, session: Session):
-    storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
-    product_view = storage.get_product_by_id(id, session.user)
-    product_to_update = Product(
-        id,
-        request.form["name"],
-        Category(int(request.form["category"]), None, None),
-        Unit(int(request.form["unit"]), None, None),
-        User(int(session.user.id), None, None),
-    )
-    updated_product_id = storage.update_product(product_to_update)
-    if updated_product_id is None:
-        flash("Не удалось изменить продукт")
-        product_view = storage.get_product_by_id(id, session.user)
-        form = ProductForm()
-        form.category.choices = [
-            (category.id, category.name)
-            for category in storage.get_categories(session.user)
-        ]
-        form.unit.choices = [
-            (unit.id, unit.name) for unit in storage.get_units(session.user)
-        ]
-        return render_template(
-            "products/edit.html",
-            product=product_view,
-            form=form,
-        )
-    return redirect(f"/products/{updated_product_id}")
 
 
 # -------------------------------------------------------------------------------
@@ -653,7 +426,6 @@ def delete_meal_by_id_route(id: str, session: Session):
     if deleted_meal_id is None:
         flash("Не удалось удалить блюдо")
     return redirect(f"/meals")
-
 
 # -------------------------------------------------------------------------------
 # CRUD recipes
