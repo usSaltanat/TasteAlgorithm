@@ -1,8 +1,10 @@
-import pytest
 from typing import List
-from storage import Product, Category, Unit, User, Session
+
+import pytest
+
 from main import app
 from mocks import StorageMock
+from storage_entities import Product, Category, Unit, User, Session
 
 
 # Декоратор @pytest.fixture в сочетании с функцией client()
@@ -17,14 +19,18 @@ def client():
         yield c
 
 
-def test_get_products_empty(client):
-    def get_products_mock_empty() -> List[Product]:
+def test_get_products_empty_authorized(client):
+    def get_products_mock_empty(user: User) -> List[Product]:
+        assert user.id == 1
+        assert user.login == "salta"
         return []
-    
-    def find_session_by_uuid() -> Session | None:
+
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+
         return Session(
             User(1, "salta", "hashqwerty123"),
-            "test_session",
+            session_uuid,
         )
 
     app.config["storage"] = StorageMock(
@@ -33,7 +39,7 @@ def test_get_products_empty(client):
             "find_session_by_uuid": find_session_by_uuid,
         }
     )
-    
+
     client.set_cookie("session_id", "test_session")
     response = client.get("/products")
     assert response.status_code == 200
