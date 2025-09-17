@@ -1,4 +1,5 @@
 import typing
+import uuid
 from functools import wraps
 
 from flask import Blueprint, redirect, render_template, make_response, request, current_app, flash
@@ -9,7 +10,7 @@ from forms.signup import SignUpForm
 from request_utils import get_session_from_cookies
 from storage import Storage
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+bp = Blueprint('auth', __name__)
 
 
 def login_required(view_func):
@@ -82,6 +83,7 @@ def post_signup():
 
 @bp.route("/logout", methods=["GET"])
 def get_logout():
-    resp = make_response()
+    resp = make_response("", 302)
     resp.set_cookie("session_id", "", -1)
+    resp.headers["Location"] = "/"
     return resp
