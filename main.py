@@ -21,7 +21,8 @@ from forms.create_product import ProductForm
 from forms.create_unit import UnitForm
 from forms.signin import LoginForm
 from forms.signup import SignUpForm
-from storage import Category, Meal, MealsCategory, Product, Session, Storage, Unit, User
+from storage_entities import Category, Meal, MealsCategory, Product, Session, Unit, User
+from storage import Storage
 
 app = Flask(__name__)
 

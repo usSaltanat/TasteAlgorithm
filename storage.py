@@ -4,53 +4,7 @@ from pg8000.exceptions import DatabaseError
 from config_reader import env_config
 from contextlib import contextmanager
 
-class User(NamedTuple):
-    id: int
-    login: str
-    password_hash: str
-
-class Category(NamedTuple):
-    id: int
-    name: str | None
-    user: User | None
-
-
-class Unit(NamedTuple):
-    id: int
-    name: str | None
-    user: User | None
-
-
-class Product(NamedTuple):
-    id: int
-    name: str
-    category: Category
-    unit: Unit
-    user: User | None
-
-
-class MealsCategory(NamedTuple):
-    id: int
-    name: str
-    user: User | None
-
-
-class Meal(NamedTuple):
-    id: int
-    name: str
-    meal_category: MealsCategory
-    user: User | None
-
-
-# class Recipe(NamedTuple):
-#     id: int
-#     meal: Meal
-#     body_meal_recipes: str
-
-
-class Session(NamedTuple):
-    user: User
-    session_uuid: str
+from storage_entities import User, Session, Product, Category, Unit, MealsCategory, Meal
 
 
 class Storage:
