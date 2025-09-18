@@ -3,19 +3,29 @@
 
 {% block content %}
 
-<a class="btn" href="/units">Единицы измерения</a>
-<a class="btn" href="/units/{{unit.id}}/edit">Изменить</a>
-<a class="btn" href="/units/{{unit.id}}/delete">Удалить</a>
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
+    </div>
+
+    <div class="container">
+        <div class="logout-container">
+            <a class="logout-btn" href="/logout">Выйти</a>
+        </div>
+
+        <a class="btn" href="/units">Единицы измерения</a>
+        <a class="btn" href="/units/{{unit.id}}/edit">Изменить</a>
+        <a class="btn" href="/units/{{unit.id}}/delete">Удалить</a>
 
 
-<h2>Выбранная Единица измерения</h2>
-<div class="table-container">
-    <table id="unit_table" class="display">
-        <tbody>
-            <tr>
-                <td>{{ unit.name }}</a></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-{% endblock %}
+        <h2>Выбранная Единица измерения</h2>
+        <div class="table-container">
+            <table id="unit_table" class="display">
+                <tbody>
+                    <tr>
+                        <td>{{ unit.name }}</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endblock %}

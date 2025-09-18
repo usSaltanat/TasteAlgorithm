@@ -48,14 +48,17 @@ class Storage:
 
     def find_user_by_login(self, login: str) -> Optional[User]:
         with self.connection() as conn:
-            user_rows = conn.run("""
+            user_rows = conn.run(
+                """
                 SELECT
                     u.id as user_id,
                     u.login as user_login,
                     u.password_hash as user_password_hash
                 FROM users u
                 WHERE u.login = :login
-            """, login=login)
+            """,
+                login=login,
+            )
         if len(user_rows) == 0:
             return None
         user_row = user_rows[0]
@@ -64,7 +67,8 @@ class Storage:
 
     def find_session_by_uuid(self, session_uuid: str) -> Session | None:
         with self.connection() as conn:
-            session_rows = conn.run("""
+            session_rows = conn.run(
+                """
                 SELECT
                     s.session_uuid,
                     u.id as user_id,
@@ -73,7 +77,8 @@ class Storage:
                 FROM auth_session s
                 JOIN users u ON u.id = s.user_id
                 WHERE s.session_uuid = :session_uuid
-            """, session_uuid=session_uuid,
+            """,
+                session_uuid=session_uuid,
             )
         if len(session_rows) == 0:
             return None
@@ -87,14 +92,15 @@ class Storage:
         with self.connection() as conn:
             conn.run(
                 "INSERT INTO auth_session (user_id, session_uuid) VALUES (:user_id, :session_uuid)",
-                user_id=user.id, session_uuid=session_uuid,
+                user_id=user.id,
+                session_uuid=session_uuid,
             )
 
     def get_products(self, user: User) -> List[Product]:
         products = []
         with self.connection() as conn:
             for row in conn.run(
-                    """
+                """
                     SELECT p.id,
                            p.product_name,
                            c.id,
@@ -106,7 +112,7 @@ class Storage:
                              JOIN categories c ON p.category_id = c.id
                     WHERE p.user_id = :user_id         
                     """,
-                    user_id=user.id
+                user_id=user.id,
             ):
                 products.append(
                     Product(
@@ -114,7 +120,7 @@ class Storage:
                         row[1],
                         Category(int(row[2]), row[3], None),
                         Unit(int(row[4]), row[5], None),
-                        None
+                        None,
                     )
                 )
                 # products_view.append(ProductView(row[0], row[1], row[2], row[3]))
@@ -136,7 +142,7 @@ class Storage:
                 WHERE p.id = :product_id and p.user_id = :user_id 
                 """,
                 product_id=id,
-                user_id=user.id
+                user_id=user.id,
             )
             if len(result) == 0:
                 return None
@@ -146,21 +152,21 @@ class Storage:
             product[1],
             Category(int(product[2]), product[3], None),
             Unit(int(product[4]), product[5], None),
-            None
+            None,
         )
 
     def get_categories(self, user: User) -> List[Category]:
         categories = []
         with self.connection() as conn:
             for row in conn.run(
-                    """
+                """
                     SELECT c.id,
                            c.category
                     FROM categories c
                     WHERE c.user_id = :user_id 
                     ORDER BY c.category
                     """,
-                    user_id=user.id,
+                user_id=user.id,
             ):
                 categories.append(Category(int(row[0]), row[1], None))
         return categories
@@ -229,14 +235,14 @@ class Storage:
         units = []
         with self.connection() as conn:
             for row in conn.run(
-                    """
+                """
                     SELECT u.id,
                            u.unit
                     FROM units u
                     WHERE u.user_id = :user_id 
                     ORDER BY u.unit
                     """,
-                    user_id=user.id,
+                user_id=user.id,
             ):
                 units.append(Unit(row[0], row[1], None))
         return units
@@ -275,7 +281,7 @@ class Storage:
         try:
             with self.connection() as conn:
                 result = conn.run(
-                    "DELETE FROM units WHERE id = :unit_id and user_id = :user_id RETURNING id", 
+                    "DELETE FROM units WHERE id = :unit_id and user_id = :user_id RETURNING id",
                     unit_id=id,
                     user_id=user.id,
                 )
@@ -310,7 +316,6 @@ class Storage:
                     category_id=product.category.id,
                     product_name=product.name,
                     user_id=product.user.id,
-
                 )
                 return result[0][0]
         except:
@@ -351,15 +356,14 @@ class Storage:
         meals_categories = []
         with self.connection() as conn:
             for row in conn.run(
-                    """
+                """
                     SELECT c.id,
                            c.meals_category
                     FROM meals_categories c
                     WHERE c.user_id = :user_id
                     ORDER BY c.meals_category
                     """,
-                    user_id=user.id,
-
+                user_id=user.id,
             ):
                 meals_categories.append(MealsCategory(int(row[0]), row[1], None))
         return meals_categories
@@ -376,7 +380,7 @@ class Storage:
         except:
             return None
 
-    def get_meals_category_by_id(self, id: str, user: User ) -> MealsCategory | None:
+    def get_meals_category_by_id(self, id: str, user: User) -> MealsCategory | None:
         with self.connection() as conn:
             result = conn.run(
                 """
@@ -427,7 +431,7 @@ class Storage:
         meals_view = []
         with self.connection() as conn:
             for row in conn.run(
-                    """
+                """
                     SELECT m.id,
                            m.meal,
                            mc.meals_category
@@ -435,7 +439,7 @@ class Storage:
                              JOIN meals_categories mc ON m.meal_category_id = mc.id
                     WHERE m.user_id = :user_id         
                     """,
-                    user_id=user.id,
+                user_id=user.id,
             ):
                 meals_view.append(Meal(int(row[0]), row[1], row[2], None))
         return meals_view
@@ -467,7 +471,7 @@ class Storage:
                     "INSERT INTO meals (meal, meal_category_id, user_id) VALUES (:meal, :meal_category_id, :user_id) RETURNING id",
                     meal=meal.name,
                     meal_category_id=meal.meal_category.id,
-                    user_id=meal.user.id
+                    user_id=meal.user.id,
                 )
                 return result[0][0]
         except:
@@ -494,7 +498,7 @@ class Storage:
                     meal_category_id=meal.meal_category.id,
                     meal=meal.name,
                     id=meal.id,
-                    user_id=meal.user.id
+                    user_id=meal.user.id,
                 )
                 if len(result) == 0:
                     return None

@@ -2,7 +2,15 @@ import typing
 import uuid
 from functools import wraps
 
-from flask import Blueprint, redirect, render_template, make_response, request, current_app, flash
+from flask import (
+    Blueprint,
+    redirect,
+    render_template,
+    make_response,
+    request,
+    current_app,
+    flash,
+)
 from passlib.hash import pbkdf2_sha256
 
 from forms.signin import LoginForm
@@ -10,7 +18,7 @@ from forms.signup import SignUpForm
 from request_utils import get_session_from_cookies
 from storage import Storage
 
-bp = Blueprint('auth', __name__)
+bp = Blueprint("auth", __name__)
 
 
 def login_required(view_func):

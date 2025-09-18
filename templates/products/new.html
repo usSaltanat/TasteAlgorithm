@@ -2,29 +2,35 @@
 {% block title %}Добавить Продукт{% endblock %}
 
 {% block content %}
-<form action="/products/create" method="post">
 
-    <a class="btn" href="/products">Назад</a>
-
-    <h2>Создать продукт</h2>
-
-    <div class="product_input_label">
-        <div class="product_name_input">
-            {{ form.name.label() }}
-            {{ form.name(placeholder="Введите название продукта") }}
-        </div>
-
-        <div class="product_category_input">
-            {{ form.category.label() }}
-            {{ form.category() }}
-        </div>
-
-        <div class="product_unit_input">
-            {{ form.unit.label() }}
-            {{ form.unit() }}
-        </div>
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
     </div>
-    <input class="btn" type="submit" value="Сохранить">
 
-</form>
-{% endblock %}
+    <form action="/products/create" method="post">
+
+        <a class="btn" href="/products">Назад</a>
+
+        <h2>Создать продукт</h2>
+
+        <div class="product_input_label">
+            <div class="product_name_input">
+                {{ form.name.label() }}
+                {{ form.name(placeholder="Введите название продукта") }}
+            </div>
+
+            <div class="product_category_input">
+                {{ form.category.label() }}
+                {{ form.category() }}
+            </div>
+
+            <div class="product_unit_input">
+                {{ form.unit.label() }}
+                {{ form.unit() }}
+            </div>
+        </div>
+        <input class="btn" type="submit" value="Сохранить">
+
+    </form>
+    {% endblock %}

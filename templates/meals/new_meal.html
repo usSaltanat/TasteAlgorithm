@@ -3,25 +3,30 @@
 
 {% block content %}
 
-<form action="/meals/create" method="post">
-
-    <a class="btn" href="/meals">Назад</a>
-
-    <h2>Создать блюдо</h2>
-
-    <div class="meal_input_label">
-        <div class="meal_name_input">
-            {{ form.name.label() }}
-            {{ form.name(placeholder="Введите название блюда") }}
-        </div>
-
-        <div class="meal_category_input">
-            {{ form.meals_category.label() }}
-            {{ form.meals_category() }}
-        </div>
-
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
     </div>
-    <input class="btn" type="submit" value="Сохранить">
 
-</form>
-{% endblock %}
+    <form action="/meals/create" method="post">
+
+        <a class="btn" href="/meals">Назад</a>
+
+        <h2>Создать блюдо</h2>
+
+        <div class="meal_input_label">
+            <div class="meal_name_input">
+                {{ form.name.label() }}
+                {{ form.name(placeholder="Введите название блюда") }}
+            </div>
+
+            <div class="meal_category_input">
+                {{ form.meals_category.label() }}
+                {{ form.meals_category() }}
+            </div>
+
+        </div>
+        <input class="btn" type="submit" value="Сохранить">
+
+    </form>
+    {% endblock %}

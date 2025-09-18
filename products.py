@@ -1,13 +1,22 @@
 import typing
 
-from flask import Blueprint, current_app, render_template, abort, request, flash, redirect
+from flask import (
+    Blueprint,
+    current_app,
+    render_template,
+    abort,
+    request,
+    flash,
+    redirect,
+)
 
 from auth import login_required
 from forms.create_product import ProductForm
 from storage import Storage
 from storage_entities import Session, Product, Category, Unit, User
 
-bp = Blueprint('products', __name__)
+bp = Blueprint("products", __name__)
+
 
 @bp.route("/products", methods=["GET"])
 @login_required
