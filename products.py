@@ -101,6 +101,8 @@ def delete_product_by_id_route(id: str, session: Session):
 def edit_product_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     product_view = storage.get_product_by_id(id, session.user)
+    if product_view is None:
+        return abort(404, "Продукт не найден")
     form = ProductForm()
     form.name.data = product_view.name
     form.category.choices = [
@@ -110,8 +112,6 @@ def edit_product_by_id(id: int, session: Session):
     form.unit.choices = [
         (unit.id, unit.name) for unit in storage.get_units(session.user)
     ]
-    if product_view is None:
-        return abort(404, "Продукт не найден")
     return render_template(
         "products/edit.html",
         product=product_view,

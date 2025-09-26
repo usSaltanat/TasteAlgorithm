@@ -75,14 +75,14 @@ def create_meal(session: Session):
 def edit_meal_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     meal_view = storage.get_meal_by_id(id, session.user)
+    if meal_view is None:
+        return abort(404, "Блюдо не найдено")
     form = MealForm()
     form.name.data = meal_view.name
     form.meals_category.choices = [
         (meals_category.id, meals_category.name)
         for meals_category in storage.get_meals_categories(session.user)
     ]
-    if meal_view is None:
-        return abort(404, "Блюдо не найдено")
     return render_template(
         "meals/edit_meal.html",
         meal=meal_view,

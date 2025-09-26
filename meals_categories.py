@@ -69,10 +69,10 @@ def create_meal_categories(session: Session):
 def edit_meals_category_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     meals_category_view = storage.get_meals_category_by_id(id, session.user)
-    form = MealsCategoryForm()
-    form.name.data = meals_category_view.name
     if meals_category_view is None:
         return abort(404, "Категория блюда не найдена")
+    form = MealsCategoryForm()
+    form.meals_category.data = meals_category_view.name
     return render_template(
         "meals_categories/edit_meals_category.html",
         meals_category=meals_category_view,

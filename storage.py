@@ -477,12 +477,13 @@ class Storage:
         except:
             return None
 
-    def delete_meal_by_id(self, id: str) -> int | None:
+    def delete_meal_by_id(self, id: str, user: User) -> int | None:
         try:
             with self.connection() as conn:
                 result = conn.run(
-                    "DELETE FROM meals WHERE id = :meal_id RETURNING id",
+                    "DELETE FROM meals WHERE id = :meal_id and m.user_id = :user_id RETURNING id",
                     meal_id=id,
+                    user_id=user.id,
                 )
                 if len(result) == 0:
                     return None

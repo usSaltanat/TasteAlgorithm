@@ -27,7 +27,6 @@ def test_get_products_empty(client):
 
     def find_session_by_uuid(session_uuid: str) -> Session | None:
         assert session_uuid == "test_session"
-
         return Session(
             User(1, "salta", "hashqwerty123"),
             session_uuid,
@@ -63,9 +62,7 @@ def test_get_products_empty_unauthorized(client):
         }
     )
 
-    client.set_cookie("session_id", "test_session")
     response = client.get("/products")
-
     assert response.status_code == 302
     assert response.headers.get("Location") == "/signin"
 
@@ -85,21 +82,30 @@ def test_get_products_empty_unauthorized_no_cookie_header(client):
     )
 
     response = client.get("/products")
-
     assert response.status_code == 302
     assert response.headers.get("Location") == "/signin"
 
 
 def test_get_products_not_empty(client):
-    def get_products_mock_not_empty() -> List[Product]:
+    def get_products_mock_not_empty(user: User) -> List[Product]:
+        assert user.id == 1
+        assert user.login == "salta"
         return [
-            Product(1, "Молоко", Category(1, "Бакалея"), Unit(1, "Литры")),
-            Product(2, "Яйца", Category(1, "Бакалея"), Unit(2, "Десятки")),
+            Product(1, "Молоко", Category(1, "Бакалея", user), Unit(1, "Литры", user), user),
+            Product(2, "Яйца", Category(1, "Бакалея", user), Unit(2, "Десятки", user), user),
         ]
+
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+        return Session(
+            User(1, "salta", "hashqwerty123"),
+            session_uuid,
+        )
 
     app.config["storage"] = StorageMock(
         {
             "get_products": get_products_mock_not_empty,
+            "find_session_by_uuid": find_session_by_uuid,            
         }
     )
 
