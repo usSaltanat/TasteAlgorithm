@@ -1,6 +1,5 @@
 import pytest
-from typing import List
-from storage import Category
+from storage_entities import User, Session
 from main import app
 from mocks import StorageMock
 
@@ -13,6 +12,18 @@ def client():
 
 
 def test_new_category(client):
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+        return Session(
+            User(1, "salta", "hashqwerty123"),
+            session_uuid,
+        )
+
+    app.config["storage"] = StorageMock(
+        {
+            "find_session_by_uuid": find_session_by_uuid,
+        }
+    )
     client.set_cookie("session_id", "test_session")
     response = client.get("/categories/new")
     assert response.status_code == 200
@@ -23,3 +34,33 @@ def test_new_category(client):
         '<input class="btn" id="submit" name="submit" type="submit" value="Сохранить">'
         in html_body
     )
+
+
+def test_new_category_unauthorized(client):
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+        return None
+
+    app.config["storage"] = StorageMock(
+        {
+            "find_session_by_uuid": find_session_by_uuid,
+        }
+    )
+    client.set_cookie("session_id", "test_session")
+    response = client.get("/categories/new")
+    assert response.status_code == 302
+    assert response.headers.get("Location") == "/signin"
+
+
+def test_new_category_unauthorized_no_cookie_header(client):
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        return None
+
+    app.config["storage"] = StorageMock(
+        {
+            "find_session_by_uuid": find_session_by_uuid,
+        }
+    )
+    response = client.get("/categories/new")
+    assert response.status_code == 302
+    assert response.headers.get("Location") == "/signin"

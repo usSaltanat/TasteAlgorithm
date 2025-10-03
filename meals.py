@@ -104,7 +104,7 @@ def update_meal_route(id: int, session: Session):
     updated_meal_id = storage.update_meal(meal_to_update)
     if updated_meal_id is None:
         flash("Не удалось изменить блюдо")
-        meal_view = storage.get_meal_by_id(id)
+        meal_view = storage.get_meal_by_id(id, session.user)
         form = MealForm()
         form.meals_category.choices = [
             (meal_category.id, meal_category.name)

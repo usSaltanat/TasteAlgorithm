@@ -3,13 +3,14 @@ from flask import (
     redirect,
 )
 
-from auth import bp as auth_bp
+from auth import bp as auth_bp, login_required
 from products import bp as products_bp
 from meals_categories import bp as meals_categories_bp
 from categories import bp as categories_bp
 from units import bp as units_bp
 from meals import bp as meals_bp
 from storage import Storage
+from storage_entities import Session
 
 app = Flask(__name__)
 
@@ -25,7 +26,8 @@ app.register_blueprint(meals_bp)
 
 
 @app.route("/", methods=["GET"])
-def get_root():
+@login_required
+def get_root(session: Session):
     # print(f"❗️user = {pbkdf2_sha256.hash("qwerty123")}")
     return redirect("/products")
 

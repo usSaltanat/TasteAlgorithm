@@ -1,5 +1,5 @@
 import pytest
-from storage import Category
+from storage_entities import Category, User, Session
 from main import app
 from mocks import StorageMock
 
@@ -17,18 +17,26 @@ def test_category_update_success(client):
         assert category.id == 105
         return 105
 
-    def get_category_by_id(id: str) -> Category | None:
+    def get_category_by_id(id: str, user: User) -> Category | None:
         assert id == 105
-        return Category(105, "фруктыучки")
+        assert user.id == 1
+        assert user.login == "salta"
+        return Category(105, "фруктыучки", user)
 
-    storage_mock = StorageMock(
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+        return Session(
+            User(1, "salta", "hashqwerty123"),
+            session_uuid,
+        )
+
+    app.config["storage"] = StorageMock(
         {
             "update_category": update_category,
             "get_category_by_id": get_category_by_id,
+            "find_session_by_uuid": find_session_by_uuid,
         }
     )
-
-    app.config["storage"] = storage_mock
     client.set_cookie("session_id", "test_session")
     response = client.post(
         "/categories/105/update",
@@ -41,24 +49,90 @@ def test_category_update_success(client):
     assert response.headers.get("Location") == "/categories/105"
 
 
+def test_category_update_success_unauthorized(client):
+    def update_category(category: Category) -> int | None:
+        return 105
+
+    def get_category_by_id(id: str, user: User) -> Category | None:
+        return Category(105, "фруктыучки", user)
+
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+        return None
+
+    app.config["storage"] = StorageMock(
+        {
+            "update_category": update_category,
+            "get_category_by_id": get_category_by_id,
+            "find_session_by_uuid": find_session_by_uuid,
+        }
+    )
+    client.set_cookie("session_id", "test_session")
+    response = client.post(
+        "/categories/105/update",
+        data={
+            "category": "фрукты",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.headers.get("Location") == "/signin"
+
+
+def test_category_update_success_unauthorized_no_cookie_header(client):
+    def update_category(category: Category) -> int | None:
+        return 105
+
+    def get_category_by_id(id: str, user: User) -> Category | None:
+        return Category(105, "фруктыучки", user)
+
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        return None
+
+    app.config["storage"] = StorageMock(
+        {
+            "update_category": update_category,
+            "get_category_by_id": get_category_by_id,
+            "find_session_by_uuid": find_session_by_uuid,
+        }
+    )
+    response = client.post(
+        "/categories/105/update",
+        data={
+            "category": "фрукты",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.headers.get("Location") == "/signin"
+
+
 def test_category_update_failed(client):
     def update_category(category: Category) -> int | None:
         assert category.name == "фрукты"
         assert category.id == 105
         return None
 
-    def get_category_by_id(id: str) -> Category | None:
+    def get_category_by_id(id: str, user: User) -> Category | None:
         assert id == 105
-        return Category(105, "фруктыучки")
+        assert user.id == 1
+        assert user.login == "salta"
+        return Category(105, "фруктыучки", user)
 
-    storage_mock = StorageMock(
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+        return Session(
+            User(1, "salta", "hashqwerty123"),
+            session_uuid,
+        )
+
+    app.config["storage"] = StorageMock(
         {
             "update_category": update_category,
             "get_category_by_id": get_category_by_id,
+            "find_session_by_uuid": find_session_by_uuid,
         }
     )
-
-    app.config["storage"] = storage_mock
     client.set_cookie("session_id", "test_session")
     response = client.post(
         "/categories/105/update",
@@ -77,3 +151,61 @@ def test_category_update_failed(client):
     )
     assert "errorModal" in html_body
     assert "Не удалось изменить категорию" in html_body
+
+
+def test_category_update_failed_unauthorized(client):
+    def update_category(category: Category) -> int | None:
+        return None
+
+    def get_category_by_id(id: str, user: User) -> Category | None:
+        return Category(105, "фруктыучки", user)
+
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        assert session_uuid == "test_session"
+        return None
+
+    app.config["storage"] = StorageMock(
+        {
+            "update_category": update_category,
+            "get_category_by_id": get_category_by_id,
+            "find_session_by_uuid": find_session_by_uuid,
+        }
+    )
+    client.set_cookie("session_id", "test_session")
+    response = client.post(
+        "/categories/105/update",
+        data={
+            "category": "фрукты",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.headers.get("Location") == "/signin"
+
+
+def test_category_update_failed_unauthorized_no_cookie_header(client):
+    def update_category(category: Category) -> int | None:
+        return None
+
+    def get_category_by_id(id: str, user: User) -> Category | None:
+        return Category(105, "фруктыучки", user)
+
+    def find_session_by_uuid(session_uuid: str) -> Session | None:
+        return None
+
+    app.config["storage"] = StorageMock(
+        {
+            "update_category": update_category,
+            "get_category_by_id": get_category_by_id,
+            "find_session_by_uuid": find_session_by_uuid,
+        }
+    )
+    response = client.post(
+        "/categories/105/update",
+        data={
+            "category": "фрукты",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.headers.get("Location") == "/signin"

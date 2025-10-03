@@ -75,9 +75,9 @@ def edit_category_by_id(id: int, session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     category_view = storage.get_category_by_id(id, session.user)
     form = CategoryForm()
-    form.category.data = category_view.name
     if category_view is None:
         return abort(404, "Категория не найдена")
+    form.category.data = category_view.name
     return render_template(
         "categories/edit_category.html", category=category_view, form=form
     )
