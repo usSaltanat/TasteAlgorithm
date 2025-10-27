@@ -434,14 +434,17 @@ class Storage:
                 """
                     SELECT m.id,
                            m.meal,
-                           mc.meals_category
+                           mc.meals_category,
+                           m.description
                     FROM meals m
                              JOIN meals_categories mc ON m.meal_category_id = mc.id
                     WHERE m.user_id = :user_id         
                     """,
                 user_id=user.id,
-            ):
-                meals_view.append(Meal(int(row[0]), row[1], row[2], None))
+            ):  
+                if row[3] is None: 
+                    row[3] = ''
+                meals_view.append(Meal(int(row[0]), row[1], row[2], None, row[3]))
         return meals_view
     
     def get_meals_by_category(self, user: User, meal_category_id) -> List[Meal]:

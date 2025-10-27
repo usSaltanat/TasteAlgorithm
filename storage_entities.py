@@ -38,6 +38,8 @@ class Meal(NamedTuple):
     name: str
     meal_category: MealsCategory
     user: User | None
+    description: str | None
+
 
 
 # class Recipe(NamedTuple):

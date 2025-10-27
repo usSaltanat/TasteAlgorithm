@@ -22,6 +22,7 @@
                 <tr>
                     <td>Наименования</td>
                     <td>Категория</td>
+                    <td>Рецепт</td>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +30,7 @@
                 <tr>
                     <td><a href="/meals/{{ meal.id }}">{{ meal.name }}</a></td>
                     <td>{{ meal.meal_category }}</td>
+                    <td>{{ meal.description }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
