@@ -9,7 +9,7 @@
         <a class="logout-btn" href="/logout">Выйти</a>
     </div>
 
-    <a class="btn" href="/meals_categories/new">Добавить</a>
+    <!-- <a class="btn" href="/meals_categories/new">Добавить</a> -->
     <a class="btn" href="/meals">Список блюд</a>
 
     <h2>Список категорий блюд</h2>
@@ -24,7 +24,8 @@
             <tbody>
                 {% for meals_category in meals_categories %}
                 <tr>
-                    <td><a href="/meals_categories/{{ meals_category.id }}">{{ meals_category.name }}</a></td>
+                    <!-- <td><a href="/meals_categories/{{ meals_category.id }}">{{ meals_category.name }}</a></td> -->
+                    <td>{{ meals_category.name }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

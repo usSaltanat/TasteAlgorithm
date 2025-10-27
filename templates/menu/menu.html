@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Добавить Продукт{% endblock %}
+
+{% block content %}
+
+<!-- <div class="container"> -->
+<div class="logout-container">
+    <a class="logout-btn" href="/logout">Выйти</a>
+</div>
+
+<a class="btn" href="/meals">Список блюд</a>
+<a class="btn" href="/products">Список продуктов</a>
+
+
+<form action="/menu" method="post">
+    <h2>Меню на неделю</h2>
+
+    <div class="menu_week_container">
+
+        {% for day_form in form.days %}
+        <div class="menu_day_block">
+            <h4>День {{ loop.index }}</h4>
+
+            <div class="menu_meal_input">
+                {{ day_form.breakfast.label() }}
+                {{ day_form.breakfast() }}
+            </div>
+
+            <div class="menu_meal_input">
+                {{ day_form.lunch.label() }}
+                {{ day_form.lunch() }}
+            </div>
+
+            <div class="menu_meal_input">
+                {{ day_form.dinner.label() }}
+                {{ day_form.dinner() }}
+            </div>
+
+            <div class="menu_meal_input">
+                {{ day_form.snack.label() }}
+                {{ day_form.snack() }}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <input class="btn" type="submit" value="Рассчитать к закупке">
+</form>
+<!-- </div> -->
+{% endblock %}

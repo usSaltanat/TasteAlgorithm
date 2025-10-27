@@ -1,0 +1,89 @@
+/* Контейнер для всех дней недели */
+.menu_week_container {
+    display: flex;
+    /* flex-wrap: wrap; */
+    /* justify-content: center; */
+    /* flex-direction: row; */
+    /*Упорядочиваем элементы сверху вниз */
+    align-items: center;
+    /* Выравнивание элементов по центру */
+
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin: 20px 0;
+    /* Выравниваем элементы по горизонтали */
+    /* flex-direction: column; */
+    /*Упорядочиваем элементы сверху вниз */
+    /* align-items: right; */
+    /* Выравнивание элементов по центру */
+
+}
+
+.menu_day_block {
+    /* width: 350px; */
+    width: 90%;
+    height: 250px;
+    background-color: #F8EBE1;
+    margin: 10px 10px 10px 10px;
+    /* margin-left: 20px; */
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    /* Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    align-items: right;
+    /* Выравнивание элементов по центру */
+}
+
+.menu_meal_input input {
+    /* margin-left: 20px; */
+    margin-bottom: 15px;
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    align-items: center;
+    text-indent: 5px;
+    font-size: 12px;
+}
+
+.menu_meal_input select {
+    margin-left: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    font-size: 12px;
+}
+
+
+/* ДОБАВЬТЕ МЕДИА-ЗАПРОСЫ ДЛЯ РАСПОЛОЖЕНИЯ 4+3 */
+@media (min-width: 1024px) {
+
+.menu_week_container {
+    display: flex;
+    flex-direction: row;
+    /*Упорядочиваем элементы сверху вниз */
+    align-items: center;
+    gap: 5px;
+    margin: 5px 0;
+
+}
+
+}
+

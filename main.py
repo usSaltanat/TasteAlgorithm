@@ -9,6 +9,7 @@ from meals_categories import bp as meals_categories_bp
 from categories import bp as categories_bp
 from units import bp as units_bp
 from meals import bp as meals_bp
+from menu import bp as menu_bp
 from storage import Storage
 from storage_entities import Session
 
@@ -23,6 +24,7 @@ app.register_blueprint(meals_categories_bp)
 app.register_blueprint(categories_bp)
 app.register_blueprint(units_bp)
 app.register_blueprint(meals_bp)
+app.register_blueprint(menu_bp)
 
 
 @app.route("/", methods=["GET"])

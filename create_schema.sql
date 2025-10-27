@@ -2,6 +2,7 @@ DROP DATABASE if EXISTS taste_algorithm;
 
 CREATE DATABASE taste_algorithm;
 
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     login VARCHAR NOT NULL,
@@ -44,11 +45,12 @@ CREATE TABLE IF NOT EXISTS products (
     CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
+--drop table meals_categories
 CREATE TABLE IF NOT EXISTS meals_categories (
-    id SERIAL PRIMARY KEY,
+    id INT NOT NULL,
     meals_category VARCHAR NOT NULL,
     user_id INT NOT NULL,
-    UNIQUE (user_id, meals_category),
+    UNIQUE (id, user_id, meals_category),
     CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
@@ -59,7 +61,7 @@ CREATE TABLE IF NOT EXISTS meals (
     user_id INT NOT NULL,
     description TEXT NULL,
     UNIQUE (user_id, meal, meal_category_id),
-    CONSTRAINT fk_category_meal FOREIGN KEY(meal_category_id) REFERENCES meals_categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+--    CONSTRAINT fk_category_meal FOREIGN KEY(meal_category_id, user_id) REFERENCES meals_categories(id, user_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 

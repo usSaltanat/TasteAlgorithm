@@ -13,18 +13,19 @@ html {
 }
 
 /* body { */
-    /* font-family: Nunito; */
-    /* min-width: 320px; */
-    /* height: 100vh; */
-    /* min-height: 100vh; */
-    /* background-color: #f9f9f9; */
-    /* color: black; */
+/* font-family: Nunito; */
+/* min-width: 320px; */
+/* height: 100vh; */
+/* min-height: 100vh; */
+/* background-color: #f9f9f9; */
+/* color: black; */
 /* } */
 
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Важно! */
+    min-height: 100vh;
+    /* Важно! */
     margin: 0;
     font-family: Nunito;
     background-color: #f9f9f9;
@@ -32,8 +33,10 @@ body {
 }
 
 .main-content {
-    flex: 1; /* Растягивает контент, чтобы футер был внизу */
-    padding-bottom: 20px; /* Отступ от футера */
+    flex: 1;
+    /* Растягивает контент, чтобы футер был внизу */
+    padding-bottom: 20px;
+    /* Отступ от футера */
 }
 
 img,
@@ -71,6 +74,10 @@ fieldset {
     margin: 0;
 }
 
+h4 {
+    margin: 10px;
+}
+
 fieldset {
     padding: 0;
     margin: 0;
@@ -94,12 +101,14 @@ fieldset {
     html {
         --container: 640px;
     }
+
 }
 
 @media (min-width: 768px) {
     html {
         --padding-container: 64px;
     }
+
 }
 
 @media (min-width: 1024px) {
