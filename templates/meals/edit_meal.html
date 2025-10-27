@@ -4,22 +4,27 @@
 
 {% block content %}
 
-<h2>Изменить блюдо</h2>
-<form action="/meals/{{meal.id}}/update" method="post">
-    <a class="btn" href="/meals">Отмена</a>
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
+    </div>
 
-    <div class="meal_input_label">
-        <div class="meal_name_input">
-            {{ form.name.label() }}
-            {{ form.name(placeholder="Введите название блюда") }}
-        </div>
+    <h2>Изменить блюдо</h2>
+    <form action="/meals/{{meal.id}}/update" method="post">
+        <a class="btn" href="/meals">Отмена</a>
 
-        <div class="meal_category_input">
-            {{ form.meals_category.label() }}
-            {{ form.meals_category() }}
-        </div>
+        <div class="meal_input_label">
+            <div class="meal_name_input">
+                {{ form.name.label() }}
+                {{ form.name(placeholder="Введите название блюда") }}
+            </div>
 
-        <input class="btn" type="submit" value="Сохранить">
+            <div class="meal_category_input">
+                {{ form.meals_category.label() }}
+                {{ form.meals_category() }}
+            </div>
 
-</form>
-{% endblock %}
+            <input class="btn" type="submit" value="Сохранить">
+
+    </form>
+    {% endblock %}

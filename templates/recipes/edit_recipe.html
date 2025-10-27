@@ -4,21 +4,27 @@
 
 {% block content %}
 
-<h2>Изменить рецепт</h2>
-<form action="/recipes/{{recipe.id}}/update" method="post">
-    <a class="btn" href="/recipes">Отмена</a>
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
+    </div>
 
-    <div class="recipe_input_label">
-        <div class="recipe_meal_input">
-            {{ form.meal.label() }}
-            {{ form.meal(placeholder="Выберите блюдо") }}
-        </div>
 
-        <div class="recipe_body_input">
-            {{ form.recipe_body.label() }}
-            {{ form.recipe_body(placeholder=recipe.body_meal_recipes) }}
-        </div>
-        <input class="btn" type="submit" value="Сохранить">
+    <h2>Изменить рецепт</h2>
+    <form action="/recipes/{{recipe.id}}/update" method="post">
+        <a class="btn" href="/recipes">Отмена</a>
 
-</form>
-{% endblock %}
+        <div class="recipe_input_label">
+            <div class="recipe_meal_input">
+                {{ form.meal.label() }}
+                {{ form.meal(placeholder="Выберите блюдо") }}
+            </div>
+
+            <div class="recipe_body_input">
+                {{ form.recipe_body.label() }}
+                {{ form.recipe_body(placeholder=recipe.body_meal_recipes) }}
+            </div>
+            <input class="btn" type="submit" value="Сохранить">
+
+    </form>
+    {% endblock %}

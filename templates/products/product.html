@@ -3,28 +3,33 @@
 
 {% block content %}
 
-<a class="btn" href="/products">Список продуктов</a>
-<a class="btn" href="/products/{{product.id}}/edit">Изменить</a>
-<a class="btn" href="/products/{{product.id}}/delete">Удалить</a>
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
+    </div>
 
-<h2>Выбранный продукт</h2>
-<div class="table-container">
-    <table id="products_table" class="display">
-        <thead>
-            <tr>
-                <td>Наименования</td>
-                <td>Категория</td>
-                <td>Еденицы измерения</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ product.name }}</a></td>
-                <td>{{ product.category.name }}</td>
-                <td>{{ product.unit.name }}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+    <a class="btn" href="/products">Список продуктов</a>
+    <a class="btn" href="/products/{{product.id}}/edit">Изменить</a>
+    <a class="btn" href="/products/{{product.id}}/delete">Удалить</a>
 
-{% endblock %}
+    <h2>Выбранный продукт</h2>
+    <div class="table-container">
+        <table id="products_table" class="display">
+            <thead>
+                <tr>
+                    <td>Наименования</td>
+                    <td>Категория</td>
+                    <td>Единицы измерения</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ product.name }}</a></td>
+                    <td>{{ product.category.name }}</td>
+                    <td>{{ product.unit.name }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% endblock %}

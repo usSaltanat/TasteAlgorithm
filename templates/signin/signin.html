@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Логин{% endblock %}
+
+{% block content %}
+<form action="/signin" method="post">
+    <div>
+        <div class="login_input">
+            {{ form.login.label() }}
+            {{ form.login(placeholder="Введите логин") }}
+        </div>
+
+        <div class="password_input">
+            {{ form.password.label() }}
+            {{ form.password(placeholder="Введите пароль") }}
+        </div>
+
+    </div>
+    <input class="btn" type="submit" value="Войти">
+</form>
+<a class="btn" href="/signup">Регистрация</a>
+{% endblock %}

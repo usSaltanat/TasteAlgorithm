@@ -1,0 +1,51 @@
+.login_input label {
+    margin-left: 20px;
+    padding: 5px;
+    /*Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    color: #272121;
+}
+
+.login_input input {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    align-items: center;
+    text-indent: 5px;
+    font-size: 12px;
+}
+
+.password_input label {
+    margin-left: 20px;
+    padding: 5px;
+    /*Внутренние отступы */
+    display: flex;
+    /* Выравниваем элементы по горизонтали */
+    flex-direction: column;
+    /*Упорядочиваем элементы сверху вниз */
+    color: #272121;
+}
+
+.password_input input {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    padding: 10px;
+    color: #474040;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 95%;
+    /* width: 300px; */
+    align-items: center;
+    text-indent: 5px;
+    font-size: 12px;
+}

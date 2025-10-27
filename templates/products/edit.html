@@ -4,27 +4,32 @@
 
 {% block content %}
 
-<h2>Изменить продукт</h2>
-<form action="/products/{{product.id}}/update" method="post">
-    <a class="btn" href="/products">Отмена</a>
-    <input class="btn" type="submit" value="Сохранить">
-
-    <div class="product_input_label">
-        <div class="product_name_input">
-            {{ form.name.label() }}
-            {{ form.name(placeholder="Введите название продукта") }}
-        </div>
-
-        <div class="product_category_input">
-            {{ form.category.label() }}
-            {{ form.category() }}
-        </div>
-
-        <div class="product_unit_input">
-            {{ form.unit.label() }}
-            {{ form.unit() }}
-        </div>
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
     </div>
 
-</form>
-{% endblock %}
+    <h2>Изменить продукт</h2>
+    <form action="/products/{{product.id}}/update" method="post">
+        <a class="btn" href="/products">Отмена</a>
+        <input class="btn" type="submit" value="Сохранить">
+
+        <div class="product_input_label">
+            <div class="product_name_input">
+                {{ form.name.label() }}
+                {{ form.name(placeholder="Введите название продукта") }}
+            </div>
+
+            <div class="product_category_input">
+                {{ form.category.label() }}
+                {{ form.category() }}
+            </div>
+
+            <div class="product_unit_input">
+                {{ form.unit.label() }}
+                {{ form.unit() }}
+            </div>
+        </div>
+
+    </form>
+    {% endblock %}

@@ -1,61 +1,66 @@
 {% extends 'base.html' %}
 
-{% block title %}Еденицы измерения продуктов{% endblock %}
+{% block title %}Единицы измерения продуктов{% endblock %}
 
 {% block content %}
 
-<a class="btn" href="/units/new">Добавить</a>
-<a class="btn" href="/products">Список продуктов</a>
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
+    </div>
 
-<h2>Список едениц измерения</h2>
-{% if units %}
-<div class="table-container">
-    <table id="units_table" class="display">
-        <thead>
-            <tr>
-                <td>Еденицы измерения</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for unit in units %}
-            <tr>
-                <td><a href="/units/{{ unit.id }}">{{ unit.name }}</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% else %}
-<p>Список пуст</p>
-{% endif %}
+    <a class="btn" href="/units/new">Добавить</a>
+    <a class="btn" href="/products">Список продуктов</a>
 
-{% block scripts %}
-<script type="text/javascript" charset="utf8"
-    src="{{ url_for('static', filename='scripts/jquery-3.5.1.js') }}"></script>
-<script type="text/javascript" charset="utf8"
-    src="{{ url_for('static', filename='scripts/jquery.dataTables.js') }}"></script>
+    <h2>Список единиц измерения</h2>
+    {% if units %}
+    <div class="table-container">
+        <table id="units_table" class="display">
+            <thead>
+                <tr>
+                    <td>Единицы измерения</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unit in units %}
+                <tr>
+                    <td><a href="/units/{{ unit.id }}">{{ unit.name }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Список пуст</p>
+    {% endif %}
 
-<script>
-    $(document).ready(function () {
-        if (!$.fn.DataTable.isDataTable('#units_table')) {
-            $('#units_table').DataTable({
-                language: {
-                    search: "", // Убираем слово "Search"
-                    searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
-                    info: "Показано _START_ до _END_ из _TOTAL_ записей", // Убираем информацию о количестве записей, например, "Показано 1-10 из 50"
-                    infoEmpty: "", // Убираем информацию, когда таблица пуста
-                    zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
-                    infoFiltered: "",
-                    paginate: {
-                        previous: "Назад", // Текст для кнопки "Предыдущая"
-                        next: "Вперед" // Текст для кнопки "Следующая"
-                    },
-                    lengthMenu: "_MENU_",
-                }
-            });
-        };
-    });
-</script>
-{% endblock %}
+    {% block scripts %}
+    <script type="text/javascript" charset="utf8"
+        src="{{ url_for('static', filename='scripts/jquery-3.5.1.js') }}"></script>
+    <script type="text/javascript" charset="utf8"
+        src="{{ url_for('static', filename='scripts/jquery.dataTables.js') }}"></script>
 
-{% endblock %}
+    <script>
+        $(document).ready(function () {
+            if (!$.fn.DataTable.isDataTable('#units_table')) {
+                $('#units_table').DataTable({
+                    language: {
+                        search: "", // Убираем слово "Search"
+                        searchPlaceholder: "Поиск по таблице...", // Placeholder для поля поиска
+                        info: "Показано _START_ до _END_ из _TOTAL_ записей", // Убираем информацию о количестве записей, например, "Показано 1-10 из 50"
+                        infoEmpty: "", // Убираем информацию, когда таблица пуста
+                        zeroRecords: "", // Убираем текст "No matching records found" (Нет совпадающих записей)
+                        infoFiltered: "",
+                        paginate: {
+                            previous: "Назад", // Текст для кнопки "Предыдущая"
+                            next: "Вперед" // Текст для кнопки "Следующая"
+                        },
+                        lengthMenu: "_MENU_",
+                    }
+                });
+            };
+        });
+    </script>
+    {% endblock %}
+
+    {% endblock %}

@@ -5,21 +5,43 @@ h2 {
     /* Цвет текста */
 }
 
+/* .table-container { */
+/* width: 40%; */
+/* max-width: 100%; */
+/* margin: 0 auto; */
+/* border-collapse: collapse; */
+/* border-radius: 10px; */
+/* overflow: hidden; */
+/* overflow-x: auto; */
+/* margin: 0 auto; */
+/* margin-left: 20px; */
+/* margin-bottom: 50px; */
+/* max-width: 70%; */
+/* color: #272121; */
+/* table-layout: auto; */
+/* } */
+
 .table-container {
-    /* width: 40%; */
+    width: 100%;
     max-width: 100%;
-    margin: 0 auto;
+    margin: 0 0 50px 0; /* Упрощаем margin */
     border-collapse: collapse;
     border-radius: 10px;
-    overflow: hidden;
-    overflow-x: auto;
-    /* margin: 0 auto; */
-    margin-left: 20px;
-    margin-bottom: 50px;
-    /* max-width: 70%; */
+    overflow-x: auto; /* Только горизонтальный скролл */
     color: #272121;
     table-layout: auto;
+    box-sizing: border-box;
+}
 
+.table-wrapper {
+    padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.display {
+    width: 100%;
+    border-collapse: collapse;
 }
 
 th,
@@ -45,9 +67,63 @@ thead {
     table-layout: auto;
 }
 
-
-
 /* ---------------------------------------- */
+
+/* Стили для кнопки выхода */
+.logout-btn {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 0 10px;
+    margin: 10px 0 15px 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    outline: none;
+    border: none;
+    border-radius: 30px;
+    height: 30px;
+    width: 200px;
+    line-height: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    color: #444;
+    background-color: #FFA181;
+    box-shadow: 0 4px 6px rgb(65 132 144 / 10%), 0 1px 3px rgb(0 0 0 / 8%);
+    cursor: pointer;
+    user-select: none;
+    appearance: none;
+    touch-action: manipulation;
+    vertical-align: top;
+    transition: box-shadow 0.2s;
+}
+
+.logout-btn:hover {
+    transition: all 0.2s;
+    box-shadow: 0 7px 14px rgb(65 132 144 / 10%), 0 3px 6px rgb(0 0 0 / 8%);
+    background-color: #ff5e006e;
+}
+
+/* Сдвигаем все элементы ниже */
+.btn,
+h2,
+.table-container,
+p {
+    margin-top: 20px;
+    /* Добавляем отступ сверху */
+}
+
+/* Уточняем отступы для кнопок */
+.btn {
+    margin: 20px 0 15px 20px;
+    /* top right bottom left */
+}
+
+/* Уточняем отступ для заголовка */
+h2 {
+    margin: 30px 15px 15px 20px;
+}
+
+
 .btn {
     display: inline-block;
     box-sizing: border-box;
@@ -266,15 +342,19 @@ div.dataTables_filter {
 }
 
 @media (min-width: 480px) {
+    .logout-container {
+        display: flex;
+        justify-content: flex-end;
+    }
 
     .product_name_input input {
         width: 300px;
     }
-    
+
     .product_category_input select {
         width: 300px;
     }
-    
+
     .product_unit_input select {
         width: 200px;
     }
@@ -284,13 +364,11 @@ div.dataTables_filter {
 
     .product_input_label {
         width: 1000px;
-        height: 200px;       
+        height: 200px;
         flex-direction: row;
         /*Упорядочиваем элементы сверху вниз */
         align-items: center;
         /* Выравнивание элементов по центру */
-        
+
     }
 }
-
-

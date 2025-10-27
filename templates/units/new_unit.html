@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
-{% block title %}Добавить еденицу измерения{% endblock %}
+{% block title %}Добавить единицу измерения{% endblock %}
 
 {% block content %}
-<form action="/units/create" method="post">
-    <a class="btn" href="/units">Назад</a>
-    <h2>Создать еденицу измерения</h2>
-    <div class="unit_input_label">
-        <div class="unit_name_input">
-            {{ form.unit.label() }}
-            {{ form.unit(placeholder="Введите новую ед. измерения") }}
-        </div>
+
+<div class="container">
+    <div class="logout-container">
+        <a class="logout-btn" href="/logout">Выйти</a>
     </div>
-    {{ form.submit(class="btn") }}
-</form>
-{% endblock %}
+
+    <form action="/units/create" method="post">
+        <a class="btn" href="/units">Назад</a>
+        <h2>Создать единицу измерения</h2>
+        <div class="unit_input_label">
+            <div class="unit_name_input">
+                {{ form.unit.label() }}
+                {{ form.unit(placeholder="Введите новую ед. измерения") }}
+            </div>
+        </div>
+        {{ form.submit(class="btn") }}
+    </form>
+    {% endblock %}

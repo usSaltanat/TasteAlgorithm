@@ -1,8 +1,15 @@
-.footer {
+/* .footer {
     padding: 24px 24px 24px 24px;
     background-color: #FFFFFF;
     width: 100%;
     bottom: 0;
+} */
+
+.footer {
+    padding: 24px;
+    background-color: #FFFFFF;
+    width: 100%;
+    margin-top: auto; /* Ключевое свойство для прижатия к низу */
 }
 
 .footer_content {

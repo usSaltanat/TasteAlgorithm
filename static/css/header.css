@@ -1,7 +1,4 @@
 .header {
-    /* background-image: url("data:image/svg+xml,%3Csvg width='2880' height='2880' viewBox='0 0 2880 2880' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1440' cy='1440' r='1440' fill='%23CBB355'/%3E%3C/svg%3E%0A"); */
-    /* background-image: url("data:image/svg+xml,%3Csvg width='1440' height='427' viewBox='0 0 1440 427' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='720' cy='-1013' r='1440' fill='%23CBB355'/%3E%3C/svg%3E%0A"); */
-    /* background-image: url("data:image/svg+xml,%3C!-- Круг --%3E%3Csvg id='header' width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='100' cy='100' r='100' fill='%23CBB355'/%3E%3C/svg%3E%0A"); */
     background-image: url("data:image/svg+xml,%3Csvg width='1440' height='407' viewBox='0 0 1440 407' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1440' height='407' fill='%23CBB355'/%3E%3C/svg%3E%0A");
     background-position: bottom;
     /* background-repeat: no-repeat; */
