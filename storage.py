@@ -454,7 +454,8 @@ class Storage:
                 """
                     SELECT m.id,
                            m.meal,
-                           mc.meals_category
+                           mc.meals_category,
+                           m.description
                     FROM meals m
                              JOIN meals_categories mc ON m.meal_category_id = mc.id
                     WHERE   m.user_id = :user_id  
@@ -463,7 +464,9 @@ class Storage:
                 user_id=user.id,
                 meal_category_id=meal_category_id,
             ):
-                meals_view.append(Meal(int(row[0]), row[1], row[2], None))
+                if row[3] is None: 
+                    row[3] = ''                
+                meals_view.append(Meal(int(row[0]), row[1], row[2], None, row[3]))
         return meals_view
 
 
@@ -473,7 +476,8 @@ class Storage:
                 """
                 SELECT m.id,
                        m.meal,
-                       mc.meals_category
+                       mc.meals_category,
+                       m.description
                 FROM meals m
                          JOIN meals_categories mc ON m.meal_category_id = mc.id
                 WHERE m.id = :meal_id
@@ -485,7 +489,9 @@ class Storage:
             if len(result) == 0:
                 return None
             meal = result[0]
-        return Meal(int(meal[0]), meal[1], meal[2], None)
+            if meal[3] is None: 
+                meal[3] = ''                
+        return Meal(int(meal[0]), meal[1], meal[2], None, meal[3])
 
     def insert_meal(self, meal: Meal) -> int | None:
         try:
