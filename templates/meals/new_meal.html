@@ -20,6 +20,11 @@
                 {{ form.name(placeholder="Введите название блюда") }}
             </div>
 
+            <div class="meal_product_input">
+                {{ form.products.label() }}
+                {{ form.products() }}
+            </div>
+
             <div class="meal_category_input">
                 {{ form.meals_category.label() }}
                 {{ form.meals_category() }}

@@ -1,4 +1,5 @@
-from wtforms import Form, StringField, validators, SubmitField, SelectField
+from wtforms import Form, StringField, validators, SelectField
+from wtforms import SelectMultipleField
 
 
 class MealForm(Form):
@@ -9,6 +10,11 @@ class MealForm(Form):
             validators.DataRequired(),
         ],
     )
+    products = SelectMultipleField(
+        "Список продуктов",
+        coerce=int,
+        validators=[validators.DataRequired()],
+    )
     meals_category = SelectField(
         "Категория блюда",
         [
@@ -16,10 +22,10 @@ class MealForm(Form):
         ],
     )
 
-    recipe = StringField(
-        "Рецепт",
-        [
-            validators.length(min=2, max=10),
-            validators.DataRequired(),
-        ],
-    )
+    # recipe = StringField(
+    #     "Рецепт",
+    #     [
+    #         validators.length(min=2, max=10),
+    #         validators.DataRequired(),
+    #     ],
+    # )

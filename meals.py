@@ -41,6 +41,9 @@ def get_meal_by_id_route(id: int, session: Session):
 def new_meal(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])  # подключение к БД
     form = MealForm()
+    form.products.choices = [
+        (product.id, product.name) for product in storage.get_products(session.user)
+    ]
     form.meals_category.choices = [
         (meals_category.id, meals_category.name)
         for meals_category in storage.get_meals_categories(session.user)
@@ -53,11 +56,13 @@ def new_meal(session: Session):
 def create_meal(session: Session):
     storage = typing.cast(Storage, current_app.config["storage"])
     meal_to_create = Meal(
-        None,
-        request.form["name"],
-        MealsCategory(int(request.form["meals_category"]), None, None),
-        session.user,
+        id=None,
+        name=request.form["name"],
+        meal_category=MealsCategory(int(request.form["meals_category"]), None, None),
+        user=session.user,
+        description=None,  # TODO прокинуть реальный description из HTTP запроса
     )
+    form = MealForm(request.form)
     created_meal_id = storage.insert_meal(meal_to_create)
     if created_meal_id is None:
         flash("Не удалось создать блюдо")
@@ -67,6 +72,7 @@ def create_meal(session: Session):
             for meals_category in storage.get_meals_categories(session.user)
         ]
         return render_template("meals/new_meal.html", form=form)
+    storage.insert_meal_products(created_meal_id, form.products.data)
     return redirect(f"/meals/{created_meal_id}")
 
 

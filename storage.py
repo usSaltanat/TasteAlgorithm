@@ -506,6 +506,23 @@ class Storage:
         except:
             return None
 
+    def insert_meal_products(self, meal_id: int, product_ids: list[int]) -> list[int]:
+        inserted_ids = []
+        try:
+            with self.connection() as conn:
+                for product_id in product_ids:
+                    # TODO вместо цикла и множества SQL зарпосов, написать один SQL запрос который вставляет все записи сразу
+                    result = conn.run(
+                        "INSERT INTO meals_compositions (meal_id, product_id, per_portion) VALUES (:meal_id, :product_id, :per_portion) RETURNING id",
+                        meal_id=meal_id,
+                        product_id=product_id,
+                        per_portion=None
+                    )
+                    inserted_ids.append(result)
+                return inserted_ids
+        except:
+            return None
+
     def delete_meal_by_id(self, id: str, user: User) -> int | None:
         try:
             with self.connection() as conn:
